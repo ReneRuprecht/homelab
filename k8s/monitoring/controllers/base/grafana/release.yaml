@@ -1,0 +1,25 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: grafana
+      version: "8.x"
+      interval: "12h"
+      sourceRef:
+        kind: HelmRepository
+        name: grafana
+        namespace: monitoring
+  values:
+    persistence:
+      enabled: true
+      type: pvc
+      storageClassName: nfs
+      accessModes:
+        - ReadWriteOnce
+      size: 4Gi
