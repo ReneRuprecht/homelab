@@ -1,0 +1,9 @@
+---
+collections:
+  - name: ansible.posix
+    version: "2.0.0" 
+roles:
+  - name: reneruprecht.kubernetes
+    src: "https://github.com/reneruprecht/ansible-role-kubernetes"
+    scm: git
+    version: main
