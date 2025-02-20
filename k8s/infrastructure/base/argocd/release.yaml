@@ -16,6 +16,9 @@ spec:
         namespace: gitops
       interval: 12h
   values:
+    secret:
+      annotations:
+        sealedsecrets.bitnami.com/managed: "true"
     redis-ha:
       enabled: true
     controller:
