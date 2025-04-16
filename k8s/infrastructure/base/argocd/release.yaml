@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: argo-cd
-      version: "7.8.3"
+      version: "7.8.24"
       sourceRef:
         kind: HelmRepository
         name: argocd
@@ -19,17 +19,29 @@ spec:
     secret:
       annotations:
         sealedsecrets.bitnami.com/managed: "true"
-    redis-ha:
-      enabled: true
     controller:
-      replicas: 1
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
     server:
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
       autoscaling:
         enabled: true
         minReplicas: 2
     repoServer:
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
       autoscaling:
         enabled: true
         minReplicas: 2
     applicationSet:
-      replicas: 2
+      metrics:
+        enabled: true
+        serviceMonitor:
+          enabled: true
