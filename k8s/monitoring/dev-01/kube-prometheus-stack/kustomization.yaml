@@ -3,6 +3,7 @@ kind: Kustomization
 namespace: monitoring
 resources:
 - ./release.yaml
+- ./podmonitor.yaml
 - ../../base/kube-prometheus-stack/repository.yaml
 configMapGenerator:
   - name: flux-kube-state-metrics-config
