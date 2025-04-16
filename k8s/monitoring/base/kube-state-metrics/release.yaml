@@ -15,3 +15,7 @@ spec:
         name: kube-state-metrics
         namespace: monitoring
       interval: 12h
+  values:
+    prometheus:
+      monitor:
+        enabled: true

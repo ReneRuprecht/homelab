@@ -15,6 +15,10 @@ spec:
         name: kube-prometheus-stack
         namespace: monitoring
       interval: 12h
+  valuesFrom:
+  - kind: ConfigMap
+    name: flux-kube-state-metrics-config
+    valuesKey: kube-state-metrics-config.yaml
   values:
     grafana:
       enabled: false
