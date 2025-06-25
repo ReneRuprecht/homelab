@@ -1,0 +1,6 @@
+- name: Install acme
+  hosts: loadbalancer
+  gather_facts: true
+  roles:
+    - role: reneruprecht.acme
+    - role: geerlingguy.nginx

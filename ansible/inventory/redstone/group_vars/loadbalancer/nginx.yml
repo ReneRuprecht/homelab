@@ -1,0 +1,92 @@
+---
+nginx_remove_default_vhost: true
+
+nginx_upstreams:
+  - name: vault
+    strategy: "ip_hash"
+    keepalive: 16
+    servers:
+      - "{{ vaults.vault_01.ip }}:8200"
+      - "{{ vaults.vault_02.ip }}:8200"
+      - "{{ vaults.vault_03.ip }}:8200"
+
+server_url: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  31663461376561386539636561636666633430663363666133343565363666623730646232356436
+  6539383864353430346533343332656632323035623037630a353363313330363931323332636637
+  34353430333339313665633038646539353066316632336534613066303733646133306539393861
+  3437336564323936390a316666353735623335303531346238613162303366613561386262323066
+  66393334386265396165643132613336353466636430306533366337303439393064
+
+nginx_vhosts:
+  - listen: "443 ssl http2"
+    server_name: "{{ vaults.vault.address }}"
+    state: "present"
+    extra_parameters: |
+      location / {
+        proxy_pass http://vault;
+        proxy_ssl_verify off;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+      }
+      ssl_certificate     /etc/acme/certs/wildcard.{{ server_url }}.pem;
+      ssl_certificate_key /etc/acme/certs/wildcard.{{ server_url }}.key;
+      ssl_protocols       TLSv1.2 TLSv1.3;
+      ssl_ciphers         HIGH:!aNULL:!MD5;
+
+  - listen: "443 ssl http2"
+    server_name: "{{ vaults.vault_01.address }}"
+    state: "present"
+    extra_parameters: |
+      location / {
+        proxy_pass http://{{ vaults.vault_01.ip }}:8200;
+        proxy_ssl_verify off;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+      }
+      ssl_certificate     /etc/acme/certs/wildcard.{{ server_url }}.pem;
+      ssl_certificate_key /etc/acme/certs/wildcard.{{ server_url}}.key;
+      ssl_protocols       TLSv1.2 TLSv1.3;
+      ssl_ciphers         HIGH:!aNULL:!MD5;
+
+  - listen: "443 ssl http2"
+    server_name: "{{ vaults.vault_02.address }}"
+    state: "present"
+    extra_parameters: |
+      location / {
+        proxy_pass http://{{ vaults.vault_02.ip }}:8200;
+        proxy_ssl_verify off;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+      }
+      ssl_certificate     /etc/acme/certs/wildcard.{{ server_url }}.pem;
+      ssl_certificate_key /etc/acme/certs/wildcard.{{ server_url }}.key;
+      ssl_protocols       TLSv1.2 TLSv1.3;
+      ssl_ciphers         HIGH:!aNULL:!MD5;
+
+  - listen: "443 ssl http2"
+    server_name: "{{ vaults.vault_03.address }}"
+    state: "present"
+    extra_parameters: |
+      location / {
+        proxy_pass http://{{ vaults.vault_03.ip }}:8200;
+        proxy_ssl_verify off;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+      }
+      ssl_certificate     /etc/acme/certs/wildcard.{{ server_url }}.pem;
+      ssl_certificate_key /etc/acme/certs/wildcard.{{ server_url }}.key;
+      ssl_protocols       TLSv1.2 TLSv1.3;
+      ssl_ciphers         HIGH:!aNULL:!MD5;

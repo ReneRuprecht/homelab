@@ -1,0 +1,8 @@
+---
+roles:
+  - name: reneruprecht.acme
+    src: "https://github.com/reneruprecht/ansible-role-acme"
+    scm: git
+    version: main
+  - name: geerlingguy.nginx
+    version: "3.2.0"

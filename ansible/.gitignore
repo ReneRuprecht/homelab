@@ -1,0 +1,6 @@
+Pipfile.lock
+.vscode
+.vaultpass
+ansible.log
+roles
+ansible_collections
