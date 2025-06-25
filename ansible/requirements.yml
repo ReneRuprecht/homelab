@@ -6,3 +6,7 @@ roles:
     version: main
   - name: geerlingguy.nginx
     version: "3.2.0"
+  - src: https://github.com/ansible-community/ansible-vault.git
+    name: ansible-community.ansible-vault
+    scm: git
+    version: master

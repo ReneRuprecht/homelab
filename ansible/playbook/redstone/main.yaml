@@ -4,3 +4,15 @@
   roles:
     - role: reneruprecht.acme
     - role: geerlingguy.nginx
+
+- name: Install vault
+  hosts: vault
+  gather_facts: true
+  roles:
+    - role: ansible-community.ansible-vault
+  post_tasks:
+    - name: Set vault environment
+      ansible.builtin.lineinfile:
+        path: "~/.bashrc"
+        line: "export VAULT_ADDR={{ vault_api_addr }}"
+        state: present

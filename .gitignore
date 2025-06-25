@@ -1,2 +1,9 @@
 .terraform*
 *.tfstate
+*.tfstate.*
+.vaultpass
+.vscode
+ansible_collections
+roles
+.ansible
+^.log
