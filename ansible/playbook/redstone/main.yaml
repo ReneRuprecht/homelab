@@ -16,3 +16,9 @@
         path: "~/.bashrc"
         line: "export VAULT_ADDR={{ vault_api_addr }}"
         state: present
+
+- name: Install k8s
+  hosts: k8s-01
+  gather_facts: true
+  roles:
+    - role: reneruprecht.kubernetes

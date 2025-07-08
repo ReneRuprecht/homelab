@@ -4,6 +4,10 @@ roles:
     src: "https://github.com/reneruprecht/ansible-role-acme"
     scm: git
     version: main
+  - name: reneruprecht.kubernetes
+    src: "https://github.com/reneruprecht/ansible-role-kubernetes"
+    scm: git
+    version: main
   - name: geerlingguy.nginx
     version: "3.2.0"
   - src: https://github.com/ansible-community/ansible-vault.git
