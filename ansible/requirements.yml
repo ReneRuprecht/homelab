@@ -1,4 +1,6 @@
 ---
+collections:
+  - name: community.general
 roles:
   - name: reneruprecht.acme
     src: "https://github.com/reneruprecht/ansible-role-acme"
@@ -12,5 +14,11 @@ roles:
     version: "3.2.0"
   - src: https://github.com/ansible-community/ansible-vault.git
     name: ansible-community.ansible-vault
+    scm: git
+    version: master
+  - name: geerlingguy.nfs
+    version: "2.1.0"
+  - name: tinslice.ansible-role-disks
+    src: "https://github.com/tinslice/ansible-role-disks"
     scm: git
     version: master

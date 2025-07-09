@@ -17,6 +17,21 @@
         line: "export VAULT_ADDR={{ vault_api_addr }}"
         state: present
 
+- name: Install nfs
+  hosts: nfs
+  gather_facts: true
+  roles:
+    - role: geerlingguy.nfs
+
+- name: Install nfs
+  hosts: k8s-01
+  gather_facts: true
+  tasks:
+    - name: Install nfs common
+      ansible.builtin.apt:
+        name: "nfs-common"
+        update_cache: true
+
 - name: Install k8s
   hosts: k8s-01
   gather_facts: true
