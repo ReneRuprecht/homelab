@@ -19,7 +19,7 @@ vms = [
     cpu = {
       cores = 2
     }
-    memory  = 4096
+    memory  = 8192
     ip      = "192.168.178.154"
     gateway = "192.168.178.1"
   },
@@ -31,7 +31,7 @@ vms = [
     cpu = {
       cores = 2
     }
-    memory  = 4096
+    memory  = 8192
     ip      = "192.168.178.155"
     gateway = "192.168.178.1"
   }

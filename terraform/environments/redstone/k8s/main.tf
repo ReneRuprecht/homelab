@@ -22,7 +22,7 @@ resource "proxmox_vm_qemu" "vm" {
   automatic_reboot = true
 
   ciupgrade  = true
-  nameserver = "1.1.1.1 8.8.8.8"
+  nameserver = "192.168.178.99 1.1.1.1 8.8.8.8"
   ipconfig0  = "ip=${each.value.ip}/24,gw=${each.value.gateway}"
   skip_ipv6  = true
 
