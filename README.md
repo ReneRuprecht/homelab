@@ -15,6 +15,24 @@ Die VMs werden mit Terraform erstellt. Dabei werden grundlegende Ressourcen wie 
 # Kubernetes
 Das laufende Kubernetes Cluster soll, soweit möglich, vollständig mittels GitOps ausgestattet und konfiguriert werden. Geplant ist, interne Services wie Prometheus und Grafana mit FluxCD zu deployen und zu verwalten, während eigene Apps und Services über ArgoCD bereitgestellt und gemanagt werden. Ziel ist es, anhand praktischer Beispiele ein besseres Verständnis für beide Systeme zu entwickeln.
 
+# Services
+
+Aktuell betreiben wir eine Kombination aus virtuellen Maschinen und Kubernetes-Services.
+Die Umgebung wird kontinuierlich weiterentwickelt und angepasst.
+
+## Virtuelle Maschinen (VMs)
+- 3× **Vault**, die derzeit für Kubernetes-Secrets verwendet werden  
+- 1× **Loadbalancer**, der Anfragen an die Vault-Instanzen weiterleitet  
+- 3× **K8s** (1 Master und 2 Nodes)  
+- 1× **VM als Netzwerkspeicher**, die von Kubernetes-Services zur Datenspeicherung genutzt wird  
+
+## Kubernetes-Services
+- **FluxCD**  
+- **Prometheus**  
+- **Grafana**  
+- **External Secrets**  
+- **ArgoCD**
+  
 # Configs
 ## Ansible
 Im Ansible-Ordner befindet sich die Pipfile, welche mit dem Befehl ```pipenv shell``` aktiviert werden kann. Fehlende Python Pakete lassen sich anschließend mit ```pipenv install --dev``` installieren. Um die benötigten Ansible Collections und Rollen zu installieren, kann ```ansible-galaxy install -r requirements.yml``` verwendet werden.
