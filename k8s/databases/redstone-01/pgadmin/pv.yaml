@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pgadmin
+  namespace: pgadmin
+spec:
+  capacity:
+    storage: 10Gi
+  storageClassName: nfs
+  accessModes:
+    - ReadWriteOnce
+  claimRef:
+    name: pgadmin-pvc
+    namespace: pgadmin
+  persistentVolumeReclaimPolicy: Recycle
+  nfs:
+    path: /mnt/data/pgadmin
+    server: nfs-01.redstone
