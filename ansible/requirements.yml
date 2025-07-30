@@ -18,6 +18,8 @@ roles:
     version: master
   - name: geerlingguy.nfs
     version: "2.1.0"
+  - name: geerlingguy.docker
+    version: "7.4.7"
   - name: tinslice.ansible-role-disks
     src: "https://github.com/tinslice/ansible-role-disks"
     scm: git
