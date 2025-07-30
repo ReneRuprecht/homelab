@@ -1,0 +1,7 @@
+---
+disks:
+  - name: data
+    disk: sdb
+    mount: /mnt/data
+    state: present
+    fstype: ext4

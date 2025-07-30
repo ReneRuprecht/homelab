@@ -1,0 +1,4 @@
+---
+docker_file_urls:
+  - url: "https://raw.githubusercontent.com/ReneRuprecht/homelab/refs/heads/main/files/docker/registry.yml"
+    dest: "/mnt/data/registry.yml"
