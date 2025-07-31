@@ -8,26 +8,10 @@ variable "vm_ssh_keys" {
   type        = string
 }
 
-
-variable "netbox_url" {
-  type = string
-}
-
-variable "netbox_token" {
-  type      = string
-  sensitive = true
-}
-
-variable "prefix" {
-  description = "CIDR Prefix aus NetBox, z. B. '192.168.178.0/24'"
-  type        = string
-  default     = "192.168.178.0/24"
-}
-
-variable "cluster_name" {
-  description = "Name des Clusters in NetBox"
-  type        = string
-  default     = "Proxmox PVE-02"
+variable "vm_ips" {
+  description = "Map von VM-Namen auf zugewiesene IP-Adressen"
+  type        = map(string)
+  default     = {}
 }
 
 variable "vms" {
@@ -66,9 +50,36 @@ variable "vms" {
       name    = string
       size    = string
       size_mb = number
-      storage = optional(string, "internal-storage")
-      format  = optional(string, "raw")
+      storage = string
+      format  = string
       slot    = string
     })), [])
   }))
+}
+
+variable "netbox_url" {
+  type = string
+}
+
+variable "netbox_token" {
+  type      = string
+  sensitive = true
+}
+
+variable "vm_ip" {
+  description = "Map von VM-Namen auf zugewiesene IP-Adressen"
+  type        = string
+  default     = ""
+}
+
+variable "prefix" {
+  description = "CIDR Prefix aus NetBox, z. B. '192.168.178.0/24'"
+  type        = string
+  default     = "192.168.178.0/24"
+}
+
+variable "cluster_name" {
+  description = "Name des Clusters in NetBox"
+  type        = string
+  default     = "Proxmox PVE-02"
 }
