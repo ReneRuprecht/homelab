@@ -1,9 +1,7 @@
 vms = [
   {
-    vm_state    = "running"
-    name        = "vault-01.redstone"
-    target_node = "pve-02"
-    clone       = "debian-12-cloud"
+    vm_state = "running"
+    name     = "vault-01.redstone"
     cpu = {
       cores = 2
     }
@@ -12,10 +10,8 @@ vms = [
     gateway = "192.168.178.1"
   },
   {
-    vm_state    = "running"
-    name        = "vault-02.redstone"
-    target_node = "pve-02"
-    clone       = "debian-12-cloud"
+    vm_state = "running"
+    name     = "vault-02.redstone"
     cpu = {
       cores = 2
     }
@@ -24,10 +20,8 @@ vms = [
     gateway = "192.168.178.1"
   },
   {
-    vm_state    = "running"
-    name        = "vault-03.redstone"
-    target_node = "pve-02"
-    clone       = "debian-12-cloud"
+    vm_state = "running"
+    name     = "vault-03.redstone"
     cpu = {
       cores = 2
     }

@@ -1,9 +1,7 @@
 vms = [
   {
-    vm_state    = "running"
-    name        = "loadbalancer-01.redstone"
-    target_node = "pve-02"
-    clone       = "debian-12-cloud"
+    vm_state = "running"
+    name     = "loadbalancer-01.redstone"
     cpu = {
       cores = 2
     }

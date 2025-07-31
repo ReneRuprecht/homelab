@@ -1,9 +1,7 @@
 vms = [
   {
-    vm_state    = "running"
-    name        = "netbox-01.redstone"
-    target_node = "pve-02"
-    clone       = "debian-12-cloud"
+    vm_state = "running"
+    name     = "netbox-01.redstone"
     cpu = {
       cores = 2
     }
@@ -11,7 +9,7 @@ vms = [
     ip      = "192.168.178.111"
     gateway = "192.168.178.1"
     scsi_disk = {
-      format = "raw", size = "30G", storage = "internal-storage"
+      size = "30G"
     }
   },
 ]
