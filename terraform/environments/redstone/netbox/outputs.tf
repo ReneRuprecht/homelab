@@ -1,3 +1,3 @@
-output "proxmox_vms" {
-  value = module.proxmox_vms.vms
+output "all_vm_names" {
+  value = module.netbox_proxmox_vms.proxmox_vm_names
 }
