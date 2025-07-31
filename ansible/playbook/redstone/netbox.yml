@@ -1,0 +1,142 @@
+- name: Install netbox
+  hosts: netbox
+  gather_facts: true
+  roles:
+    - role: geerlingguy.docker
+  post_tasks:
+    - name: Check if netbox is already cloned
+      ansible.builtin.stat:
+        path: /opt/netbox-git
+      register: "netbox_git_status"
+
+    - name: Clone netbox-docker
+      ansible.builtin.git:
+        repo: "https://github.com/netbox-community/netbox-docker"
+        dest: /opt/netbox-git
+        version: "3.3.0"
+      when: "not netbox_git_status.stat.exists"
+
+    - name: Update netbox env
+      block:
+        - name: Change netbox db pw
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/env/netbox.env
+            regexp: "DB_PASSWORD"
+            line: "DB_PASSWORD={{ netbox_db_pass }}"
+
+        - name: Change netbox db name
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/env/netbox.env
+            regexp: "DB_NAME"
+            line: "DB_NAME={{ netbox_db_name }}"
+
+        - name: Change netbox db user
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/env/netbox.env
+            regexp: "DB_USER"
+            line: "DB_USER={{ netbox_db_user }}"
+
+        - name: Change netbox redis db pw
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/env/netbox.env
+            regexp: "REDIS_PASSWORD"
+            line: "REDIS_PASSWORD={{ netbox_redis_pass }}"
+
+        - name: Change netbox redis cache db pw
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/env/netbox.env
+            regexp: "REDIS_CACHE_PASSWORD"
+            line: "REDIS_CACHE_PASSWORD={{ netbox_redis_cache_pass }}"
+
+    - name: Update postgres env
+      block:
+        - name: Change postgres db name
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/env/postgres.env
+            regexp: "POSTGRES_DB"
+            line: "POSTGRES_DB={{ netbox_db_name }}"
+
+        - name: Change postgres db user
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/env/postgres.env
+            regexp: "POSTGRES_USER"
+            line: "POSTGRES_USER={{ netbox_db_user }}"
+
+        - name: Change postgres db pw
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/env/postgres.env
+            regexp: "POSTGRES_PASSWORD"
+            line: "POSTGRES_PASSWORD={{ netbox_db_pass }}"
+
+    - name: Update redis env
+      block:
+        - name: Change redis db pw
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/env/redis.env
+            regexp: "REDIS_PASSWORD"
+            line: "REDIS_PASSWORD={{ netbox_redis_pass }}"
+
+        - name: Change redis cache db pw
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/env/redis-cache.env
+            regexp: "REDIS_PASSWORD"
+            line: "REDIS_PASSWORD={{ netbox_redis_cache_pass }}"
+
+    - name: Update compose override
+      block:
+        - name: Check if compose override already exists
+          ansible.builtin.stat:
+            path: /opt/netbox-git/docker-compose.override.yml
+          register: "netbox_docker_compose_override_status"
+
+        - name: Copy compose override
+          ansible.builtin.copy:
+            remote_src: true
+            src: /opt/netbox-git/docker-compose.override.yml.example
+            dest: /opt/netbox-git/docker-compose.override.yml
+            mode: "644"
+          when: "not netbox_docker_compose_override_status.stat.exists"
+
+        - name: Change netbox compose override
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/docker-compose.override.yml
+            regexp: "    # environment:"
+            line: "    environment:"
+
+        - name: Change netbox compose override skip superuser
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/docker-compose.override.yml
+            regexp: '      # SKIP_SUPERUSER: "false"'
+            line: '      SKIP_SUPERUSER: "false"'
+
+        - name: Change netbox compose override api token
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/docker-compose.override.yml
+            regexp: '      # SUPERUSER_API_TOKEN: ""'
+            line: '      SUPERUSER_API_TOKEN: "{{ netbox_superuser_api_token }}"'
+
+        - name: Change netbox compose override email
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/docker-compose.override.yml
+            regexp: '      # SUPERUSER_EMAIL: ""'
+            line: '      SUPERUSER_EMAIL: "{{ netbox_superuser_email }}"'
+
+        - name: Change netbox compose override name
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/docker-compose.override.yml
+            regexp: '      # SUPERUSER_NAME: ""'
+            line: '      SUPERUSER_NAME: "{{ netbox_superuser_name }}"'
+
+        - name: Change netbox compose override password
+          ansible.builtin.lineinfile:
+            path: /opt/netbox-git/docker-compose.override.yml
+            regexp: '      # SUPERUSER_PASSWORD: ""'
+            line: '      SUPERUSER_PASSWORD: "{{ netbox_superuser_password }}"'
+
+    - name: Start netbox
+      ansible.builtin.command:
+        cmd: "docker-compose up -d"
+        chdir: /opt/netbox-git
+      changed_when: false
+      retries: 10
+      delay: 60
