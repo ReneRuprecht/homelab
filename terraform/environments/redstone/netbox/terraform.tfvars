@@ -2,6 +2,7 @@ vms = [
   {
     name     = "netbox-01.redstone"
     vm_state = "running"
+    ip = "192.168.178.91/24"
     cpu = {
       cores = 2
     }
