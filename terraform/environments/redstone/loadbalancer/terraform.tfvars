@@ -6,6 +6,7 @@ vms = [
       cores = 2
     }
     memory  = 2048
+    tags = "test"
     gateway = "192.168.178.1"
   },
   {
