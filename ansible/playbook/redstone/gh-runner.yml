@@ -1,0 +1,7 @@
+---
+- name: Install gh-runner
+  hosts: gh_runner
+  become: true
+  roles:
+    - role: monolithprojects.github_actions_runner
+    - role: geerlingguy.docker

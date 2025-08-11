@@ -24,6 +24,9 @@ roles:
     version: "2.1.0"
   - name: geerlingguy.docker
     version: "7.4.7"
+  - name: monolithprojects.github_actions_runner
+    version: "1.26.0"
+    src: "https://github.com/MonolithProjects/ansible-github_actions_runner"
   - name: tinslice.ansible-role-disks
     src: "https://github.com/tinslice/ansible-role-disks"
     scm: git
