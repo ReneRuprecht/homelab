@@ -7,3 +7,4 @@ ansible_collections
 roles
 .ansible
 ^.log
+backend.hcl
