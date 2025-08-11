@@ -8,16 +8,6 @@ variable "vm_ssh_keys" {
   type        = string
 }
 
-
-variable "netbox_url" {
-  type = string
-}
-
-variable "netbox_token" {
-  type      = string
-  sensitive = true
-}
-
 variable "prefix" {
   description = "CIDR Prefix aus NetBox, z. B. '192.168.178.0/24'"
   type        = string

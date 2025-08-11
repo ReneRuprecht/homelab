@@ -11,8 +11,6 @@ module "netbox_vms" {
   extra_disks  = var.vms[count.index].scsi_extra_disks
   prefix       = var.prefix
   cluster_name = var.cluster_name
-  netbox_url   = var.netbox_url
-  netbox_token = var.netbox_token
 
 }
 
