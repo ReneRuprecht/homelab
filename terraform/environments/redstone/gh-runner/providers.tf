@@ -1,5 +1,6 @@
 terraform {
   backend "consul" {
+    path    = "terraform/state/redstone/gh-runner"
   }
 
   required_providers {
