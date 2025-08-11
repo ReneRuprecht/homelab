@@ -1,0 +1,6 @@
+---
+- name: Install consul
+  hosts: consul
+  gather_facts: true
+  roles:
+    - role: ansible-consul
