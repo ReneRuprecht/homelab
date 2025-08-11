@@ -1,0 +1,9 @@
+---
+keepalived_instances:
+  internal:
+    interface: "eth0"
+    state: "BACKUP"
+    virtual_router_id: "51"
+    priority: "100"
+    vips:
+      - "{{ lb_group_vip }}"
