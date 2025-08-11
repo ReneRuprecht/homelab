@@ -1,5 +1,6 @@
 terraform {
   backend "consul" {
+    path    = "terraform/state/redstone/loadbalancer"
   }
 
   required_providers {
