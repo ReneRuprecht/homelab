@@ -2,6 +2,12 @@
 - name: Install gh-runner
   hosts: gh_runner
   become: true
+  pre_tasks:
+    - name: Install unzip
+      ansible.builtin.apt:
+        name: unzip
+        state: present
   roles:
     - role: monolithprojects.github_actions_runner
     - role: geerlingguy.docker
+    - role: geerlingguy.nodejs
