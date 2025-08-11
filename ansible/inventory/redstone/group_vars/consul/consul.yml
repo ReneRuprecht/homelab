@@ -1,0 +1,3 @@
+---
+consul_group_name: consul
+consul_client_address: "0.0.0.0"
