@@ -57,15 +57,6 @@ variable "vms" {
   }))
 }
 
-variable "netbox_url" {
-  type = string
-}
-
-variable "netbox_token" {
-  type      = string
-  sensitive = true
-}
-
 variable "vm_ip" {
   description = "Map von VM-Namen auf zugewiesene IP-Adressen"
   type        = string

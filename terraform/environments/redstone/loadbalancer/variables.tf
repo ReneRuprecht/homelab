@@ -1,3 +1,4 @@
+
 variable "vm_user" {
   description = "VM User"
   type        = string
@@ -6,16 +7,6 @@ variable "vm_user" {
 variable "vm_ssh_keys" {
   description = "VM SSH Keys for login"
   type        = string
-}
-
-
-variable "netbox_url" {
-  type = string
-}
-
-variable "netbox_token" {
-  type      = string
-  sensitive = true
 }
 
 variable "prefix" {

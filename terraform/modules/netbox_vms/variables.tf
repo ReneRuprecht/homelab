@@ -1,12 +1,3 @@
-variable "netbox_url" {
-  type = string
-}
-
-variable "netbox_token" {
-  type      = string
-  sensitive = true
-}
-
 variable "ip_count" {
   type    = number
   default = 1
