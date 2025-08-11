@@ -1,0 +1,58 @@
+name: Terraform Apply
+
+on:
+  workflow_run:
+    workflows: ["Terraform Plan"]
+    types:
+      - completed
+
+
+jobs:
+  apply:
+    if: ${{ github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.outputs.plan_accepted == 'true' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Download changed dirs artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: changed-dirs
+          path: ./artifacts
+
+      - name: Download terraform plans artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: terraform-plans
+          path: ./artifacts
+
+      - name: Terraform apply changed dirs
+        env:
+          TERRAFORM_STATE_ADDRESS: ${{ secrets.TERRAFORM_STATE_ADDRESS }}
+        run: |
+          mapfile -t DIRS < ./artifacts/changed_dirs.txt
+
+          for DIR in "${DIRS[@]}"; do
+            echo "Apply Terraform in $DIR"
+
+            ENV_NAME=$(echo "$DIR" | cut -d'/' -f1)
+            COMPONENT=$(echo "$DIR" | cut -d'/' -f2)
+
+            WORKDIR="terraform/environments/$ENV_NAME/$COMPONENT"
+            PLANFILE="./artifacts/${ENV_NAME}_${COMPONENT}.out"
+
+            if [ ! -f "$PLANFILE" ]; then
+              echo "Plan file $PLANFILE fehlt! Überspringe $DIR"
+              continue
+            fi
+
+            cd "$WORKDIR"
+
+            terraform init -backend-config="address=${TERRAFORM_STATE_ADDRESS}"
+
+            terraform apply -auto-approve "$PLANFILE"
+
+            cd - >/dev/null
+          done

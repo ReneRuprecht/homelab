@@ -1,4 +1,3 @@
-
 variable "vm_user" {
   description = "VM User"
   type        = string
