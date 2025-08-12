@@ -3,9 +3,11 @@
   hosts: gh_runner
   become: true
   pre_tasks:
-    - name: Install unzip
+    - name: Install packages
       ansible.builtin.apt:
-        name: unzip
+        name: 
+          - unzip
+          - jq
         state: present
   roles:
     - role: monolithprojects.github_actions_runner
