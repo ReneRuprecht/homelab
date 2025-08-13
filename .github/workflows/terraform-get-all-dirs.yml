@@ -1,0 +1,44 @@
+name: Terraform get all dirs
+
+on:
+  workflow_call:
+    outputs:
+      dirs: 
+        description: "Json of terraform environment dirs"
+        value: ${{ jobs.terraform-dirs.outputs.dirs }}
+    inputs:
+      base_dir:
+        required: true
+        type: string
+
+jobs:
+  terraform-dirs:
+    runs-on: self-hosted
+    outputs:
+      dirs: ${{ steps.terraform_dirs.outputs.dirs }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Find all terraform dirs
+        id: terraform_dirs
+        run: |
+          ALL_DIRS=$(find ${{ inputs.base_dir }} -mindepth 2 -maxdepth 2 -type d \
+            | sed 's|${{ inputs.base_dir }}/||')
+
+          if [ -z "$ALL_DIRS" ]; then
+            JSON="[]"
+          else
+            JSON=$(echo "$ALL_DIRS" | jq -R . | jq -s .)
+          fi
+
+          {
+            echo "dirs<<EOF"
+            echo "$JSON"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "### Terraform dirs: <br>"
+            echo "$ALL_DIRS" | sed 's/^/📁 /' | sed 's/$/<br>/'
+          } >> $GITHUB_STEP_SUMMARY

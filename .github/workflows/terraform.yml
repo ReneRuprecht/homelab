@@ -1,192 +1,55 @@
 name: Terraform Workflow
 
+
 on:
   push:
+    paths:
+      - 'terraform/environments/**/**'
+    branches:
+      - main
+      - 'feat/**'
+      - 'fix/**'
   pull_request:
+    branches:
+      - main
 
 env:
   TF_VERSION: 1.12.2
   TERRAFORM_STATE_ADDRESS: ${{ secrets.TERRAFORM_STATE_ADDRESS }}
   NETBOX_SERVER_URL: ${{ secrets.NETBOX_URL }}
   NETBOX_API_TOKEN: ${{ secrets.NETBOX_TOKEN }}
-  TF_VAR_vm_user:  ${{ secrets.VM_USER }}
-  TF_VAR_vm_ssh_keys:  ${{ secrets.VM_KEYS }}
+  TF_VAR_vm_user: ${{ secrets.VM_USER }}
+  TF_VAR_vm_ssh_keys: ${{ secrets.VM_KEYS }}
   PM_API_URL: ${{ secrets.PM_API_URL }}
   PM_API_TOKEN_ID: ${{ secrets.PM_API_TOKEN_ID }}
   PM_API_TOKEN_SECRET: ${{ secrets.PM_API_TOKEN_SECRET }}
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
 jobs:
-  plan:
-    runs-on: self-hosted
+  # fetch-terraform-dirs:
+  #   uses: ./.github/workflows/terraform-get-all-dirs.yml
+  #   with:
+  #     base_dir: "terraform/environments"
 
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+  fetch-terraform-dirs:
+    uses: ./.github/workflows/terraform-get-changed-dirs.yml
+    with:
+      base_dir: "terraform/environments"
 
-      - name: Find all terraform components
-        id: terraform_dirs
-        run: |
-          ALL_DIRS=$(find terraform/environments -mindepth 2 -maxdepth 2 -type d | sed 's|terraform/environments/||')
+  terraform-plan:
+    uses: ./.github/workflows/terraform-plan.yml
+    needs: fetch-terraform-dirs
+    secrets: inherit
+    with:
+      dirs: "${{ needs.fetch-terraform-dirs.outputs.dirs }}"
 
-          echo "$ALL_DIRS" > /changed_dirs.txt
-          echo "### Changed Servers: <br>
-            $(cat changed_dirs.txt)" >> $GITHUB_STEP_SUMMARY
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Run terraform plan for each changed dir
-        run: |
-          rm $GITHUB_STEP_SUMMARY
-          touch /plans_short.txt
-          mkdir -p /plan_outputs
-
-          for DIR in $CHANGED_DIRS; do
-            echo "Planning $DIR"
-            ENV_NAME=$(echo "$DIR" | cut -d'/' -f1)
-            COMPONENT=$(echo "$DIR" | cut -d'/' -f2)
-
-            WORKDIR="terraform/environments/$ENV_NAME/$COMPONENT"
-
-            cd "$WORKDIR"
-
-            terraform init -backend-config="address=${TERRAFORM_STATE_ADDRESS}"
-
-            terraform plan -no-color -out=/plan_outputs/${ENV_NAME}_${COMPONENT}.out
-            terraform show -no-color /plan_outputs/${ENV_NAME}_${COMPONENT}.out > /plan_outputs/${ENV_NAME}_${COMPONENT}.txt
-
-            echo "# === ${ENV_NAME}_${COMPONENT} ===" >> /plans_short.txt
-            echo "<br>" >> /plans_short.txt
-            echo "$(grep -E '^Plan: ' /plan_outputs/${ENV_NAME}_${COMPONENT}.txt || echo "No changes")" >> /plans_short.txt
-            echo "<br>" >> /plans_short.txt
-            echo "<br>" >> /plans_short.txt
-
-            cd - >/dev/null
-          done
-          echo "$(cat /plans_short.txt)" >> $GITHUB_STEP_SUMMARY
-          rm /plans_short.txt
-
-
-      # Changed dirs section
-      - name: Check if changed_dirs exists
-        id: check-file
-        if: steps.terraform_dirs.outcome == 'success'
-        run: |
-          if [ -f /changed_dirs.txt ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Encrypt changed_dirs
-        if: steps.check-file.outputs.exists == 'true'
-        run: |
-          openssl enc -aes-256-cbc -salt -pbkdf2 -k "$SECRET_KEY" -in /changed_dirs.txt -out /changed_dirs.txt.enc
-
-      - name: Upload encrypted changed_dirs artifact
-        if: steps.check-file.outputs.exists == 'true'
-        uses: actions/upload-artifact@v4
-        with:
-          name: changed-dirs
-          path: /changed_dirs.txt.enc
-
-      # Terraform plan section
-      - name: Archiv plans
-        run: tar -czf plan_outputs.tar.gz -C / plan_outputs
-
-      - name: Encrypt plans
-        run: |
-          openssl enc -aes-256-cbc -salt -pbkdf2 -k "$SECRET_KEY" -in plan_outputs.tar.gz -out plan_outputs.tar.gz.enc
-
-      - name: Upload encrypted terraform plans artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: terraform-plans
-          path: plan_outputs.tar.gz.enc
-
-  apply:
-    needs: plan
-    # environment: production
-    runs-on: self-hosted
+  terraform-apply:
+    uses: ./.github/workflows/terraform-apply.yml
     if: github.event_name == 'pull_request'
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-        # Changed dirs section
-      - name: Download encrypted changed_dirs artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: changed-dirs
-        continue-on-error: true
-
-      - name: Check if changed_dirs.txt.enc exists
-        id: check-changed-dirs
-        run: |
-          if [ -f changed_dirs.txt.enc ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Decrypt changed_dirs.txt.enc, if exists
-        if: steps.check-changed-dirs.outputs.exists == 'true'
-        run: |
-          openssl enc -d -aes-256-cbc -pbkdf2 -k "$SECRET_KEY" -in changed_dirs.txt.enc -out changed_dirs.txt
-
-
-        # Terraform plan section
-      - name: Download encrypted terraform plans artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: terraform-plans
-        continue-on-error: true
-
-      - name: Check if plan_outputs.tar.gz.enc exists
-        id: check-plans
-        run: |
-          if [ -f plan_outputs.tar.gz.enc ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Decrypt and unzip plan_outputs.tar.gz.enc if exists
-        if: steps.check-plans.outputs.exists == 'true'
-        run: |
-          openssl enc -d -aes-256-cbc -pbkdf2 -k "$SECRET_KEY" -in plan_outputs.tar.gz.enc -out plan_outputs.tar.gz
-          tar -xzf plan_outputs.tar.gz
-
-
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-
-      - name: Terraform apply changed dirs
-        run: |
-          mapfile -t DIRS < /changed_dirs/changed_dirs.txt
-
-          for DIR in "${DIRS[@]}"; do
-            echo "Apply Terraform in $DIR"
-
-            ENV_NAME=$(echo "$DIR" | cut -d'/' -f1)
-            COMPONENT=$(echo "$DIR" | cut -d'/' -f2)
-
-            WORKDIR="terraform/environments/$ENV_NAME/$COMPONENT"
-            PLANFILE="/plan_outputs/${ENV_NAME}_${COMPONENT}.out"
-
-            if [ ! -f "$PLANFILE" ]; then
-              echo "Plan file $PLANFILE missing! Skipping $DIR"
-              continue
-            fi
-
-            cd "$WORKDIR"
-
-            terraform init -backend-config="address=${TERRAFORM_STATE_ADDRESS}"
-
-            terraform apply -auto-approve "$PLANFILE"
-
-            cd - >/dev/null
-          done
+    needs: 
+      - fetch-terraform-dirs
+      - terraform-plan
+    secrets: inherit
+    with:
+      dirs: "${{ needs.fetch-terraform-dirs.outputs.dirs }}"
+    
