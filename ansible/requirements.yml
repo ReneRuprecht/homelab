@@ -45,3 +45,7 @@ roles:
     name: evrardjp.keepalived
     scm: git
     version: "8.2.0"
+  - src: https://github.com/systemli/ansible-role-bind9.git
+    name: systemli/bind9
+    scm: git
+    version: "1.6.0"

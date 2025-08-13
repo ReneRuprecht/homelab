@@ -1,0 +1,6 @@
+---
+- name: Install bind9
+  hosts: dns
+  gather_facts: true
+  roles:
+    - role: systemli/bind9
