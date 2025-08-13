@@ -1,0 +1,115 @@
+name: Ansible Init
+
+on:
+  workflow_call:
+    outputs:
+      matrix:
+        value: ${{ jobs.init.outputs.playbook_mapping }}
+        description: "Playbook and Env mapping"
+      can_run:
+        value: ${{ jobs.init.outputs.playbooks_found }}
+        description: "Playbook and Env mapping"
+    inputs:
+      on:
+        description: "Playbook run on all or changed directories"
+        type: string
+
+jobs:
+  init:
+    runs-on: self-hosted
+    container:
+      image:  reneruprecht/ci-python3.12
+    outputs:
+      playbook_mapping: ${{ steps.setup.outputs.playbook_mapping }}
+      playbooks_found: ${{ steps.check_playbook.outputs.playbooks_found }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Dirs and Playbooks mapping
+        id: setup
+        run: |
+          CHOICE="${{ inputs.on }}"
+
+          DIR="ansible/inventory"
+
+          if [ "$CHOICE" = "all" ]; then
+            # all dirs
+            DIRS=$(find "$DIR" -mindepth 2 -maxdepth 4 -type d \
+              | sed "s|$DIR/||")
+          else
+            # only changed dirs
+            DIRS=$(git diff --name-only HEAD~1 HEAD \
+              | grep "^${DIR}/" \
+              | sed "s|^${DIR}/||" \
+              | sort -u)
+          fi
+
+          if [ -z "$DIRS" ]; then
+            JSON="[]"
+          else
+            JSON=$(echo "$DIRS" | jq -R . | jq -s .)
+          fi
+
+          cd "ansible"
+          RESULT=$(python3 select_playbook.py "$JSON" | jq -c .)
+
+          {
+            echo "playbook_mapping<<EOF"
+            echo "$RESULT"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Check if Playbook exists
+        id: check_playbook
+        run: |
+          MAPPING="${{ steps.setup.outputs.playbook_mapping }}"
+          if [ "$MAPPING" = "[]" ]; then
+            {
+              echo "## ℹ️ **INFO: NO PLAYBOOKS TO RUN!** ℹ️"
+              echo '```'
+              echo "#########################################"
+              echo "###                                   ###"
+              echo "###   ℹ️    NO PLAYBOOKS TO RUN   ℹ️  ###"
+              echo "###                                   ###"
+              echo "#########################################"
+              echo '```'
+            } >> $GITHUB_STEP_SUMMARY
+
+            {
+              echo "playbooks_found<<EOF"
+              echo "false"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+
+          else
+            {
+              echo "playbooks_found<<EOF"
+              echo "true"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+
+            {
+              echo "## ℹ️ **CHANGES DETECTED** ℹ️"
+              echo '```'
+              echo "###################################################"
+              echo "###                                             ###"
+              echo "###  ℹ️   PLAYBOOKS WILL BE EXECUTED             ###"
+              echo "###                                             ###"
+              echo "###################################################"
+              echo ""
+              echo '```'
+            } >> $GITHUB_STEP_SUMMARY
+
+
+              JSON='${{ steps.setup.outputs.playbook_mapping }}'
+
+            {
+              echo "| Playbook | Env |"
+              echo "|----------|-----|"
+              echo "$JSON" | jq -r '.[] | "| \(.playbook) | \(.env) |"'
+            } >> $GITHUB_STEP_SUMMARY
+
+          fi
