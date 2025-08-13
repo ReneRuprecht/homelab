@@ -1,0 +1,17 @@
+patterns:
+  dns.yml:
+    - "dns-*"
+    - "dns" 
+  consul.yml:
+    - "consul-*"
+    - "consul" 
+  loadbalancer.yml:
+    - "loadbalancer-*"
+    - "loadbalancer" 
+  netbox.yml:
+    - "netbox-*"
+    - "netbox" 
+  gh-runner.yml:
+    - "gh-runner-*"
+    - "gh-runner" 
+    - "gh_runner" 

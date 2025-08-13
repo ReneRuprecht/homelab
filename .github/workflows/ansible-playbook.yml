@@ -1,0 +1,95 @@
+name: Ansible Playbook
+
+env:
+  ANSIBLE_VAULT: ${{ secrets.ANSIBLE_VAULT }}
+  ANSIBLE_SSH_KEY: ${{ secrets.SSH_KEY }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+on:
+  workflow_call:
+    inputs:
+      matrix:
+        description: "Playbook and Env mapping as json"
+        required: true
+        type: string
+
+jobs:
+  playbooks:
+    runs-on: self-hosted
+    container:
+      image:  reneruprecht/ci-python3.12
+    strategy:
+      matrix:
+        playbooks: ${{ fromJSON(inputs.matrix) }}
+    steps:
+      - name: Prepare
+        id: prepare
+        run: |
+          ANSIBLE_LOG="/ansible_logs"
+          mkdir -p $ANSIBLE_LOG
+
+          PLAYBOOK=${{ matrix.playbooks.playbook}}
+          ENV_NAME=${{ matrix.playbooks.env}}
+
+          {
+            echo "log_dir<<EOF"
+            echo "$ANSIBLE_LOG"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "log_file<<EOF"
+            echo "${ANSIBLE_LOG}/${ENV_NAME}_${PLAYBOOK}.log"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "log_name<<EOF"
+            echo "${ENV_NAME}_${PLAYBOOK}.log"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "inventory<<EOF"
+            echo "inventory/${ENV_NAME}/hosts.yml"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "playbook<<EOF"
+            echo "playbook/${ENV_NAME}/${PLAYBOOK}"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+
+          echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          
+      - name: "Run ${{ matrix.playbooks.playbook }} on ${{ matrix.playbooks.env}}"
+        working-directory: ansible
+        env:
+          ANSIBLE_VAULT_PASSWORD_FILE: ".vaultpass"
+          ALLOW_BROKEN_CONDITIONALS: true
+        run: |
+          pipenv install
+          pipenv run ansible-galaxy install -r requirements.yml
+          echo "${{ secrets.ANSIBLE_VAULT }}" >> .vaultpass
+          pipenv run ansible-playbook -i "${{ steps.prepare.outputs.inventory }}" --private-key="~/.ssh/id_rsa" "${{ steps.prepare.outputs.playbook }}" | tee "${{ steps.prepare.outputs.log_file }}" > /dev/null
+
+      - name: Compress log
+        run: |
+          tar -czf "${{ steps.prepare.outputs.log_file }}.tar.gz" '${{ steps.prepare.outputs.log_file }}'
+
+      - name: Encrypt plans
+        run: |
+          openssl enc -aes-256-cbc -salt -pbkdf2 -k "$SECRET_KEY" -in "${{ steps.prepare.outputs.log_file }}.tar.gz" -out "${{ steps.prepare.outputs.log_file }}.tar.gz.enc"
+
+      - name: Upload encrypted terraform plans artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ steps.prepare.outputs.log_name }}"
+          path: "${{ steps.prepare.outputs.log_file }}.tar.gz.enc"
