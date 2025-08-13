@@ -1,0 +1,133 @@
+name: Terraform apply
+
+env:
+  TF_VERSION: 1.12.2
+  TERRAFORM_STATE_ADDRESS: ${{ secrets.TERRAFORM_STATE_ADDRESS }}
+  NETBOX_SERVER_URL: ${{ secrets.NETBOX_URL }}
+  NETBOX_API_TOKEN: ${{ secrets.NETBOX_TOKEN }}
+  TF_VAR_vm_user: ${{ secrets.VM_USER }}
+  TF_VAR_vm_ssh_keys: ${{ secrets.VM_KEYS }}
+  PM_API_URL: ${{ secrets.PM_API_URL }}
+  PM_API_TOKEN_ID: ${{ secrets.PM_API_TOKEN_ID }}
+  PM_API_TOKEN_SECRET: ${{ secrets.PM_API_TOKEN_SECRET }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+on:
+  workflow_call:
+    inputs:
+      dirs:
+        required: true
+        type: string
+
+jobs:
+  apply:
+    if: ${{ inputs.dirs != '[]' }}
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        env_name: ${{ fromJSON(inputs.dirs) }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup vars
+        id: vars
+        run: |
+          ENV_NAME=$(echo "${{ matrix.env_name }}" | cut -d'/' -f1)
+          {
+            echo "env_name<<EOF"
+            echo "${ENV_NAME}"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          COMPONENT=$(echo "${{ matrix.env_name }}" | cut -d'/' -f2)
+          {
+            echo "component<<EOF"
+            echo "${COMPONENT}"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "plan_name<<EOF"
+            echo "${ENV_NAME}_${COMPONENT}"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          PLAN_DIR=$(echo "/${ENV_NAME}_${COMPONENT}")
+
+          {
+            echo "plan_dir<<EOF"
+            echo "$PLAN_DIR"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          PLANFILE="${PLAN_DIR}/${ENV_NAME}_${COMPONENT}".out
+
+          {
+            echo "plan_file<<EOF"
+            echo "$PLANFILE"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          WORKDIR="terraform/environments/$ENV_NAME/$COMPONENT"
+          {
+            echo "workdir<<EOF"
+            echo "$WORKDIR"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          PLAN_SAVE_SUFFIX="-plans"
+          {
+            echo "plan_save_suffix<<EOF"
+            echo "$PLAN_SAVE_SUFFIX"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+
+      - name: Download encrypted terraform plans artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: "${{ steps.vars.outputs.plan_name }}${{ steps.vars.outputs.plan_save_suffix }}"
+        continue-on-error: true
+
+      - name: Check if plan exists
+        id: check-plans
+        run: |
+          if [ -f "${{ steps.vars.outputs.plan_name }}.tar.gz.enc" ]; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            {
+              echo "## ℹ️ **INFO: NO PLAN FILE TO APPLY!** ℹ️"
+              echo '```'
+              echo "##############################################"
+              echo "###                                        ###"
+              echo "###     ℹ️        NO PLAN FILE       ℹ️    ###"
+              echo "###                                        ###"
+              echo "##############################################"
+              echo '```'
+            } >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
+      - name: Decrypt and unzip plan if exists
+        if: steps.check-plans.outputs.exists == 'true'
+        run: |
+          openssl enc -d -aes-256-cbc -pbkdf2 -k "$SECRET_KEY" -in "${{ steps.vars.outputs.plan_name }}".tar.gz.enc -out "${{ steps.vars.outputs.plan_name }}".tar.gz
+          tar -xzf "${{ steps.vars.outputs.plan_name }}".tar.gz
+
+      - name: Setup Terraform
+        if: steps.check-plans.outputs.exists == 'true'
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        if: steps.check-plans.outputs.exists == 'true'
+        working-directory: ${{ steps.vars.outputs.workdir }}
+        run: |
+          terraform init -backend-config="address=${TERRAFORM_STATE_ADDRESS}"
+
+      - name: Terraform apply
+        if: steps.check-plans.outputs.exists == 'true'
+        working-directory: ${{ steps.vars.outputs.workdir }}
+        run: |
+          terraform apply -auto-approve "${{ steps.vars.outputs.plan_file }}"

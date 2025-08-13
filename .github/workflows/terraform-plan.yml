@@ -1,0 +1,214 @@
+name: Terraform plan
+
+env:
+  TF_VERSION: 1.12.2
+  TERRAFORM_STATE_ADDRESS: ${{ secrets.TERRAFORM_STATE_ADDRESS }}
+  NETBOX_SERVER_URL: ${{ secrets.NETBOX_URL }}
+  NETBOX_API_TOKEN: ${{ secrets.NETBOX_TOKEN }}
+  TF_VAR_vm_user: ${{ secrets.VM_USER }}
+  TF_VAR_vm_ssh_keys: ${{ secrets.VM_KEYS }}
+  PM_API_URL: ${{ secrets.PM_API_URL }}
+  PM_API_TOKEN_ID: ${{ secrets.PM_API_TOKEN_ID }}
+  PM_API_TOKEN_SECRET: ${{ secrets.PM_API_TOKEN_SECRET }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+on:
+  workflow_call:
+    inputs:
+      dirs:
+        required: true
+        type: string
+
+jobs:
+  plan:
+    if: ${{ inputs.dirs != '[]' }}
+    runs-on: self-hosted
+    outputs:
+      plan_dir: ${{ steps.setup_vars_and_dirs.outputs.plan_dir }}
+      plan_name: ${{ steps.setup_vars_and_dirs.outputs.plan_name }}
+      plan_file: ${{ steps.setup_vars_and_dirs.outputs.plan_file }}
+      plan_file_txt: ${{ steps.setup_vars_and_dirs.outputs.plan_file_txt }}
+      plan_save_suffix: ${{ steps.setup_vars_and_dirs.outputs.plan_save_suffix }}
+      workdir: ${{ steps.setup_vars_and_dirs.outputs.workdir }}
+    strategy:
+      matrix:
+        env_name: ${{ fromJSON(inputs.dirs) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Vars and Dirs
+        id: setup_vars_and_dirs
+        run: |
+          ENV_NAME=$(echo "${{ matrix.env_name }}" | cut -d'/' -f1)
+          COMPONENT=$(echo "${{ matrix.env_name }}" | cut -d'/' -f2)
+          PLAN_DIR=$(echo "/${ENV_NAME}_${COMPONENT}")
+          PLAN_SAVE_SUFFIX="-plans"
+
+          mkdir -p "${PLAN_DIR}"
+
+          WORKDIR="terraform/environments/$ENV_NAME/$COMPONENT"
+
+          {
+            echo "workdir<<EOF"
+            echo "$WORKDIR"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "plan_dir<<EOF"
+            echo "$PLAN_DIR"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "plan_name<<EOF"
+            echo "${ENV_NAME}_${COMPONENT}"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "plan_file<<EOF"
+            echo "${PLAN_DIR}/${ENV_NAME}_${COMPONENT}.out"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "plan_file_txt<<EOF"
+            echo "${PLAN_DIR}/${ENV_NAME}_${COMPONENT}.txt"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "plan_save_suffix<<EOF"
+            echo "${PLAN_SAVE_SUFFIX}"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: ${{ steps.setup_vars_and_dirs.outputs.workdir }}
+        run: |
+          echo "# ===Terraform init started==="
+          terraform init -backend-config="address=${TERRAFORM_STATE_ADDRESS}" > /dev/null
+          echo "# ===Terraform init successful==="
+
+      - name: Terraform Plan
+        working-directory: ${{ steps.setup_vars_and_dirs.outputs.workdir }}
+        run: |
+
+          echo "# ===Terraform plan started==="
+          terraform plan -no-color -out="${{ steps.setup_vars_and_dirs.outputs.plan_file }}" > /dev/null
+          terraform show -no-color "${{ steps.setup_vars_and_dirs.outputs.plan_file }}"  | tee "${{ steps.setup_vars_and_dirs.outputs.plan_file_txt }}" > /dev/null
+          echo "# ===Terraform plan successful==="
+
+
+      - name: Show Plan short Result
+        working-directory: ${{ steps.setup_vars_and_dirs.outputs.workdir }}
+        run: |
+          echo "# ===Terraform plan result==="
+          echo "$(grep -E '^Plan: ' ${{ steps.setup_vars_and_dirs.outputs.plan_file_txt }} || echo "No changes")"
+
+
+          {
+            echo "# === ${{ steps.setup_vars_and_dirs.outputs.plan_name }} ==="
+            echo "$(grep -E '^Plan: ' ${{ steps.setup_vars_and_dirs.outputs.plan_file_txt }} || echo "No changes")"
+
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Check if plan has changes / destroys / no changes
+        id: check_plan
+        run: |
+
+          PLAN_SUMMARY=$(grep -E 'Plan:'  "${{ steps.setup_vars_and_dirs.outputs.plan_file_txt }}" || echo "No changes")
+
+          echo "has_changes=false" >> $GITHUB_OUTPUT
+          echo "has_destroys=false" >> $GITHUB_OUTPUT
+          echo "has_no_changes=false" >> $GITHUB_OUTPUT
+
+          if [[ "$PLAN_SUMMARY" == "No changes" ]] || echo "$PLAN_SUMMARY" | grep -q 'Plan: 0 to add, 0 to change, 0 to destroy'; then
+            echo "has_no_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+            DESTROYS=$(echo "$PLAN_SUMMARY" | grep -Eo '[0-9]+ to destroy' | awk '{print $1}' || echo 0)
+            if [[ "$DESTROYS" -gt 0 ]]; then
+              echo "has_destroys=true" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: No changes banner
+        if: steps.check_plan.outputs.has_no_changes == 'true'
+        run: |
+          {
+            echo "## ✅ **NO CHANGES DETECTED**"
+            echo '```'
+            echo "#################################################"
+            echo "###                                           ###"
+            echo "###    ✅   NO RESOURCES WILL BE ADDED        ###"
+            echo "###    ✅   NO RESOURCES WILL BE CHANGED      ###"
+            echo "###    ✅   NO RESOURCES WILL BE DESTROYED    ###"
+            echo "###                                           ###"
+            echo "#################################################"
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Changes banner
+        if: steps.check_plan.outputs.has_changes == 'true' && steps.check_plan.outputs.has_destroys != 'true'
+        run: |
+          {
+            echo "## ℹ️ **CHANGES DETECTED** ℹ️"
+            echo '```'
+            echo "###################################################"
+            echo "###                                             ###"
+            echo "###  ℹ️   RESOURCES WILL BE ADDED OR MODIFIED   ###"
+            echo "###                                             ###"
+            echo "###  ✅   NO DESTROYS DETECTED                  ###"
+            echo "###                                             ###"
+            echo "###################################################"
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Show destroy banner in summary
+        if: steps.check_plan.outputs.has_destroys == 'true'
+        run: |
+          {
+            echo "## 🚨**WARNING: DESTROY ACTIONS DETECTED!** 🚨"
+            echo '```'
+            echo "#################################################"
+            echo "###                                           ###"
+            echo "###      ⚠️  PLEASE REVIEW CAREFULLY! ⚠️      ###"
+            echo "###                                           ###"
+            echo "###    🚨  Terraform plan will DESTROY! 🚨    ###"
+            echo "###                                           ###"
+            echo "#################################################"
+            echo '```'
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Compress plans
+        # if: steps.check_plan.outputs.has_no_changes == 'false'
+        if: (github.ref == 'refs/heads/main' || 
+            github.event_name == 'pull_request') &&
+            steps.check_plan.outputs.has_no_changes == 'false'
+        run: |
+          tar -czf "${{ steps.setup_vars_and_dirs.outputs.plan_name }}.tar.gz" -C  / '${{ steps.setup_vars_and_dirs.outputs.plan_dir}}'
+
+      - name: Encrypt plans
+        # if: steps.check_plan.outputs.has_no_changes == 'false'
+        if: (github.ref == 'refs/heads/main' || 
+            github.event_name == 'pull_request') &&
+            steps.check_plan.outputs.has_no_changes == 'false'
+        run: |
+          openssl enc -aes-256-cbc -salt -pbkdf2 -k "$SECRET_KEY" -in "${{ steps.setup_vars_and_dirs.outputs.plan_name }}.tar.gz" -out "${{ steps.setup_vars_and_dirs.outputs.plan_name }}.tar.gz.enc"
+
+      - name: Upload encrypted terraform plans artifact
+        # if: steps.check_plan.outputs.has_no_changes == 'false'
+        if: (github.ref == 'refs/heads/main' || 
+            github.event_name == 'pull_request') &&
+            steps.check_plan.outputs.has_no_changes == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ steps.setup_vars_and_dirs.outputs.plan_name }}${{ steps.setup_vars_and_dirs.outputs.plan_save_suffix }}"
+          path: "${{ steps.setup_vars_and_dirs.outputs.plan_name }}.tar.gz.enc"
