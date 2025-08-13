@@ -3,8 +3,8 @@ name: Terraform Workflow
 
 on:
   push:
-    paths:
-      - 'terraform/environments/**/**'
+    # paths:
+    #   - 'terraform/environments/**/**'
     branches:
       - main
       - 'feat/**'
@@ -30,15 +30,11 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
 jobs:
-  # fetch-terraform-dirs:
-  #   uses: ./.github/workflows/terraform-get-all-dirs.yml
-  #   with:
-  #     base_dir: "terraform/environments"
-
   fetch-terraform-dirs:
-    uses: ./.github/workflows/terraform-get-changed-dirs.yml
+    uses: ./.github/workflows/terraform-get-dirs.yml
     with:
       base_dir: "terraform/environments"
+      on: "all"
 
   terraform-plan:
     uses: ./.github/workflows/terraform-plan.yml
