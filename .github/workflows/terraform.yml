@@ -3,8 +3,8 @@ name: Terraform Workflow
 
 on:
   push:
-    # paths:
-    #   - 'terraform/environments/**/**'
+    paths:
+      - 'terraform/environments/**/**'
     branches:
       - main
       - 'feat/**'
@@ -34,7 +34,7 @@ jobs:
     uses: ./.github/workflows/terraform-get-dirs.yml
     with:
       base_dir: "terraform/environments"
-      on: "all"
+      on: "changed"
 
   terraform-plan:
     uses: ./.github/workflows/terraform-plan.yml
