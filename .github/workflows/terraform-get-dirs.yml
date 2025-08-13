@@ -1,0 +1,62 @@
+name: Terraform get dirs
+
+on:
+  workflow_call:
+    inputs:
+      base_dir:
+        required: true
+        type: string
+      on:
+        type: string
+        description: "Get all or only changed dirs"
+    outputs:
+      dirs:
+        value: ${{ jobs.terraform-dirs.outputs.dirs }}
+        description: "Json of changed directories"
+
+jobs:
+  terraform-dirs:
+    runs-on: self-hosted
+    container:
+      image:  reneruprecht/ci-node22
+    outputs:
+      dirs: ${{ steps.changed_dirs.outputs.dirs }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Find all changed terraform dirs
+        id: changed_dirs
+        run: |
+          CHOICE="${{ inputs.on }}"
+
+          if [ "$CHOICE" = "all" ]; then
+            # all dirs
+            DIRS=$(find ${{ inputs.base_dir }} -mindepth 2 -maxdepth 2 -type d \
+              | sed 's|${{ inputs.base_dir }}/||')
+          else
+            # only changed dirs
+            echo "Detecting changed components..."
+            DIRS=$(git diff --name-only HEAD~1 HEAD \
+              | grep '^${{ inputs.base_dir }}/' \
+              | awk -F/ '{print $3"/"$4}' \
+              | sort -u)
+          fi
+
+          if [ -z "$DIRS" ]; then
+            JSON="[]"
+          else
+            JSON=$(echo "$DIRS" | jq -R . | jq -s .)
+          fi
+
+          {
+            echo "dirs<<EOF"
+            echo "$JSON"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "# Terraform Dirs"
+            echo "$DIRS" | sed 's/^/📁 /' | sed 's/$/<br>/'
+          } >> $GITHUB_STEP_SUMMARY
