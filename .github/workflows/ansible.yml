@@ -1,0 +1,40 @@
+name: Ansible Workflow
+
+env:
+  ANSIBLE_VAULT: ${{ secrets.ANSIBLE_VAULT }}
+  ANSIBLE_SSH_KEY: ${{ secrets.SSH_KEY }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+on:
+  push:
+    paths:
+      - 'ansible/inventory/**/**'
+      - 'ansible/playbooks/**/**'
+    branches:
+      - main
+      - 'feat/**'
+      - 'fix/**'
+  pull_request:
+    paths:
+      - 'ansible/inventory/**/**'
+      - 'ansible/playbooks/**/**'
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  ansible-init:
+    uses: ./.github/workflows/ansible-init.yml
+    with:
+      on: "changed"
+
+  ansible-playbooks:
+    needs: ansible-init
+    if: needs.ansible-init.outputs.can_run == 'true' &&
+        github.event.pull_request.merged == true
+    uses: ./.github/workflows/ansible-playbook.yml
+    secrets: inherit
+    with:
+      matrix: "${{ needs.ansible-init.outputs.matrix }}"
+
