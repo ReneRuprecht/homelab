@@ -1,0 +1,55 @@
+---
+bind9_authoritative: true
+bind9_forward: true
+bind9_forward_servers:
+  - 192.168.178.99
+  - 1.1.1.1
+bind9_slaves:
+  - 192.168.178.96
+bind9_our_neighbors:
+  - 192.168.178.96
+
+bind9_zones_dynamic:
+  - name: redstone
+    serial: 2025081104
+    admin: noemail.redstone
+    ns_records:
+      - dns-01.redstone
+      - dns-02.redstone
+    rrs:
+      - label: netbox-01
+        type: A
+        rdata: 192.168.178.91
+      - label: consul-01
+        type: A
+        rdata: 192.168.178.92
+      - label: consul-02
+        type: A
+        rdata: 192.168.178.93
+      - label: consul-03
+        type: A
+        rdata: 192.168.178.94
+      - label: dns-01
+        type: A
+        rdata: 192.168.178.95
+      - label: dns-02
+        type: A
+        rdata: 192.168.178.96
+      - label: pve-02
+        type: A
+        rdata: 192.168.178.99
+      - label: loadbalancer-01
+        type: A
+        rdata: 192.168.178.100
+      - label: loadbalancer-02
+        type: A
+        rdata: 192.168.178.101
+      - label: gh-runner-01
+        type: A
+        rdata: 192.168.178.102
+      - label: gh-runner-02
+        type: A
+        rdata: 192.168.178.103
+      - label: gh-runner-03
+        type: A
+        rdata: 192.168.178.104
