@@ -23,6 +23,8 @@ jobs:
   plan:
     if: ${{ inputs.dirs != '[]' }}
     runs-on: self-hosted
+    container:
+      image:  reneruprecht/ci-node22
     outputs:
       plan_dir: ${{ steps.setup_vars_and_dirs.outputs.plan_dir }}
       plan_name: ${{ steps.setup_vars_and_dirs.outputs.plan_name }}
@@ -188,26 +190,26 @@ jobs:
           } >> $GITHUB_STEP_SUMMARY
 
       - name: Compress plans
-        # if: steps.check_plan.outputs.has_no_changes == 'false'
-        if: (github.ref == 'refs/heads/main' || 
-            github.event_name == 'pull_request') &&
-            steps.check_plan.outputs.has_no_changes == 'false'
+        if: steps.check_plan.outputs.has_no_changes == 'false'
+        # if: (github.ref == 'refs/heads/main' || 
+        #     github.event_name == 'pull_request') &&
+        #     steps.check_plan.outputs.has_no_changes == 'false'
         run: |
           tar -czf "${{ steps.setup_vars_and_dirs.outputs.plan_name }}.tar.gz" -C  / '${{ steps.setup_vars_and_dirs.outputs.plan_dir}}'
 
       - name: Encrypt plans
-        # if: steps.check_plan.outputs.has_no_changes == 'false'
-        if: (github.ref == 'refs/heads/main' || 
-            github.event_name == 'pull_request') &&
-            steps.check_plan.outputs.has_no_changes == 'false'
+        if: steps.check_plan.outputs.has_no_changes == 'false'
+        # if: (github.ref == 'refs/heads/main' || 
+        #     github.event_name == 'pull_request') &&
+        #     steps.check_plan.outputs.has_no_changes == 'false'
         run: |
           openssl enc -aes-256-cbc -salt -pbkdf2 -k "$SECRET_KEY" -in "${{ steps.setup_vars_and_dirs.outputs.plan_name }}.tar.gz" -out "${{ steps.setup_vars_and_dirs.outputs.plan_name }}.tar.gz.enc"
 
       - name: Upload encrypted terraform plans artifact
-        # if: steps.check_plan.outputs.has_no_changes == 'false'
-        if: (github.ref == 'refs/heads/main' || 
-            github.event_name == 'pull_request') &&
-            steps.check_plan.outputs.has_no_changes == 'false'
+        if: steps.check_plan.outputs.has_no_changes == 'false'
+        # if: (github.ref == 'refs/heads/main' || 
+        #     github.event_name == 'pull_request') &&
+        #     steps.check_plan.outputs.has_no_changes == 'false'
         uses: actions/upload-artifact@v4
         with:
           name: "${{ steps.setup_vars_and_dirs.outputs.plan_name }}${{ steps.setup_vars_and_dirs.outputs.plan_save_suffix }}"

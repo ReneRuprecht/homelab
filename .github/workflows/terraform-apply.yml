@@ -23,6 +23,8 @@ jobs:
   apply:
     if: ${{ inputs.dirs != '[]' }}
     runs-on: self-hosted
+    container:
+      image:  reneruprecht/ci-node22
     strategy:
       matrix:
         env_name: ${{ fromJSON(inputs.dirs) }}
