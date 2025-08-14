@@ -75,7 +75,14 @@ jobs:
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
-          {
-            echo "# Found Dirs"
-            echo "$DIRS" | sed 's/^/📁 /' | sed 's/$/<br>/'
-          } >> $GITHUB_STEP_SUMMARY
+
+          if [ "$JSON" = "[]" ]; then
+            {
+              echo "# Nothing was changed"
+            } >> $GITHUB_STEP_SUMMARY
+          else
+            {
+              echo "# Found Dirs"
+              echo "$DIRS" | sed 's/^/📁 /' | sed 's/$/<br>/'
+            } >> $GITHUB_STEP_SUMMARY
+          fi
