@@ -51,7 +51,7 @@ jobs:
 
 
       - name: Push
-        if: github.event.pull_request.merged == true
+        if: ${{ github.ref == 'refs/heads/main' }}
         working-directory: "docker/ci"
         run: |
           docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
