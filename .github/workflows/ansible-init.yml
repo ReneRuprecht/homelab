@@ -10,8 +10,8 @@ on:
         value: ${{ jobs.init.outputs.playbooks_found }}
         description: "Playbook and Env mapping"
     inputs:
-      on:
-        description: "Playbook run on all or changed directories"
+      dirs:
+        required: true
         type: string
 
 jobs:
@@ -28,37 +28,25 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup Dirs and Playbooks mapping
+      - name: Setup Playbooks mapping
+        working-directory: "ansible"
+        env:
+          JSON_DIRS: "${{ inputs.dirs }}"
         id: setup
         run: |
-          CHOICE="${{ inputs.on }}"
+          JSON="${JSON_DIRS}"
 
-          DIR="ansible/inventory"
-
-          if [ "$CHOICE" = "all" ]; then
-            # all dirs
-            DIRS=$(find "$DIR" -mindepth 2 -maxdepth 4 -type d \
-              | sed "s|$DIR/||")
-          else
-            # only changed dirs
-            DIRS=$(git diff --name-only HEAD~1 HEAD \
-              | grep "^${DIR}/" \
-              | sed "s|^${DIR}/||" \
-              | sort -u)
-          fi
-
-          if [ -z "$DIRS" ]; then
-            JSON="[]"
-          else
-            JSON=$(echo "$DIRS" | jq -R . | jq -s .)
-          fi
-
-          cd "ansible"
           RESULT=$(python3 select_playbook.py "$JSON" | jq -c .)
 
           {
             echo "playbook_mapping<<EOF"
             echo "$RESULT"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+          {
+            echo "test<<EOF"
+            echo "$JSON"
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
@@ -94,11 +82,11 @@ jobs:
             {
               echo "## ℹ️ **CHANGES DETECTED** ℹ️"
               echo '```'
-              echo "###################################################"
-              echo "###                                             ###"
-              echo "###  ℹ️   PLAYBOOKS WILL BE EXECUTED             ###"
-              echo "###                                             ###"
-              echo "###################################################"
+              echo "##############################################"
+              echo "###                                        ###"
+              echo "###  ℹ️   PLAYBOOKS WILL BE EXECUTED   ℹ️  ###"
+              echo "###                                        ###"
+              echo "##############################################"
               echo ""
               echo '```'
             } >> $GITHUB_STEP_SUMMARY
