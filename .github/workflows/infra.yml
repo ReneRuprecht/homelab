@@ -8,18 +8,19 @@ on:
       - 'ansible/inventory/**/**'
       - 'ansible/playbooks/**/**'
     branches:
+      - main
       - 'feat/**'
       - 'fix/**'
-  pull_request:
-    paths:
-      - 'docker/ci/**/**'
-      - 'terraform/environments/**/**'
-      - 'ansible/inventory/**/**'
-      - 'ansible/playbooks/**/**'
-    branches:
-      - main
-    types:
-      - closed
+  # pull_request:
+  #   paths:
+  #     - 'docker/ci/**/**'
+  #     - 'terraform/environments/**/**'
+  #     - 'ansible/inventory/**/**'
+  #     - 'ansible/playbooks/**/**'
+  #   branches:
+  #     - main
+  #   types:
+  #     - closed
 
 env:
   TF_VERSION: 1.12.2
