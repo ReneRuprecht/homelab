@@ -38,6 +38,12 @@ variable "vm_gateway" {
   type        = string
 }
 
+variable "vm_nameserver" {
+  description = "VM Nameserver"
+  type        = string
+  default     = "192.168.178.95 192.168.178.96"
+}
+
 variable "vm_cpu" {
   description = "VM CPU"
   type = object({
