@@ -6,29 +6,25 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
 on:
-  push:
-    paths:
-      - 'ansible/inventory/**/**'
-      - 'ansible/playbooks/**/**'
-    branches:
-      - main
-      - 'feat/**'
-      - 'fix/**'
-  pull_request:
-    paths:
-      - 'ansible/inventory/**/**'
-      - 'ansible/playbooks/**/**'
-    branches:
-      - main
-    types:
-      - closed
+  workflow_call:
+    inputs:
+      on:
+        type: string
+        description: "Get 'all' or only 'changed' dirs"
+        default: "changed"
+  workflow_dispatch:
+    inputs:
+      on:
+        type: string
+        description: "Get 'all' or only 'changed' dirs"
+        default: "all"
 
 jobs:
   get-dirs:
     uses: ./.github/workflows/get-dirs.yml
     with:
       base_dir: "ansible/inventory"
-      on: "changed"
+      on: "${{ inputs.on }}"
       min_depth: "3"
       max_depth: "4"
 
@@ -46,4 +42,3 @@ jobs:
     secrets: inherit
     with:
       matrix: "${{ needs.ansible-init.outputs.matrix }}"
-
