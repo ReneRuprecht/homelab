@@ -44,12 +44,6 @@ jobs:
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
-          {
-            echo "test<<EOF"
-            echo "$JSON"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
       - name: Check if Playbook exists
         id: check_playbook
         run: |

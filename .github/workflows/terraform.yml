@@ -2,20 +2,18 @@ name: Terraform Workflow
 
 
 on:
-  push:
-    paths:
-      - 'terraform/environments/**/**'
-    branches:
-      - main
-      - 'feat/**'
-      - 'fix/**'
-  pull_request:
-    paths:
-      - 'terraform/environments/**/**'
-    branches:
-      - main
-    types:
-      - closed
+  workflow_call:
+    inputs:
+      on:
+        type: string
+        description: "Get 'all' or only 'changed' dirs"
+        default: "changed"
+  workflow_dispatch:
+    inputs:
+      on:
+        type: string
+        description: "Get 'all' or only 'changed' dirs"
+        default: "all"
 
 env:
   TF_VERSION: 1.12.2
@@ -34,7 +32,7 @@ jobs:
     uses: ./.github/workflows/get-dirs.yml
     with:
       base_dir: "terraform/environments"
-      on: "changed"
+      on: "${{ inputs.on }}"
 
   terraform-plan:
     uses: ./.github/workflows/terraform-plan.yml
