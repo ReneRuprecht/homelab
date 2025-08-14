@@ -1,4 +1,8 @@
 terraform {
+  backend "consul" {
+    path    = "terraform/state/redstone/netbox"
+  }
+
   required_providers {
     netbox = {
       source = "e-breuninger/netbox"
