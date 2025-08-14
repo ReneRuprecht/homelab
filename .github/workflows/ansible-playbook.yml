@@ -17,7 +17,7 @@ jobs:
   playbooks:
     runs-on: self-hosted
     container:
-      image:  reneruprecht/ci-python3.12
+      image:  reneruprecht/ci-python312
     strategy:
       matrix:
         playbooks: ${{ fromJSON(inputs.matrix) }}
