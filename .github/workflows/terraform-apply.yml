@@ -2,7 +2,6 @@ name: Terraform apply
 
 env:
   TF_VERSION: 1.12.2
-  TERRAFORM_STATE_ADDRESS: ${{ secrets.TERRAFORM_STATE_ADDRESS }}
   NETBOX_SERVER_URL: ${{ secrets.NETBOX_URL }}
   NETBOX_API_TOKEN: ${{ secrets.NETBOX_TOKEN }}
   TF_VAR_vm_user: ${{ secrets.VM_USER }}
@@ -55,15 +54,9 @@ jobs:
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
-          PLAN_DIR=$(echo "/${ENV_NAME}_${COMPONENT}")
+          PLAN_DIR="${ENV_NAME}_${COMPONENT}"
 
-          {
-            echo "plan_dir<<EOF"
-            echo "$PLAN_DIR"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
-          PLANFILE="${PLAN_DIR}/${ENV_NAME}_${COMPONENT}".out
+          PLANFILE="${PLAN_DIR}/${ENV_NAME}_${COMPONENT}.out"
 
           {
             echo "plan_file<<EOF"
@@ -90,9 +83,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: "${{ steps.vars.outputs.plan_name }}${{ steps.vars.outputs.plan_save_suffix }}"
+          path: ${{ steps.vars.outputs.workdir }}
         continue-on-error: true
 
       - name: Check if plan exists
+        working-directory: ${{ steps.vars.outputs.workdir }}
         id: check-plans
         run: |
           if [ -f "${{ steps.vars.outputs.plan_name }}.tar.gz.enc" ]; then
@@ -113,10 +108,14 @@ jobs:
           fi
 
       - name: Decrypt and unzip plan if exists
+        working-directory: ${{ steps.vars.outputs.workdir }}
         if: steps.check-plans.outputs.exists == 'true'
+        env:
+          PLAN_ENC: "${{ steps.vars.outputs.plan_name }}.tar.gz.enc"
+          PLAN_TAR: "${{ steps.vars.outputs.plan_name }}.tar.gz"
         run: |
-          openssl enc -d -aes-256-cbc -pbkdf2 -k "$SECRET_KEY" -in "${{ steps.vars.outputs.plan_name }}".tar.gz.enc -out "${{ steps.vars.outputs.plan_name }}".tar.gz
-          tar -xzf "${{ steps.vars.outputs.plan_name }}".tar.gz
+          openssl enc -d -aes-256-cbc -pbkdf2 -k "$SECRET_KEY" -in "${PLAN_ENC}" -out "${PLAN_TAR}"
+          tar -xzf "${PLAN_TAR}"
 
       - name: Setup Terraform
         if: steps.check-plans.outputs.exists == 'true'
@@ -126,10 +125,12 @@ jobs:
         if: steps.check-plans.outputs.exists == 'true'
         working-directory: ${{ steps.vars.outputs.workdir }}
         run: |
-          terraform init -backend-config="address=${TERRAFORM_STATE_ADDRESS}"
+          terraform init -backend-config="address=${{ secrets.TERRAFORM_STATE_ADDRESS }}"
 
       - name: Terraform apply
         if: steps.check-plans.outputs.exists == 'true'
+        env:
+          PLAN_FILE: "${{ steps.vars.outputs.plan_file }}"
         working-directory: ${{ steps.vars.outputs.workdir }}
         run: |
-          terraform apply -auto-approve "${{ steps.vars.outputs.plan_file }}"
+          terraform apply -auto-approve "${PLAN_FILE}"
