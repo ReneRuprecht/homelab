@@ -3,8 +3,8 @@ name: Terraform Workflow
 
 on:
   push:
-    # paths:
-    #   - 'terraform/environments/**/**'
+    paths:
+      - 'terraform/environments/**/**'
     branches:
       - main
       - 'feat/**'
@@ -30,26 +30,26 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
 jobs:
-  fetch-terraform-dirs:
-    uses: ./.github/workflows/terraform-get-dirs.yml
+  get-dirs:
+    uses: ./.github/workflows/get-dirs.yml
     with:
       base_dir: "terraform/environments"
-      on: "all"
+      on: "changed"
 
   terraform-plan:
     uses: ./.github/workflows/terraform-plan.yml
-    needs: fetch-terraform-dirs
+    needs: get-dirs
     secrets: inherit
     with:
-      dirs: "${{ needs.fetch-terraform-dirs.outputs.dirs }}"
+      dirs: "${{ needs.get-dirs.outputs.dirs }}"
 
   terraform-apply:
     uses: ./.github/workflows/terraform-apply.yml
     if: github.event.pull_request.merged == true
     needs: 
-      - fetch-terraform-dirs
+      - get-dirs
       - terraform-plan
     secrets: inherit
     with:
-      dirs: "${{ needs.fetch-terraform-dirs.outputs.dirs }}"
+      dirs: "${{ needs.get-dirs.outputs.dirs }}"
     

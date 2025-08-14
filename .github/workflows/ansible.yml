@@ -24,10 +24,19 @@ on:
       - closed
 
 jobs:
+  get-dirs:
+    uses: ./.github/workflows/get-dirs.yml
+    with:
+      base_dir: "ansible/inventory"
+      on: "changed"
+      min_depth: "3"
+      max_depth: "4"
+
   ansible-init:
+    needs: get-dirs
     uses: ./.github/workflows/ansible-init.yml
     with:
-      on: "changed"
+      dirs: "${{ needs.get-dirs.outputs.dirs}}"
 
   ansible-playbooks:
     needs: ansible-init
