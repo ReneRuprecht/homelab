@@ -3,6 +3,7 @@ name: Infra Workflow
 on:
   push:
     paths:
+      - 'docker/ci/**/**'
       - 'terraform/environments/**/**'
       - 'ansible/inventory/**/**'
       - 'ansible/playbooks/**/**'
@@ -12,6 +13,7 @@ on:
       - 'fix/**'
   pull_request:
     paths:
+      - 'docker/ci/**/**'
       - 'terraform/environments/**/**'
       - 'ansible/inventory/**/**'
       - 'ansible/playbooks/**/**'
@@ -35,8 +37,18 @@ env:
   ANSIBLE_SSH_KEY: ${{ secrets.SSH_KEY }}
 
 jobs:
+  docker:
+    uses: ./.github/workflows/docker.yml
+    secrets: inherit
+    with:
+      on: "changed"
+
   terraform:
+    if: |
+      always() &&
+      (needs.docker.result == 'success' || needs.docker.result == 'skipped')
     uses: ./.github/workflows/terraform.yml
+    needs: docker
     secrets: inherit
     with:
       on: "changed"

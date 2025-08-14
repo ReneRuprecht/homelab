@@ -1,0 +1,59 @@
+name: Docker Workflow
+
+
+on:
+  workflow_call:
+    inputs:
+      on:
+        type: string
+        description: "Will build and push (push only if merged) 'all' or only 'changed' docker images"
+        default: "changed"
+  workflow_dispatch:
+    inputs:
+      on:
+        type: string
+        description: "Will build 'all' or only 'changed' docker images"
+        default: "changed"
+
+jobs:
+  get-dirs:
+    uses: ./.github/workflows/get-dirs.yml
+    with:
+      base_dir: "docker"
+      on: "${{ inputs.on }}"
+
+  docker:
+    if: ${{ needs.get-dirs.outputs.dirs != '[]' }}
+    container:
+      image:  "docker:28.3.3-dind-alpine3.22"
+    needs: get-dirs
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        image_dirs: ${{ fromJSON(needs.get-dirs.outputs.dirs) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        working-directory: "docker/${{ matrix.image_dirs }}"
+        id: build
+        run: |
+          IMG_NAME=$(echo "${{ matrix.image_dirs }}" | tr '/' '-')
+          docker build -t "${{ secrets.DOCKER_USERNAME }}/${IMG_NAME}:latest" .
+          {
+            echo "image_name<<EOF"
+            echo "$IMG_NAME"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+
+      - name: Push
+        if: github.event.pull_request.merged == true
+        working-directory: "docker/ci"
+        run: |
+          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
+          IMG_NAME="${{ steps.build.outputs.image_name }}"
+          docker image push "${{ secrets.DOCKER_USERNAME }}/${IMG_NAME}"
