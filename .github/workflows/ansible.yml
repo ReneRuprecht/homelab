@@ -37,7 +37,7 @@ jobs:
   ansible-playbooks:
     needs: ansible-init
     if: needs.ansible-init.outputs.can_run == 'true' &&
-        github.event.pull_request.merged == true
+        github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ansible-playbook.yml
     secrets: inherit
     with:
