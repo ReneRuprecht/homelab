@@ -37,6 +37,7 @@ env:
 jobs:
   terraform:
     uses: ./.github/workflows/terraform.yml
+    secrets: inherit
     with:
       on: "changed"
 
@@ -47,5 +48,6 @@ jobs:
     needs: 
       - terraform
     uses: ./.github/workflows/ansible.yml
+    secrets: inherit
     with:
       on: "changed"
