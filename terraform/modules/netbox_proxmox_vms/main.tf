@@ -24,6 +24,7 @@ module "proxmox_vms" {
   vm_memory           = var.vms[count.index].memory
   vm_scsi_disk        = var.vms[count.index].scsi_disk
   vm_ip               = module.netbox_vms[count.index].ip_address
+  vm_nameserver       = var.vms[count.index].nameserver
   vm_name             = var.vms[count.index].name
   vm_state            = var.vms[count.index].vm_state
   vm_gateway          = var.vms[count.index].gateway

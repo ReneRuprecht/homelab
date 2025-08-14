@@ -22,6 +22,7 @@ variable "vms" {
     vmid        = optional(number)
     memory      = number
     ip          = optional(string, "")
+    nameserver  = optional(string, "192.168.178.95 192.168.178.96")
     gateway     = string
     cpu = object({
       cores = optional(number, 1)
