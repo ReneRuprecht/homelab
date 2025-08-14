@@ -1,7 +1,7 @@
 module "netbox_proxmox_vms" {
   source = "../../../modules/proxmox_vms"
 
-  count  = length(var.vms)
+  count = length(var.vms)
 
   vm_user     = var.vm_user
   vm_ssh_keys = var.vm_ssh_keys
@@ -9,6 +9,7 @@ module "netbox_proxmox_vms" {
   vm_memory           = var.vms[count.index].memory
   vm_scsi_disk        = var.vms[count.index].scsi_disk
   vm_ip               = var.vms[count.index].ip
+  vm_nameserver       = var.vms[count.index].nameserver
   vm_name             = var.vms[count.index].name
   vm_state            = var.vms[count.index].vm_state
   vm_gateway          = var.vms[count.index].gateway
