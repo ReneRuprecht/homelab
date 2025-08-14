@@ -8,7 +8,6 @@ on:
       - 'ansible/inventory/**/**'
       - 'ansible/playbooks/**/**'
     branches:
-      - main
       - 'feat/**'
       - 'fix/**'
   pull_request:
