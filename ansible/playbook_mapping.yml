@@ -15,3 +15,6 @@ patterns:
     - "gh-runner-*"
     - "gh-runner" 
     - "gh_runner" 
+  vault.yml:
+    - "vault-*"
+    - "vault" 

@@ -25,6 +25,13 @@ haproxy_frontends:
     crts:
       - "/etc/acme/certs/wildcard.{{ server_url }}.pem"
     default_backend: consul
+  - name: vault
+    address: "*"
+    port: 8200
+    ssl: true
+    crts:
+      - "/etc/acme/certs/wildcard.{{ server_url }}.pem"
+    default_backend: vault
 
 haproxy_backend_default_balance: roundrobin
 haproxy_backends:
@@ -44,3 +51,23 @@ haproxy_backends:
     port: 8500
     options:
       - check
+  - name: vault
+    balance: first
+    http_check:
+      send:
+        method: GET
+        uri: /v1/sys/health?standbyok=true
+      expect: status 200
+    port: 8200
+    options:
+      - check
+    servers:
+      - name: vault-01.redstone
+        address: vault-01.redstone
+        port: 8200
+      - name: vault-02.redstone
+        address: vault-02.redstone
+        port: 8200
+      - name: vault-03.redstone
+        address: vault-03.redstone
+        port: 8200
