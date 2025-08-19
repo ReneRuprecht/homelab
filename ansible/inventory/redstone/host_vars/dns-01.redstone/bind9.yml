@@ -11,7 +11,7 @@ bind9_our_neighbors:
 
 bind9_zones_dynamic:
   - name: redstone
-    serial: 2025081111
+    serial: 2025081113
     admin: noemail.redstone
     ns_records:
       - dns-01.redstone
@@ -71,6 +71,9 @@ bind9_zones_dynamic:
       - label: k8s-node-02
         type: A
         rdata: 192.168.178.109
+      - label: nfs-01
+        type: A
+        rdata: 192.168.178.111
   - name: !vault |
       $ANSIBLE_VAULT;1.1;AES256
       38383063336632363530623037366536626230303732633363363538363936643832376136313464

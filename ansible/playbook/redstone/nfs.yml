@@ -1,8 +1,6 @@
 - name: Install nfs
-  hosts: k8s-01
+  hosts: nfs
   gather_facts: true
-  tasks:
-    - name: Install nfs common
-      ansible.builtin.apt:
-        name: "nfs-common"
-        update_cache: true
+  roles:
+    - role: geerlingguy.nfs
+    - role: tinslice.ansible-role-disks
