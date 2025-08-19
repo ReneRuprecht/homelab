@@ -1,0 +1,54 @@
+name: Pr Workflow
+
+on:
+  pull_request:
+    paths:
+      - 'docker/ci/**/**'
+      - 'terraform/environments/**/**'
+      - 'ansible/inventory/**/**'
+      - 'ansible/playbooks/**/**'
+    branches:
+      - main
+
+env:
+  TF_VERSION: 1.12.2
+  TERRAFORM_STATE_ADDRESS: ${{ secrets.TERRAFORM_STATE_ADDRESS }}
+  NETBOX_SERVER_URL: ${{ secrets.NETBOX_URL }}
+  NETBOX_API_TOKEN: ${{ secrets.NETBOX_TOKEN }}
+  TF_VAR_vm_user: ${{ secrets.VM_USER }}
+  TF_VAR_vm_ssh_keys: ${{ secrets.VM_KEYS }}
+  PM_API_URL: ${{ secrets.PM_API_URL }}
+  PM_API_TOKEN_ID: ${{ secrets.PM_API_TOKEN_ID }}
+  PM_API_TOKEN_SECRET: ${{ secrets.PM_API_TOKEN_SECRET }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  ANSIBLE_VAULT: ${{ secrets.ANSIBLE_VAULT }}
+  ANSIBLE_SSH_KEY: ${{ secrets.SSH_KEY }}
+
+jobs:
+  docker:
+    uses: ./.github/workflows/docker.yml
+    secrets: inherit
+    with:
+      on: "changed"
+
+  terraform:
+    if: |
+      always() &&
+      (needs.docker.result == 'success' || needs.docker.result == 'skipped')
+    uses: ./.github/workflows/terraform.yml
+    needs: docker
+    secrets: inherit
+    with:
+      on: "changed"
+
+  ansible:
+    if: |
+      always() &&
+      (needs.terraform.result == 'success' || needs.terraform.result == 'skipped')
+    needs: 
+      - terraform
+    uses: ./.github/workflows/ansible.yml
+    secrets: inherit
+    with:
+      on: "changed"
+      check_mode: "true"

@@ -12,12 +12,20 @@ on:
         type: string
         description: "Get 'all' or only 'changed' dirs"
         default: "changed"
+      check_mode:
+        type: string
+        description: "Run Playbook in Check Mode"
+        default: "true"
   workflow_dispatch:
     inputs:
       on:
         type: string
         description: "Get 'all' or only 'changed' dirs"
         default: "all"
+      check_mode:
+        type: string
+        description: "Run Playbook in Check Mode"
+        default: "true"
 
 jobs:
   get-dirs:
@@ -34,7 +42,19 @@ jobs:
     with:
       dirs: "${{ needs.get-dirs.outputs.dirs}}"
 
-  ansible-playbooks:
+  ansible-playbooks-check:
+    needs: ansible-init
+    if: needs.ansible-init.outputs.can_run == 'true' &&
+        github.ref != 'refs/heads/main' &&
+        inputs.check_mode == 'true'
+
+    uses: ./.github/workflows/ansible-playbook.yml
+    secrets: inherit
+    with:
+      matrix: "${{ needs.ansible-init.outputs.matrix }}"
+      check_mode: "true"
+
+  ansible-playbooks-deploy:
     needs: ansible-init
     if: needs.ansible-init.outputs.can_run == 'true' &&
         github.ref == 'refs/heads/main'
@@ -42,3 +62,4 @@ jobs:
     secrets: inherit
     with:
       matrix: "${{ needs.ansible-init.outputs.matrix }}"
+      check_mode: "false"
