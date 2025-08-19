@@ -12,6 +12,11 @@ on:
         description: "Playbook and Env mapping as json"
         required: true
         type: string
+      check_mode:
+        description: "Run Playbooks in Check Mode"
+        required: true
+        type: string
+        default: "true"
 
 jobs:
   playbooks:
@@ -78,7 +83,15 @@ jobs:
           pipenv install
           pipenv run ansible-galaxy install -r requirements.yml
           echo "${{ secrets.ANSIBLE_VAULT }}" >> .vaultpass
-          pipenv run ansible-playbook -i "${{ steps.prepare.outputs.inventory }}" --private-key="~/.ssh/id_rsa" "${{ steps.prepare.outputs.playbook }}" | tee "${{ steps.prepare.outputs.log_file }}" > /dev/null
+
+          CHECK_MODE=""
+
+          if [ "${{ inputs.check_mode }}" = "true" ]; then
+            echo "Check mode"
+            CHECK_MODE="--check"
+          fi
+
+            pipenv run ansible-playbook -i "${{ steps.prepare.outputs.inventory }}" --private-key="~/.ssh/id_rsa" "${{ steps.prepare.outputs.playbook }}" ${CHECK_MODE} | tee "${{ steps.prepare.outputs.log_file }}" > /dev/null
 
       - name: Compress log
         run: |
@@ -88,7 +101,7 @@ jobs:
         run: |
           openssl enc -aes-256-cbc -salt -pbkdf2 -k "$SECRET_KEY" -in "${{ steps.prepare.outputs.log_file }}.tar.gz" -out "${{ steps.prepare.outputs.log_file }}.tar.gz.enc"
 
-      - name: Upload encrypted terraform plans artifact
+      - name: Upload encrypted ansible log artifact
         uses: actions/upload-artifact@v4
         with:
           name: "${{ steps.prepare.outputs.log_name }}"
