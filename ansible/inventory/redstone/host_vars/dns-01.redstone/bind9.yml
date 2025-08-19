@@ -11,7 +11,7 @@ bind9_our_neighbors:
 
 bind9_zones_dynamic:
   - name: redstone
-    serial: 2025081104
+    serial: 2025081106
     admin: noemail.redstone
     ns_records:
       - dns-01.redstone
@@ -49,7 +49,32 @@ bind9_zones_dynamic:
         rdata: 192.168.178.102
       - label: gh-runner-02
         type: A
-        rdata: 192.168.178.103
+        rdata: 192.168.178.104
       - label: gh-runner-03
         type: A
-        rdata: 192.168.178.104
+        rdata: 192.168.178.103
+      - label: vault-01
+        type: A
+        rdata: 192.168.178.105
+      - label: vault-02
+        type: A
+        rdata: 192.168.178.106
+      - label: vault-03
+        type: A
+        rdata: 192.168.178.107
+  - name: !vault |
+      $ANSIBLE_VAULT;1.1;AES256
+      38383063336632363530623037366536626230303732633363363538363936643832376136313464
+      3363343930636132386331646466663435383430633234620a643139613433313838393064373036
+      37366537373566666639393364393638356535643437376539623466353639366334343265663631
+      6266643466343861610a373932386262326437616136333233643566663762313031393561396233
+      64613636643062306532323134323265333666613366303034643231306532643963
+    serial: 2025081106
+    admin: noemail.redstone
+    ns_records:
+      - dns-01.redstone
+      - dns-02.redstone
+    rrs:
+      - label: consul
+        type: A
+        rdata: 192.168.178.250
