@@ -1,17 +1,7 @@
-name: Infra Workflow
+name: Deploy Workflow
 
 on:
   push:
-    paths:
-      - 'docker/ci/**/**'
-      - 'terraform/environments/**/**'
-      - 'ansible/inventory/**/**'
-      - 'ansible/playbooks/**/**'
-    branches:
-      - main
-      - 'feat/**'
-      - 'fix/**'
-  pull_request:
     paths:
       - 'docker/ci/**/**'
       - 'terraform/environments/**/**'
@@ -61,3 +51,4 @@ jobs:
     secrets: inherit
     with:
       on: "changed"
+      check_mode: "false"
