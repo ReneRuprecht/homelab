@@ -24,6 +24,7 @@ jobs:
     container:
       image:  reneruprecht/ci-python312
     strategy:
+      max-parallel: 1
       matrix:
         playbooks: ${{ fromJSON(inputs.matrix) }}
     steps:
