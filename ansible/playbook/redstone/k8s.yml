@@ -1,0 +1,10 @@
+- name: Install k8s
+  hosts: k8s-01
+  gather_facts: true
+  pre_tasks:
+    - name: Install nfs common
+      ansible.builtin.apt:
+        name: "nfs-common"
+        update_cache: true
+  roles:
+    - role: reneruprecht.kubernetes
