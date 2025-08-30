@@ -1,0 +1,54 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: airflow
+  namespace: airflow
+spec:
+  values:
+    airflow:
+      extraPipPackages:
+        - "pydantic>=2.0.0"
+        - "asyncpg"
+        - "requests"
+        - "boto3"
+        - "psycopg2-binary"
+        - "apache-airflow-providers-postgres"
+        - "apache-airflow-providers-docker"
+        - "pytz"
+    dags:
+      gitSync:
+        enabled: true
+        repo: "https://github.com/ReneRuprecht/airflow-dags"
+        repoSubPath: "dags"
+        branch: "main"
+        syncWait: 500
+    postgresql:
+      enabled: false
+      persistence:
+        enabled: false
+    logs:
+      persistentVolume:
+        enabled: true
+    externalDatabase:
+      host: 192.168.178.89
+      database: airflow
+      user: user
+      ## the name of a pre-created secret containing the external database user
+      ## - if set, this overrides `externalDatabase.user`
+      ##
+      # userSecret: ""
+      ## the key within `externalDatabase.userSecret` containing the user string
+      ##
+      # userSecretKey: "postgresql-user"
+      password: pw
+      ## the name of a pre-created secret containing the external database password
+      ## - if set, this overrides `externalDatabase.password`
+      ##
+      # passwordSecret: ""
+      ## the key within `externalDatabase.passwordSecret` containing the password string
+      ##
+      # passwordSecretKey: "postgresql-password"
+    redis:
+      persistence:
+        enabled: false
+    #
