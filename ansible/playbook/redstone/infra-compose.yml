@@ -1,9 +1,17 @@
-- name: Install docker registry
-  hosts: registry
+- name: Install infra-compose Vms
+  hosts: infra-compose
   gather_facts: true
   roles:
     - role: geerlingguy.docker
-    - role: tinslice.ansible-role-disks
+  pre_tasks:
+    - name: Write Env Vars
+      ansible.builtin.lineinfile:
+        create: true
+        path: "/tmp/.env"
+        state: "present"
+        line: "{{ item.key }}={{ item.value }}"
+      with_dict: "{{ environment_vars }}"
+      no_log: "{{ env_no_log }}"
   post_tasks:
     - name: Get docker-compose file
       ansible.builtin.get_url:
