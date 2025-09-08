@@ -30,7 +30,8 @@ spec:
       persistentVolume:
         enabled: true
     externalDatabase:
-      host: 192.168.178.89
+      host: infra-compose-01.redstone
+      port: 5433
       database: airflow
       user: user
       ## the name of a pre-created secret containing the external database user
