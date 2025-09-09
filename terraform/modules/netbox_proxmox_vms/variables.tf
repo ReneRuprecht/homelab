@@ -8,12 +8,6 @@ variable "vm_ssh_keys" {
   type        = string
 }
 
-variable "vm_ips" {
-  description = "Map von VM-Namen auf zugewiesene IP-Adressen"
-  type        = map(string)
-  default     = {}
-}
-
 variable "vms" {
   description = "Liste von VMs mit Parametern für Proxmox + NetBox"
   type = list(object({
@@ -55,6 +49,9 @@ variable "vms" {
       format  = string
       slot    = string
     })), [])
+
+    cluster_name = optional(string, "Proxmox PVE-02")
+    prefix = optional(string, "192.168.178.0/24")
   }))
 }
 
@@ -62,16 +59,4 @@ variable "vm_ip" {
   description = "Map von VM-Namen auf zugewiesene IP-Adressen"
   type        = string
   default     = ""
-}
-
-variable "prefix" {
-  description = "CIDR Prefix aus NetBox, z. B. '192.168.178.0/24'"
-  type        = string
-  default     = "192.168.178.0/24"
-}
-
-variable "cluster_name" {
-  description = "Name des Clusters in NetBox"
-  type        = string
-  default     = "Proxmox PVE-02"
 }

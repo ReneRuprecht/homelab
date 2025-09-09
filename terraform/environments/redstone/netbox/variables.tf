@@ -8,18 +8,6 @@ variable "vm_ssh_keys" {
   type        = string
 }
 
-variable "prefix" {
-  description = "CIDR Prefix aus NetBox, z. B. '192.168.178.0/24'"
-  type        = string
-  default     = "192.168.178.0/24"
-}
-
-variable "cluster_name" {
-  description = "Name des Clusters in NetBox"
-  type        = string
-  default     = "Proxmox PVE-02"
-}
-
 variable "vms" {
   description = "Liste von VMs mit Parametern für Proxmox + NetBox"
   type = list(object({

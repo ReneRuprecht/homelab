@@ -9,8 +9,8 @@ module "netbox_vms" {
   disk_size_mb = var.vms[count.index].scsi_disk.size_mb
 
   extra_disks  = var.vms[count.index].scsi_extra_disks
-  prefix       = var.prefix
-  cluster_name = var.cluster_name
+  prefix       = var.vms[count.index].prefix
+  cluster_name = var.vms[count.index].cluster_name
 
 }
 
