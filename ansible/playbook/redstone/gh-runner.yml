@@ -5,10 +5,26 @@
   pre_tasks:
     - name: Install packages
       ansible.builtin.apt:
-        name: 
+        name:
           - unzip
           - jq
+          - gpg
         state: present
+        update_cache: true
+
+    - name: Install dependencies on Debian Trixie
+      ansible.builtin.apt:
+        name:
+          - acl
+          - liblttng-ust1t64
+          - libkrb5-3
+          - zlib1g
+          - libssl3
+          - libicu76
+        state: present
+        update_cache: true
+      become: true
+      when: (ansible_facts.distribution == "Debian" and ansible_facts.distribution_major_version == "13")
   roles:
     - role: monolithprojects.github_actions_runner
     - role: geerlingguy.docker
