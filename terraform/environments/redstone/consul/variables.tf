@@ -12,7 +12,7 @@ variable "vms" {
   description = "Liste von VMs mit Parametern für Proxmox"
   type = list(object({
     name        = string
-    target_node = optional(string, "pve-02")
+    target_node = optional(string, "pve-01")
     vmid        = optional(number)
     memory      = number
     ip          = optional(string, "")
@@ -22,7 +22,7 @@ variable "vms" {
     })
     vm_state = string
     tags     = optional(string)
-    clone    = optional(string, "debian-12-cloud")
+    clone    = optional(string, "debian-13-cloud")
 
     scsi_disk = optional(object({
       size    = string
@@ -30,8 +30,8 @@ variable "vms" {
       storage = optional(string, "internal-storage")
       format  = optional(string, "raw")
       }), {
-      size    = "20G"
-      size_mb = "20000"
+      size    = "15G"
+      size_mb = "15000"
     })
 
     scsi_extra_disks = optional(list(object({

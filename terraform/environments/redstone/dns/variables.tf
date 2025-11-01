@@ -17,14 +17,14 @@ variable "prefix" {
 variable "cluster_name" {
   description = "Name des Clusters in NetBox"
   type        = string
-  default     = "Proxmox PVE-02"
+  default     = "Proxmox PVE-01"
 }
 
 variable "vms" {
   description = "Liste von VMs mit Parametern für Proxmox + NetBox"
   type = list(object({
     name        = string
-    target_node = optional(string, "pve-02")
+    target_node = optional(string, "pve-01")
     vmid        = optional(number)
     memory      = number
     ip          = optional(string, "")
@@ -34,8 +34,8 @@ variable "vms" {
       cores = optional(number, 1)
     })
     vm_state = string
-    tags     = optional(string)
-    clone    = optional(string, "debian-12-cloud")
+    tags     = optional(string, "")
+    clone    = optional(string, "debian-13-cloud")
 
     cloudinit = optional(object({
       storage = optional(string, "internal-storage")
@@ -49,8 +49,8 @@ variable "vms" {
       storage = optional(string, "internal-storage")
       format  = optional(string, "raw")
       }), {
-      size    = "20G"
-      size_mb = "20000"
+      size    = "15G"
+      size_mb = "15000"
     })
 
     scsi_extra_disks = optional(list(object({
