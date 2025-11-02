@@ -1,4 +1,8 @@
 ---
+general_debian_extra_packages: 
+  - acl
+
+general_hide_root_password_logs: false
 general_ufw_ports:
   - port: "{{ general_ssh_port }}"
     proto: tcp
