@@ -50,6 +50,6 @@ roles:
     scm: git
     version: "8.2.0"
   - src: https://github.com/systemli/ansible-role-bind9.git
-    name: systemli/bind9
+    name: systemli.bind9
     scm: git
-    version: "1.6.0"
+    version: "1.7.1"

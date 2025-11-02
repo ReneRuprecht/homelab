@@ -1,6 +1,8 @@
 ---
-- name: Install bind9
+- name: Install dns
   hosts: dns
   gather_facts: true
+  become: true
   roles:
-    - role: systemli/bind9
+    #    - role: reneruprecht.general
+    - role: systemli.bind9
