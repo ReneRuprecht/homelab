@@ -4,5 +4,5 @@
   gather_facts: true
   become: true
   roles:
-    #    - role: reneruprecht.general
+    - role: reneruprecht.general
     - role: systemli.bind9
