@@ -1,0 +1,12 @@
+---
+general_debian_extra_packages:
+  - unzip
+  - jq
+  - gpg
+  # debian 13 packages
+  - acl
+  - liblttng-ust1t64
+  - libkrb5-3
+  - zlib1g
+  - libssl3
+  - libicu76
