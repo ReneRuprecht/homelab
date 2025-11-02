@@ -1,0 +1,58 @@
+---
+general_ufw_ports:
+  - port: "{{ general_ssh_port }}"
+    proto: tcp
+    state: enabled
+    comment: "SSH"
+
+  - port: "8300"
+    proto: tcp
+    state: enabled
+    comment: "Consul SERVER"
+
+  - port: "8301"
+    proto: tcp
+    state: enabled
+    comment: "Consul LAN"
+  - port: "8301"
+    proto: udp
+    state: enabled
+    comment: "Consul LAN"
+
+  - port: "8302"
+    proto: tcp
+    state: enabled
+    comment: "Consul WAN"
+  - port: "8302"
+    proto: udp
+    state: enabled
+    comment: "Consul WAN"
+
+  - port: "8500"
+    proto: tcp
+    state: enabled
+    comment: "Consul HTTP"
+
+  - port: "8501"
+    proto: tcp
+    state: enabled
+    comment: "Consul HTTPS"
+
+  - port: "8502"
+    proto: tcp
+    state: enabled
+    comment: "Consul GRPC"
+
+  - port: "8503"
+    proto: tcp
+    state: enabled
+    comment: "Consul GRPC TLS"
+
+  - port: "8600"
+    proto: tcp
+    state: enabled
+    comment: "Consul DNS"
+  - port: "8600"
+    proto: udp
+    state: enabled
+    comment: "Consul DNS"

@@ -3,4 +3,5 @@
   hosts: consul
   gather_facts: true
   roles:
-    - role: ansible-consul
+    - role: reneruprecht.general
+    #    - role: ansible-consul
