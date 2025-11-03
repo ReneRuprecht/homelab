@@ -1,0 +1,11 @@
+---
+general_ufw_ports:
+  - port: "{{ general_ssh_port }}"
+    proto: tcp
+    state: enabled
+    comment: "SSH"
+
+  - port: "8500"
+    proto: tcp
+    state: enabled
+    comment: "HAPROXY - Consul"

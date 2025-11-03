@@ -1,8 +1,10 @@
 ---
 - name: Install loadbalancer
   hosts: loadbalancer
+  become: true
   gather_facts: true
   roles:
+    - role: reneruprecht.general
     - role: reneruprecht.acme
     - role: robertdebock.haproxy
     - role: evrardjp.keepalived
