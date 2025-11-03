@@ -6,3 +6,5 @@
   roles:
     - role: reneruprecht.general
     - role: ansible-consul
+    - role: grafana.grafana.promtail
+    - role: prometheus.prometheus.node_exporter

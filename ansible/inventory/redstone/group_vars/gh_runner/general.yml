@@ -10,3 +10,14 @@ general_debian_extra_packages:
   - zlib1g
   - libssl3
   - libicu76
+
+general_ufw_ports:
+  - port: "{{ general_ssh_port }}"
+    proto: tcp
+    state: enabled
+    comment: "SSH"
+
+  - port: "9100"
+    proto: tcp
+    state: enabled
+    comment: "Node Exporter"

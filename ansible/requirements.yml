@@ -7,6 +7,10 @@ collections:
     version: 1.13.0
   - name: community.windows
     version: 2.1.0
+  - name: grafana.grafana
+    version: 6.0.6
+  - name: prometheus.prometheus
+    version: 0.27.3
 roles:
   - name: reneruprecht.acme
     src: "https://github.com/reneruprecht/ansible-role-acme"

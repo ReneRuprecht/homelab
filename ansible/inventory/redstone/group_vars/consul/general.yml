@@ -59,3 +59,8 @@ general_ufw_ports:
     proto: udp
     state: enabled
     comment: "Consul DNS"
+
+  - port: "9100"
+    proto: tcp
+    state: enabled
+    comment: "Node Exporter"

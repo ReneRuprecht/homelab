@@ -1,0 +1,20 @@
+---
+grafana_ini:
+  security:
+    admin_user: admin
+    admin_password: admin
+
+grafana_dashboards:
+  - dashboard_id: 1860
+    revision_id: 42
+    datasource: prometheus
+
+grafana_datasources:
+  - name: prometheus
+    type: prometheus
+    url: 'http://localhost:9090'
+    basicAuth: false
+  - name: loki
+    type: loki
+    url: 'http://localhost:3100'
+    basicAuth: false

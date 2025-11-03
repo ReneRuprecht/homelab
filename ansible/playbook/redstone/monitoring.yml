@@ -1,11 +1,12 @@
 ---
-- name: Install dns
-  hosts: dns
+- name: Install monitoring vms
+  hosts: monitoring
   gather_facts: true
   become: true
   roles:
     - role: reneruprecht.general
-    - role: systemli.bind9
+    - role: grafana.grafana.loki
     - role: grafana.grafana.promtail
+    - role: prometheus.prometheus.prometheus
     - role: prometheus.prometheus.node_exporter
-    - role: prometheus.prometheus.bind_exporter
+    - role: grafana.grafana.grafana

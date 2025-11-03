@@ -13,3 +13,13 @@ general_ufw_ports:
     proto: udp
     state: enabled
     comment: "DNS"
+
+  - port: "9100"
+    proto: tcp
+    state: enabled
+    comment: "Node Exporter"
+
+  - port: "9119"
+    proto: tcp
+    state: enabled
+    comment: "Bind Exporter"

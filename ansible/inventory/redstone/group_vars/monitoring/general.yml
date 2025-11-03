@@ -1,0 +1,36 @@
+---
+general_ufw_ports:
+  - port: "22"
+    proto: tcp
+    state: enabled
+    comment: "SSH"
+
+  - port: "3000"
+    proto: tcp
+    state: enabled
+    comment: "GRAFANA - HTTP"
+
+  - port: "3100"
+    proto: tcp
+    state: enabled
+    comment: "LOKI - HTTP"
+
+  - port: "9096"
+    proto: tcp
+    state: enabled
+    comment: "LOKI - GRPC"
+
+  - port: "9080"
+    proto: tcp
+    state: enabled
+    comment: "PROMTAIL - HTTP"
+
+  - port: "9090"
+    proto: tcp
+    state: enabled
+    comment: "Prometheus - HTTP"
+
+  - port: "9100"
+    proto: tcp
+    state: enabled
+    comment: "Node Exporter - HTTP"

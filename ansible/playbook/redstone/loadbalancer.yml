@@ -8,3 +8,5 @@
     - role: reneruprecht.acme
     - role: robertdebock.haproxy
     - role: evrardjp.keepalived
+    - role: grafana.grafana.promtail
+    - role: prometheus.prometheus.node_exporter

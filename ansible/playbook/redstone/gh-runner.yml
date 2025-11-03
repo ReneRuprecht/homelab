@@ -7,3 +7,5 @@
     - role: monolithprojects.github_actions_runner
     - role: geerlingguy.docker
     - role: geerlingguy.nodejs
+    - role: grafana.grafana.promtail
+    - role: prometheus.prometheus.node_exporter
