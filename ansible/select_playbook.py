@@ -29,5 +29,9 @@ for folder in changed_dirs:
         if any(fnmatch.fnmatch(name, pat) for pat in patterns):
             selected.add((playbook, env))
 
-matrix = [{"playbook": pb, "env": env} for pb, env in sorted(selected)]
+def sort_key(item):
+    playbook, env = item
+    return (0 if playbook.startswith("dns") else 1, playbook, env)
+
+matrix = [{"playbook": pb, "env": env} for pb, env in sorted(selected, key=sort_key)]
 print(str(json.dumps(matrix, indent=2)))
