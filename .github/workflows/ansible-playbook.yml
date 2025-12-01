@@ -83,7 +83,7 @@ jobs:
         run: |
           pipenv install
           pipenv run ansible-galaxy install -r requirements.yml
-          echo "${{ secrets.ANSIBLE_VAULT }}" >> .vaultpass
+          echo "${{ secrets.ANSIBLE_VAULT }}" > .vaultpass
 
           CHECK_MODE=""
 
