@@ -1,0 +1,26 @@
+---
+general_ufw_ports:
+  - port: "53"
+    proto: tcp
+    state: enabled
+    comment: "dns"
+
+  - port: "443"
+    proto: tcp
+    state: enabled
+    comment: "https"
+
+  - port: "8472"
+    proto: udp
+    state: enabled
+    comment: "k8s flannel"
+
+  - port: "10250"
+    proto: tcp
+    state: enabled
+    comment: "K8s kubelet api"
+
+  - port: "10256"
+    proto: tcp
+    state: enabled
+    comment: "K8s kube-proxy"

@@ -1,10 +1,25 @@
 - name: Install k8s
   hosts: k8s-01
   gather_facts: true
+  become: true
   pre_tasks:
-    - name: Install nfs common
-      ansible.builtin.apt:
-        name: "nfs-common"
-        update_cache: true
+    - name: Install conntrack
+      ansible.builtin.package:
+        name: conntrack
+        state: present
   roles:
+    - role: reneruprecht.general
     - role: reneruprecht.kubernetes
+  post_tasks:
+    - name: Link cni binaries
+      become: true
+      ansible.builtin.command:
+        cmd: "ln -s /opt/cni/bin /usr/lib/cni"
+        creates: /usr/lib/cni/flannel
+
+- name: Setup k8s node disks
+  hosts: k8s-01-nodes
+  gather_facts: true
+  become: true
+  roles:
+    - role: tinslice.ansible-role-disks
