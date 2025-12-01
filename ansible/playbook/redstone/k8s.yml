@@ -17,6 +17,11 @@
         cmd: "ln -s /opt/cni/bin /usr/lib/cni"
         creates: /usr/lib/cni/flannel
 
+    - name: Install open-iscsi for longhorn
+      ansible.builtin.package:
+        name: open-iscsi
+        state: present
+
 - name: Setup k8s node disks
   hosts: k8s-01-nodes
   gather_facts: true
