@@ -1,7 +1,8 @@
 ---
 disks:
   - name: data
-    disk: sda
+    disk: sdb
     mount: /mnt/longhorn
     state: present
+    mount_state: mounted
     fstype: ext4

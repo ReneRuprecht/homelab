@@ -1,3 +1,10 @@
+- name: Setup k8s node disks
+  hosts: k8s-01-nodes
+  gather_facts: true
+  become: true
+  roles:
+    - role: tinslice.ansible-role-disks
+
 - name: Install k8s
   hosts: k8s-01
   gather_facts: true
@@ -17,14 +24,17 @@
         cmd: "ln -s /opt/cni/bin /usr/lib/cni"
         creates: /usr/lib/cni/flannel
 
-    - name: Install open-iscsi for longhorn
-      ansible.builtin.package:
-        name: open-iscsi
-        state: present
+    - name: Loghorn setup
+      block:
+        - name: Install packages
+          ansible.builtin.package:
+            name:
+              - open-iscsi
+              - nfs-common
+              - cryptsetup
+            state: present
 
-- name: Setup k8s node disks
-  hosts: k8s-01-nodes
-  gather_facts: true
-  become: true
-  roles:
-    - role: tinslice.ansible-role-disks
+        - name: Add the dm-crypt module
+          community.general.modprobe:
+            name: dm-crypt
+            state: present
