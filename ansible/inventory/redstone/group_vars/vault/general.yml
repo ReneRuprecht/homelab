@@ -9,13 +9,3 @@ general_ufw_ports:
     proto: tcp
     state: enabled
     comment: "Vault"
-
-  - port: "8500"
-    proto: tcp
-    state: enabled
-    comment: "HAPROXY - Consul"
-
-  - port: "9100"
-    proto: tcp
-    state: enabled
-    comment: "Node Exporter"
