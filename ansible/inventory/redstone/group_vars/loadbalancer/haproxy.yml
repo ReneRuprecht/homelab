@@ -31,6 +31,9 @@ haproxy_frontends:
       - acl_name: "is_consul"
         acl_condition: "hdr(host) -i consul.{{ server_url }}"
         backend_name: "consul_backend"
+      - acl_name: "is_vault"
+        acl_condition: "hdr(host) -i vault.{{ server_url }}"
+        backend_name: "vault_backend"
     options:
       - "httplog"
 
@@ -51,3 +54,19 @@ haproxy_backends:
         address: consul-02.redstone
       - name: consul-03.redstone
         address: consul-03.redstone
+  - name: "vault_backend"
+    mode: "http"
+    balance: "first"
+    port: 8200
+    http_check:
+      send:
+        method: GET
+        uri: /v1/sys/health
+      expect: status 200
+    servers:
+      - name: vault-01.redstone
+        address: vault-01.redstone
+      - name: vault-02.redstone
+        address: vault-02.redstone
+      - name: vault-03.redstone
+        address: vault-03.redstone

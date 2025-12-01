@@ -22,7 +22,7 @@ variable "vms" {
     })
     vm_state = string
     tags     = optional(string)
-    clone    = optional(string, "debian-12-cloud")
+    clone    = optional(string, "debian-13-cloud")
 
     cloudinit = optional(object({
       storage = optional(string, "internal-storage")
@@ -36,8 +36,8 @@ variable "vms" {
       storage = optional(string, "internal-storage")
       format  = optional(string, "raw")
       }), {
-      size    = "20G"
-      size_mb = "20000"
+      size    = "15G"
+      size_mb = "15000"
     })
 
     scsi_extra_disks = optional(list(object({
