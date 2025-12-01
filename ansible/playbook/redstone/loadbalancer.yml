@@ -6,7 +6,7 @@
   roles:
     - role: reneruprecht.general
     - role: reneruprecht.acme
-    - role: robertdebock.haproxy
+    - role: reneruprecht.haproxy
     - role: evrardjp.keepalived
     - role: grafana.grafana.promtail
     - role: prometheus.prometheus.node_exporter

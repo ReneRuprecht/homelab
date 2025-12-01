@@ -16,6 +16,10 @@ roles:
     src: "https://github.com/reneruprecht/ansible-role-acme"
     scm: git
     version: main
+  - name: reneruprecht.haproxy
+    src: "https://github.com/reneruprecht/ansible-role-haproxy"
+    scm: git
+    version: main
   - name: reneruprecht.general
     src: "https://github.com/reneruprecht/ansible-role-general"
     scm: git
@@ -45,10 +49,6 @@ roles:
     name: ansible-consul
     scm: git
     version: master
-  - src: https://github.com/robertdebock/ansible-role-haproxy.git
-    name: robertdebock.haproxy
-    scm: git
-    version: "4.8.7"
   - src: https://github.com/evrardjp/ansible-keepalived.git
     name: evrardjp.keepalived
     scm: git

@@ -17,30 +17,37 @@ servers_consul: !vault |
   37636431333863643766363761383632623631346363393465613335363836626634613938633431
   3031366231633763363061396432393636376264666632663539
 
-haproxy_frontends:
-  - name: consul
-    address: "*"
-    port: 8500
-    ssl: true
-    crts:
-      - "/etc/acme/certs/wildcard.{{ server_url }}.pem"
-    default_backend: consul
+haproxy_stats_address: "0.0.0.0"
+haproxy_stats_port: 8500
 
-haproxy_backend_default_balance: roundrobin
+haproxy_frontends:
+  - name: "https"
+    address: "0.0.0.0"
+    port: 443
+    ssl_enable: true
+    ssl_certificates:
+      - "/etc/acme/certs/wildcard.{{ server_url }}.pem"
+    routes:
+      - acl_name: "is_consul"
+        acl_condition: "hdr(host) -i consul.{{ server_url }}"
+        backend_name: "consul_backend"
+    options:
+      - "httplog"
+
 haproxy_backends:
-  - name: consul
-    httpcheck: true
-    balance: roundrobin
+  - name: "consul_backend"
+    mode: "http"
+    balance: "roundrobin"
+    port: 8500
+    http_check:
+      send:
+        method: GET
+        uri: "/v1/status/leader"
+      expect: "status 200"
     servers:
       - name: consul-01.redstone
         address: consul-01.redstone
-        port: 8500
       - name: consul-02.redstone
         address: consul-02.redstone
-        port: 8500
       - name: consul-03.redstone
         address: consul-03.redstone
-        port: 8500
-    port: 8500
-    options:
-      - check
