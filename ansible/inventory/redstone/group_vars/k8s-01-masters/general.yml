@@ -1,0 +1,41 @@
+---
+general_ufw_ports:
+  - port: "443"
+    proto: tcp
+    state: enabled
+    comment: "https"
+
+  - port: "6443"
+    proto: tcp
+    state: enabled
+    comment: "K8s Api"
+
+  - port: "2379"
+    proto: tcp
+    state: enabled
+    comment: "K8s etcd-server client"
+
+  - port: "2380"
+    proto: tcp
+    state: enabled
+    comment: "K8s etcd-server client"
+
+  - port: "8472"
+    proto: udp
+    state: enabled
+    comment: "k8s flannel"
+
+  - port: "10250"
+    proto: tcp
+    state: enabled
+    comment: "K8s kubelet api"
+
+  - port: "10257"
+    proto: tcp
+    state: enabled
+    comment: "K8s kube-controller-manager"
+
+  - port: "10259"
+    proto: tcp
+    state: enabled
+    comment: "K8s kube-scheduler"
