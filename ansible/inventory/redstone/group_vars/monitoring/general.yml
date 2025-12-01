@@ -30,6 +30,11 @@ general_ufw_ports:
     state: enabled
     comment: "Prometheus - HTTP"
 
+  - port: "9093"
+    proto: tcp
+    state: enabled
+    comment: "Prometheus - Alertmanager"
+
   - port: "9100"
     proto: tcp
     state: enabled

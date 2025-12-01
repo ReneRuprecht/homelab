@@ -26,3 +26,23 @@ prometheus_scrape_configs:
       - targets:
           - "dns-01.redstone:9119"
           - "dns-02.redstone:9119"
+
+prometheus_alertmanager_config:
+  - scheme: http
+    static_configs:
+      - targets: ["127.0.0.1:9093"]
+
+_webhook_url: "http://192.168.178.55:8000/api/v1/alerts"
+alertmanager_receivers:
+  - name: "webhook-handler"
+    webhook_configs:
+      - url: "{{ _webhook_url }}"
+        send_resolved: true
+        http_config:
+          follow_redirects: true
+          tls_config:
+            insecure_skip_verify: true
+
+alertmanager_route:
+  receiver: "webhook-handler"
+  group_by: ["alertname", "team"]
