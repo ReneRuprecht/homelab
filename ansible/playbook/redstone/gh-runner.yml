@@ -4,6 +4,7 @@
   become: true
   roles:
     - role: reneruprecht.general
+    - role: ansible-consul
     - role: monolithprojects.github_actions_runner
     - role: geerlingguy.docker
     - role: geerlingguy.nodejs

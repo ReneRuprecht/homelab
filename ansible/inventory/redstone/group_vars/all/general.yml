@@ -1,5 +1,6 @@
 ---
 general_environment: development
+general_hostname: "{{ inventory_hostname }}"
 
 general_debian_base_packages:
   - ssh

@@ -8,3 +8,4 @@
     - role: ansible-consul
     - role: grafana.grafana.promtail
     - role: prometheus.prometheus.node_exporter
+    - role: prometheus.prometheus.consul_exporter

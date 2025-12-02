@@ -1,0 +1,17 @@
+---
+consul_node_role: client
+consul_services:
+  - name: node_exporter
+    id: node_exporter
+    port: 9100
+    address: "{{ general_hostname }}"
+    checks:
+      - id: node_exporter_health
+        name: Node Exporter HTTP Health Check
+        http: http://127.0.0.1:9100/metrics
+        interval: 10s
+        timeout: 1s
+    tags:
+      - metrics
+      - node
+      - prometheus

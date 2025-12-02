@@ -10,3 +10,4 @@
     - role: prometheus.prometheus.prometheus
     - role: prometheus.prometheus.node_exporter
     - role: grafana.grafana.grafana
+    - role: ansible-consul

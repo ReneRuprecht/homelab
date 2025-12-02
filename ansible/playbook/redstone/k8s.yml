@@ -14,8 +14,16 @@
       ansible.builtin.package:
         name: conntrack
         state: present
+
+    - name: Install acl
+      ansible.builtin.package:
+        name: acl
+        state: present
   roles:
     - role: reneruprecht.general
+    - role: ansible-consul
+    - role: grafana.grafana.promtail
+    - role: prometheus.prometheus.node_exporter
     - role: reneruprecht.kubernetes
   post_tasks:
     - name: Link cni binaries
