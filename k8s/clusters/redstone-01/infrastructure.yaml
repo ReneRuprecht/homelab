@@ -12,48 +12,48 @@ spec:
     name: flux-system
   path: ./k8s/infrastructure/controllers/redstone-01
   prune: true
-# ---
-# apiVersion: source.toolkit.fluxcd.io/v1
-# kind: GitRepository
-# metadata:
-#   name: homelab-sec
-#   namespace: flux-system
-# spec:
-#   interval: 5m0s
-#   url: https://github.com/reneruprecht/homelab-sec.git
-#   ref:
-#     branch: main
-#   secretRef:
-#     name: homelab-sec
-# ---
-# apiVersion: kustomize.toolkit.fluxcd.io/v1
-# kind: Kustomization
-# metadata:
-#   name: infrastucture-sec-controllers
-#   namespace: flux-system
-# spec:
-#   interval: 30s
-#   retryInterval: 1m
-#   timeout: 5m
-#   sourceRef:
-#     kind: GitRepository
-#     name: homelab-sec
-#   path: ./k8s/infrastructure/controllers/redstone-01
-#   prune: true
-# ---
-# apiVersion: kustomize.toolkit.fluxcd.io/v1
-# kind: Kustomization
-# metadata:
-#   name: infrastucture-sec-configs
-#   namespace: flux-system
-# spec:
-#   interval: 30s
-#   retryInterval: 1m
-#   timeout: 5m
-#   dependsOn:
-#     - name: infrastucture-sec-controllers
-#   sourceRef:
-#     kind: GitRepository
-#     name: homelab-sec
-#   path: ./k8s/infrastructure/configs/redstone-01
-#   prune: true
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: homelab-sec
+  namespace: flux-system
+spec:
+  interval: 5m0s
+  url: https://github.com/reneruprecht/homelab-sec.git
+  ref:
+    branch: main
+  secretRef:
+    name: homelab-sec
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastucture-sec-controllers
+  namespace: flux-system
+spec:
+  interval: 30s
+  retryInterval: 1m
+  timeout: 5m
+  sourceRef:
+    kind: GitRepository
+    name: homelab-sec
+  path: ./k8s/infrastructure/controllers/redstone-01
+  prune: true
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: infrastucture-sec-configs
+  namespace: flux-system
+spec:
+  interval: 30s
+  retryInterval: 1m
+  timeout: 5m
+  dependsOn:
+    - name: infrastucture-sec-controllers
+  sourceRef:
+    kind: GitRepository
+    name: homelab-sec
+  path: ./k8s/infrastructure/configs/redstone-01
+  prune: true
