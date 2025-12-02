@@ -1,4 +1,15 @@
 ---
+server_url_consul: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          38396336383935363064323133653837643466633366613635636362623363323861393234346463
+          6231626161373836656639386133393033316235626439310a383536653162326161356461616632
+          35636135343733366537363665316339316638656661323036663431373736383833316538663937
+          3466396239653130370a643337323130303335636635346266323363616134613339396538346132
+          61363965376163666331326234383935383662646565646263663063336630646164363130363734
+          6233313465336232623361646235383439336635663439323864
+
+_consul_exporter_targets: "{{ groups['consul'] | map('regex_replace', '^(.*)$', '\\1:9107') | list }}"
+
 prometheus_scrape_configs:
   - job_name: "prometheus"
     metrics_path: "{{ prometheus_metrics_path }}"
@@ -6,23 +17,20 @@ prometheus_scrape_configs:
       - targets:
           - "{{ ansible_fqdn | default(ansible_host) | default('localhost') }}:9090"
 
-  - job_name: "node_exporter"
-    metrics_path: "{{ prometheus_metrics_path }}"
+  - job_name: consul_exporter
     static_configs:
-      - targets:
-          - "monitoring-01.redstone:9100"
-          - "consul-01.redstone:9100"
-          - "consul-02.redstone:9100"
-          - "consul-03.redstone:9100"
-          - "dns-01.redstone:9100"
-          - "dns-02.redstone:9100"
-          - "loadbalancer-01.redstone:9100"
-          - "loadbalancer-02.redstone:9100"
-          - "gh-runner-01.redstone:9100"
-          - "gh-runner-02.redstone:9100"
-  - job_name: "bind_exporter"
-    metrics_path: "{{ prometheus_metrics_path }}"
-    static_configs:
-      - targets:
-          - "dns-01.redstone:9119"
-          - "dns-02.redstone:9119"
+      - targets: "{{ _consul_exporter_targets }}"
+
+  - job_name: "node_exporter_consul_sd"
+    consul_sd_configs:
+      - server: "{{ server_url_consul }}"
+        scheme: "https"
+        services: ["node_exporter"]
+        refresh_interval: 30s
+
+  - job_name: "bind_exporter_consul_sd"
+    consul_sd_configs:
+      - server: "{{ server_url_consul }}"
+        scheme: "https"
+        services: ["bind_exporter"]
+        refresh_interval: 30s

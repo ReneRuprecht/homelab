@@ -1,7 +1,5 @@
 ---
-consul_group_name: consul
-consul_client_address: "0.0.0.0"
-
+consul_node_role: client
 consul_services:
   - name: node_exporter
     id: node_exporter
@@ -17,17 +15,17 @@ consul_services:
       - metrics
       - node
       - prometheus
-  - name: consul_exporter
-    id: consul_exporter
-    port: 9107
+  - name: bind_exporter
+    id: bind_exporter
+    port: 9119
     address: "{{ general_hostname }}"
     checks:
-      - id: consul_exporter_health
-        name: Consul Exporter HTTP Health Check
-        http: http://127.0.0.1:9107/metrics
+      - id: bind_exporter_health
+        name: Bind Exporter HTTP Health Check
+        http: http://127.0.0.1:9119/metrics
         interval: 10s
         timeout: 1s
     tags:
       - metrics
-      - consul
+      - bind
       - prometheus

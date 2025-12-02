@@ -5,6 +5,7 @@
   become: true
   roles:
     - role: reneruprecht.general
+    - role: ansible-consul
     - role: systemli.bind9
     - role: grafana.grafana.promtail
     - role: prometheus.prometheus.node_exporter

@@ -17,6 +17,29 @@ general_ufw_ports:
     state: enabled
     comment: "SSH"
 
+  - port: "8301"
+    proto: tcp
+    state: enabled
+    comment: "Consul LAN"
+  - port: "8301"
+    proto: udp
+    state: enabled
+    comment: "Consul LAN"
+
+  - port: "8500"
+    proto: tcp
+    state: enabled
+    comment: "Consul HTTP"
+
+  - port: "8600"
+    proto: tcp
+    state: enabled
+    comment: "Consul DNS"
+  - port: "8600"
+    proto: udp
+    state: enabled
+    comment: "Consul DNS"
+
   - port: "9100"
     proto: tcp
     state: enabled

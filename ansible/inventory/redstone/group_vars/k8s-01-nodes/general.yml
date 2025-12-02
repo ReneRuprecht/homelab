@@ -10,10 +10,38 @@ general_ufw_ports:
     state: enabled
     comment: "https"
 
+  - port: "8301"
+    proto: tcp
+    state: enabled
+    comment: "Consul LAN"
+  - port: "8301"
+    proto: udp
+    state: enabled
+    comment: "Consul LAN"
+
   - port: "8472"
     proto: udp
     state: enabled
     comment: "k8s flannel"
+
+  - port: "8500"
+    proto: tcp
+    state: enabled
+    comment: "Consul HTTP"
+
+  - port: "8600"
+    proto: tcp
+    state: enabled
+    comment: "Consul DNS"
+  - port: "8600"
+    proto: udp
+    state: enabled
+    comment: "Consul DNS"
+
+  - port: "9100"
+    proto: tcp
+    state: enabled
+    comment: "Node Exporter"
 
   - port: "10250"
     proto: tcp

@@ -36,16 +36,6 @@ general_ufw_ports:
     state: enabled
     comment: "Consul HTTP"
 
-  - port: "8501"
-    proto: tcp
-    state: enabled
-    comment: "Consul HTTPS"
-
-  - port: "8502"
-    proto: tcp
-    state: enabled
-    comment: "Consul GRPC"
-
   - port: "8503"
     proto: tcp
     state: enabled
@@ -64,3 +54,8 @@ general_ufw_ports:
     proto: tcp
     state: enabled
     comment: "Node Exporter"
+
+  - port: "9107"
+    proto: tcp
+    state: enabled
+    comment: "Consul Exporter"
