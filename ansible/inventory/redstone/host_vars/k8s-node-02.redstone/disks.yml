@@ -1,7 +1,6 @@
 ---
 disks:
-  - name: data
-    disk: sdb
+  - name: scsi1
     mount: /mnt/longhorn
     state: present
     mount_state: mounted
