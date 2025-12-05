@@ -1,0 +1,14 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: grafana-cert
+  namespace: monitoring
+spec:
+  secretName: grafana-cert-tls
+  commonName: monitoring.redstone
+  dnsNames:
+    - monitoring.redstone
+  issuerRef:
+    name: vault-issuer
+    kind: ClusterIssuer

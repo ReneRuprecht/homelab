@@ -6,6 +6,8 @@ metadata:
   namespace: monitoring
 spec:
   ingressClassName: nginx
+  tls:
+    - secretName: grafana-cert-tls
   rules:
     - http:
         paths:
