@@ -5,6 +5,7 @@ resources:
   - external-secrets
   - ingress-nginx
   - metallb
+  - cert-manager
 # - airflow
 # - argocd
 # - cloudnativepg
