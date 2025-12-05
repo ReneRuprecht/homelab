@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
 - metrics-server
 # - kube-prometheus-stack
-# - grafana
+- grafana

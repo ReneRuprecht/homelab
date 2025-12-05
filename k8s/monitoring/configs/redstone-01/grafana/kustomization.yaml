@@ -3,7 +3,6 @@ kind: Kustomization
 namespace: monitoring
 resources:
 - ../../base/grafana
-- pv.yaml
 configMapGenerator:
   - name: dashboards
     files:
