@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - longhorn
   - external-secrets
+  - ingress-nginx
 # - airflow
 # - argocd
 # - cloudnativepg
