@@ -1,0 +1,12 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: grafana
+  namespace: monitoring
+spec:
+  values:
+    admin:
+      existingSecret: vault-grafana
+      admin-user: username
+      admin-password: password

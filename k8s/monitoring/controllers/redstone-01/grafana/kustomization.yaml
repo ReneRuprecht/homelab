@@ -3,14 +3,4 @@ kind: Kustomization
 resources:
 - ../../base/grafana
 patches:    
-  - target:
-      kind: HelmRelease
-      name: grafana
-    patch: |
-      - op: add
-        path: /spec/values/admin
-        value: 
-          existingSecret: vault-grafana
-          admin-user: username
-          admin-password: password
-
+  - path: ./release-patch.yaml
