@@ -10,3 +10,7 @@ spec:
       existingSecret: vault-grafana
       admin-user: username
       admin-password: password
+    grafana.ini:
+      server:
+        root_url: http://192.168.178.249/grafana/
+        serve_from_sub_path: true
