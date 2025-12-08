@@ -23,7 +23,7 @@ jobs:
     if: ${{ inputs.dirs != '[]' }}
     runs-on: self-hosted
     container:
-      image:  reneruprecht/ci-node22
+      image: reneruprecht/ci-node22
     strategy:
       matrix:
         env_name: ${{ fromJSON(inputs.dirs) }}
@@ -48,22 +48,6 @@ jobs:
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
-          {
-            echo "plan_name<<EOF"
-            echo "${ENV_NAME}_${COMPONENT}"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
-          PLAN_DIR="${ENV_NAME}_${COMPONENT}"
-
-          PLANFILE="${PLAN_DIR}/${ENV_NAME}_${COMPONENT}.out"
-
-          {
-            echo "plan_file<<EOF"
-            echo "$PLANFILE"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
           WORKDIR="terraform/environments/$ENV_NAME/$COMPONENT"
           {
             echo "workdir<<EOF"
@@ -71,66 +55,15 @@ jobs:
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
-          PLAN_SAVE_SUFFIX="-plans"
-          {
-            echo "plan_save_suffix<<EOF"
-            echo "$PLAN_SAVE_SUFFIX"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
-
-      - name: Download encrypted terraform plans artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: "${{ steps.vars.outputs.plan_name }}${{ steps.vars.outputs.plan_save_suffix }}"
-          path: ${{ steps.vars.outputs.workdir }}
-        continue-on-error: true
-
-      - name: Check if plan exists
-        working-directory: ${{ steps.vars.outputs.workdir }}
-        id: check-plans
-        run: |
-          if [ -f "${{ steps.vars.outputs.plan_name }}.tar.gz.enc" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            {
-              echo "## ℹ️ **INFO: NO PLAN FILE TO APPLY!** ℹ️"
-              echo '```'
-              echo "##############################################"
-              echo "###                                        ###"
-              echo "###     ℹ️        NO PLAN FILE       ℹ️    ###"
-              echo "###                                        ###"
-              echo "##############################################"
-              echo '```'
-            } >> $GITHUB_STEP_SUMMARY
-            exit 0
-          fi
-
-      - name: Decrypt and unzip plan if exists
-        working-directory: ${{ steps.vars.outputs.workdir }}
-        if: steps.check-plans.outputs.exists == 'true'
-        env:
-          PLAN_ENC: "${{ steps.vars.outputs.plan_name }}.tar.gz.enc"
-          PLAN_TAR: "${{ steps.vars.outputs.plan_name }}.tar.gz"
-        run: |
-          openssl enc -d -aes-256-cbc -pbkdf2 -k "$SECRET_KEY" -in "${PLAN_ENC}" -out "${PLAN_TAR}"
-          tar -xzf "${PLAN_TAR}"
-
       - name: Setup Terraform
-        if: steps.check-plans.outputs.exists == 'true'
         uses: hashicorp/setup-terraform@v3
 
       - name: Terraform Init
-        if: steps.check-plans.outputs.exists == 'true'
         working-directory: ${{ steps.vars.outputs.workdir }}
         run: |
           terraform init -backend-config="address=${{ secrets.TERRAFORM_STATE_ADDRESS }}"
 
       - name: Terraform apply
-        if: steps.check-plans.outputs.exists == 'true'
-        env:
-          PLAN_FILE: "${{ steps.vars.outputs.plan_file }}"
         working-directory: ${{ steps.vars.outputs.workdir }}
         run: |
-          terraform apply -auto-approve "${PLAN_FILE}"
+          terraform apply -auto-approve

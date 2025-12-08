@@ -1,0 +1,104 @@
+name: Deploy Ansible Workflow
+
+on:
+  push:
+    paths:
+      - 'ansible/inventory/**/**'
+      - 'ansible/playbooks/**/**'
+    branches:
+      - main
+
+env:
+  ANSIBLE_VAULT: ${{ secrets.ANSIBLE_VAULT }}
+  ANSIBLE_SSH_KEY: ${{ secrets.SSH_KEY }}
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+
+jobs:
+  get-dirs:
+    uses: ./.github/workflows/get-dirs.yml
+    with:
+      base_dir: "ansible/inventory"
+      min_depth: "3"
+      max_depth: "4"
+
+  prepare:
+    needs: get-dirs
+    uses: ./.github/workflows/ansible-playbook-prepare.yml
+    with:
+      dirs: "${{ needs.get-dirs.outputs.dirs}}"
+
+  filter-dns:
+    needs: prepare
+    if: needs.prepare.outputs.playbook_env_mapping != '[]' &&
+        github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/ansible-filter-playbook.yml
+    with:
+      filter: "dns"
+      playbook_env_mapping: "${{ needs.prepare.outputs.playbook_env_mapping }}"
+
+  deploy-dns:
+    needs: [prepare, filter-dns]
+    if: needs.filter-dns.outputs.playbook_env_mapping != '[]' &&
+        github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/ansible-playbook.yml
+    secrets: inherit
+    with:
+      playbook_env_mapping: "${{ needs.filter-dns.outputs.playbook_env_mapping }}"
+      check_mode: "false"
+
+  filter-lb:
+    needs: [prepare, deploy-dns]
+    if: needs.prepare.outputs.playbook_env_mapping != '[]' &&
+        github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/ansible-filter-playbook.yml
+    with:
+      filter: "loadbalancer"
+      playbook_env_mapping: "${{ needs.prepare.outputs.playbook_env_mapping }}"
+
+  deploy-lb:
+    needs: [prepare, filter-lb]
+    if: needs.filter-lbs.outputs.playbook_env_mapping != '[]' &&
+        github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/ansible-playbook.yml
+    secrets: inherit
+    with:
+      playbook_env_mapping: "${{ needs.filter-lb.outputs.playbook_env_mapping }}"
+      check_mode: "false"
+
+  filter-extra:
+    needs: [prepare, deploy-dns, deploy-lb]
+    if: needs.prepare.outputs.playbook_env_mapping != '[]' &&
+        github.ref == 'refs/heads/main'
+    runs-on: self-hosted
+    container:
+      image: reneruprecht/ci-python312
+    outputs:
+      playbook_env_mapping: ${{ steps.filter_extra.outputs.playbook_env_mapping }}
+    steps:
+      - name: filter_extra
+        id: filter_extra
+        run: |
+          INPUT_PLAYBOOK_ENV_MAPPING='${{ needs.prepare.outputs.playbook_env_mapping }}'
+
+          PLAYBOOK_ENV_MAPPING=$(echo "$INPUT_PLAYBOOK_ENV_MAPPING" | jq -c '[
+            .[] | select(
+              (.playbook | startswith("dns") | not) and
+              (.playbook | startswith("loadbalancer") | not)
+            )
+          ]')
+
+          {
+            echo "playbook_env_mapping<<EOF"
+            echo "$PLAYBOOK_ENV_MAPPING"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+
+  deploy-extra:
+    needs: [prepare, filter-extra]
+    if: needs.filter-extra.outputs.playbook_env_mapping != '[]' &&
+        github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/ansible-playbook.yml
+    secrets: inherit
+    with:
+      playbook_env_mapping: "${{ needs.filter-extra.outputs.playbook_env_mapping }}"
+      check_mode: "false"

@@ -1,0 +1,37 @@
+name: Pr Ansible Workflow
+
+on:
+  pull_request:
+    paths:
+      - 'ansible/inventory/**/**'
+      - 'ansible/playbooks/**/**'
+    branches:
+      - main
+
+env:
+  SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  ANSIBLE_VAULT: ${{ secrets.ANSIBLE_VAULT }}
+  ANSIBLE_SSH_KEY: ${{ secrets.SSH_KEY }}
+
+jobs:
+  get-dirs:
+    uses: ./.github/workflows/get-dirs.yml
+    with:
+      base_dir: "ansible/inventory"
+      processing_mode: "changed"
+      min_depth: "3"
+      max_depth: "4"
+
+  ansible-playbook-prepare:
+    needs: get-dirs
+    uses: ./.github/workflows/ansible-playbook-prepare.yml
+    with:
+      dirs: "${{ needs.get-dirs.outputs.dirs}}"
+
+  ansible-playbooks-check:
+    needs: ansible-playbook-prepare
+    uses: ./.github/workflows/ansible-playbook.yml
+    secrets: inherit
+    with:
+      playbook_env_mapping: "${{ needs.ansible-playbook-prepare.outputs.playbook_env_mapping }}"
+      check_mode: "true"

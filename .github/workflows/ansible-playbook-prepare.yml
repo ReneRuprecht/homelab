@@ -1,13 +1,10 @@
-name: Ansible Init
+name: Ansible Prepare Playbooks / Env
 
 on:
   workflow_call:
     outputs:
-      matrix:
-        value: ${{ jobs.init.outputs.playbook_mapping }}
-        description: "Playbook and Env mapping"
-      can_run:
-        value: ${{ jobs.init.outputs.playbooks_found }}
+      playbook_env_mapping:
+        value: ${{ jobs.prepare.outputs.playbook_env_mapping }}
         description: "Playbook and Env mapping"
     inputs:
       dirs:
@@ -15,13 +12,12 @@ on:
         type: string
 
 jobs:
-  init:
+  prepare:
     runs-on: self-hosted
     container:
-      image:  reneruprecht/ci-python312
+      image: reneruprecht/ci-python312
     outputs:
-      playbook_mapping: ${{ steps.setup.outputs.playbook_mapping }}
-      playbooks_found: ${{ steps.check_playbook.outputs.playbooks_found }}
+      playbook_env_mapping: ${{ steps.setup.outputs.playbook_env_mapping }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -31,15 +27,15 @@ jobs:
       - name: Setup Playbooks mapping
         working-directory: "ansible"
         env:
-          JSON_DIRS: "${{ inputs.dirs }}"
+          DIRS: "${{ inputs.dirs }}"
         id: setup
         run: |
-          JSON="${JSON_DIRS}"
+          RESULT=$(python3 select_playbook.py "$DIRS" | jq -c .)
 
-          RESULT=$(python3 select_playbook.py "$JSON" | jq -c .)
+          echo "$RESULT"
 
           {
-            echo "playbook_mapping<<EOF"
+            echo "playbook_env_mapping<<EOF"
             echo "$RESULT"
             echo "EOF"
           } >> $GITHUB_OUTPUT
@@ -47,7 +43,7 @@ jobs:
       - name: Check if Playbook exists
         id: check_playbook
         run: |
-          MAPPING="${{ steps.setup.outputs.playbook_mapping }}"
+          MAPPING="${{ steps.setup.outputs.playbook_env_mapping }}"
           if [ "$MAPPING" = "[]" ]; then
             {
               echo "## ℹ️ **INFO: NO PLAYBOOKS TO RUN!** ℹ️"
@@ -60,19 +56,7 @@ jobs:
               echo '```'
             } >> $GITHUB_STEP_SUMMARY
 
-            {
-              echo "playbooks_found<<EOF"
-              echo "false"
-              echo "EOF"
-            } >> $GITHUB_OUTPUT
-
           else
-            {
-              echo "playbooks_found<<EOF"
-              echo "true"
-              echo "EOF"
-            } >> $GITHUB_OUTPUT
-
             {
               echo "## ℹ️ **CHANGES DETECTED** ℹ️"
               echo '```'
@@ -86,7 +70,7 @@ jobs:
             } >> $GITHUB_STEP_SUMMARY
 
 
-              JSON='${{ steps.setup.outputs.playbook_mapping }}'
+              JSON='${{ steps.setup.outputs.playbook_env_mapping }}'
 
             {
               echo "| Playbook | Env |"

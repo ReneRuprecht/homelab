@@ -6,9 +6,10 @@ on:
       base_dir:
         required: true
         type: string
-      on:
+      processing_mode:
         type: string
         description: "Get 'all' or only 'changed' dirs"
+        default: "changed"
       min_depth:
         type: string
         description: "Min depth for the find"
@@ -26,7 +27,7 @@ jobs:
   get-dirs:
     runs-on: self-hosted
     container:
-      image:  reneruprecht/ci-node22
+      image: reneruprecht/ci-node22
     outputs:
       dirs: ${{ steps.get-dirs.outputs.dirs }}
     steps:
@@ -36,16 +37,16 @@ jobs:
 
       - name: Info Banner
         run: |
-          CHOICE="$(echo ${{ inputs.on }} | tr [a-z] [A-Z])"
+          CHOICE="$(echo ${{ inputs.processing_mode }} | tr [a-z] [A-Z])"
 
           {
             echo "## ℹ️  SEARCH FOR ${CHOICE} DIRS"
           } >> $GITHUB_STEP_SUMMARY
 
-      - name: Find all changed terraform dirs
+      - name: Find all / changed dirs
         id: get-dirs
         run: |
-          CHOICE="${{ inputs.on }}"
+          CHOICE="${{ inputs.processing_mode }}"
           DIR="${{ inputs.base_dir }}"
           MINDEPTH="${{ inputs.min_depth }}"
           MAXDEPTH="${{ inputs.max_depth }}"

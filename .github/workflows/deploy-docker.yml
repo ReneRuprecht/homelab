@@ -1,26 +1,18 @@
-name: Docker Workflow
-
+name: Deploy Docker Workflow
 
 on:
-  workflow_call:
-    inputs:
-      on:
-        type: string
-        description: "Will build and push (push only if merged) 'all' or only 'changed' docker images"
-        default: "changed"
-  workflow_dispatch:
-    inputs:
-      on:
-        type: string
-        description: "Will build 'all' or only 'changed' docker images"
-        default: "changed"
+  push:
+    paths:
+      - 'docker/ci/**/**'
+    branches:
+      - 'main'
 
 jobs:
   get-dirs:
     uses: ./.github/workflows/get-dirs.yml
     with:
       base_dir: "docker"
-      on: "${{ inputs.on }}"
+      processing_mode: "changed"
 
   docker:
     if: ${{ needs.get-dirs.outputs.dirs != '[]' }}
@@ -42,6 +34,7 @@ jobs:
         id: build
         run: |
           IMG_NAME=$(echo "${{ matrix.image_dirs }}" | tr '/' '-')
+          echo "Building image: $IMG_NAME"
           docker build -t "${{ secrets.DOCKER_USERNAME }}/${IMG_NAME}:latest" .
           {
             echo "image_name<<EOF"
@@ -49,11 +42,9 @@ jobs:
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
-
       - name: Push
-        if: ${{ github.ref == 'refs/heads/main' }}
         working-directory: "docker/ci"
         run: |
-          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
           IMG_NAME="${{ steps.build.outputs.image_name }}"
-          docker image push "${{ secrets.DOCKER_USERNAME }}/${IMG_NAME}"
+          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
+          docker image push "${{ secrets.DOCKER_USERNAME }}/${IMG_NAME}:latest"

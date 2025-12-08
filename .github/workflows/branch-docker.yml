@@ -1,0 +1,41 @@
+name: Branch Docker Workflow
+
+on:
+  push:
+    paths:
+      - 'docker/ci/**/**'
+    branches:
+      - 'feat/**'
+      - 'fix/**'
+      - 'refactor/**'
+      - 'chore/**'
+
+jobs:
+  get-dirs:
+    uses: ./.github/workflows/get-dirs.yml
+    with:
+      base_dir: "docker"
+      processing_mode: "changed"
+
+  docker:
+    if: ${{ needs.get-dirs.outputs.dirs != '[]' }}
+    container:
+      image:  "docker:28.3.3-dind-alpine3.22"
+    needs: get-dirs
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        image_dirs: ${{ fromJSON(needs.get-dirs.outputs.dirs) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        working-directory: "docker/${{ matrix.image_dirs }}"
+        id: build
+        run: |
+          IMG_NAME=$(echo "${{ matrix.image_dirs }}" | tr '/' '-')
+          echo "Building image: $IMG_NAME"
+          docker build -t "$IMG_NAME:latest" .

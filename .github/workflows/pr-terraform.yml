@@ -1,19 +1,11 @@
-name: Terraform Workflow
-
+name: Pr Terraform Workflow
 
 on:
-  workflow_call:
-    inputs:
-      on:
-        type: string
-        description: "Get 'all' or only 'changed' dirs"
-        default: "changed"
-  workflow_dispatch:
-    inputs:
-      on:
-        type: string
-        description: "Get 'all' or only 'changed' dirs"
-        default: "all"
+  pull_request:
+    paths:
+      - 'terraform/environments/**/**'
+    branches:
+      - main
 
 env:
   TF_VERSION: 1.12.2
@@ -32,7 +24,7 @@ jobs:
     uses: ./.github/workflows/get-dirs.yml
     with:
       base_dir: "terraform/environments"
-      on: "${{ inputs.on }}"
+      processing_mode: "changed"
 
   terraform-plan:
     uses: ./.github/workflows/terraform-plan.yml
@@ -40,14 +32,3 @@ jobs:
     secrets: inherit
     with:
       dirs: "${{ needs.get-dirs.outputs.dirs }}"
-
-  terraform-apply:
-    uses: ./.github/workflows/terraform-apply.yml
-    if: ${{ github.ref == 'refs/heads/main' }}
-    needs: 
-      - get-dirs
-      - terraform-plan
-    secrets: inherit
-    with:
-      dirs: "${{ needs.get-dirs.outputs.dirs }}"
-    

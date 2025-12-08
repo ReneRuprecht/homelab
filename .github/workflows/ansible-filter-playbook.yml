@@ -1,0 +1,52 @@
+name: Ansible Filter Playbooks
+
+on:
+  workflow_call:
+    outputs:
+      playbook_env_mapping:
+        value: ${{ jobs.filter.outputs.playbook_env_mapping }}
+        description: "Playbook and Env mapping"
+    inputs:
+      filter:
+        required: true
+        type: string
+      playbook_env_mapping:
+        description: "Playbook and Env mapping as json"
+        required: true
+        type: string
+
+jobs:
+  filter:
+    runs-on: self-hosted
+    container:
+      image: reneruprecht/ci-python312
+    outputs:
+      playbook_env_mapping: ${{ steps.filter.outputs.playbook_env_mapping }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Filter Playbooks mapping
+        working-directory: "ansible"
+        id: filter
+        env:
+          INPUT_PLAYBOOK_ENV_MAPPING: "${{ inputs.playbook_env_mapping }}"
+        run: |
+          echo "${{ inputs.playbook_env_mapping }}"
+          FILTER='${{ inputs.filter }}'
+
+          PLAYBOOK_ENV_MAPPING=$(echo "$INPUT_PLAYBOOK_ENV_MAPPING" | jq -c "
+            [
+              .[] | select(.playbook | startswith(\"$FILTER\"))
+            ] // []
+          ")
+
+          echo "$PLAYBOOK_ENV_MAPPING"
+
+          {
+            echo "playbook_env_mapping<<EOF"
+            echo "$PLAYBOOK_ENV_MAPPING"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT

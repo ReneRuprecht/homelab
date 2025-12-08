@@ -8,7 +8,7 @@ env:
 on:
   workflow_call:
     inputs:
-      matrix:
+      playbook_env_mapping:
         description: "Playbook and Env mapping as json"
         required: true
         type: string
@@ -24,9 +24,8 @@ jobs:
     container:
       image:  reneruprecht/ci-python312
     strategy:
-      max-parallel: 1
       matrix:
-        playbooks: ${{ fromJSON(inputs.matrix) }}
+        playbook_env_mapping: ${{ fromJSON(inputs.playbook_env_mapping) }}
     steps:
       - name: Prepare
         id: prepare
@@ -34,38 +33,14 @@ jobs:
           ANSIBLE_LOG="/ansible_logs"
           mkdir -p $ANSIBLE_LOG
 
-          PLAYBOOK=${{ matrix.playbooks.playbook}}
-          ENV_NAME=${{ matrix.playbooks.env}}
+          PLAYBOOK=${{ matrix.playbook_env_mapping.playbook}}
+          ENV_NAME=${{ matrix.playbook_env_mapping.env}}
 
-          {
-            echo "log_dir<<EOF"
-            echo "$ANSIBLE_LOG"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
-          {
-            echo "log_file<<EOF"
-            echo "${ANSIBLE_LOG}/${ENV_NAME}_${PLAYBOOK}.log"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
-          {
-            echo "log_name<<EOF"
-            echo "${ENV_NAME}_${PLAYBOOK}.log"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
-          {
-            echo "inventory<<EOF"
-            echo "inventory/${ENV_NAME}/hosts.yml"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-
-          {
-            echo "playbook<<EOF"
-            echo "playbook/${ENV_NAME}/${PLAYBOOK}"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
+          echo "log_dir=$ANSIBLE_LOG" >> $GITHUB_OUTPUT
+          echo "log_file=${ANSIBLE_LOG}/${ENV_NAME}_${PLAYBOOK}.log" >> $GITHUB_OUTPUT
+          echo "log_name=${ENV_NAME}_${PLAYBOOK}.log" >> $GITHUB_OUTPUT
+          echo "inventory=inventory/${ENV_NAME}/hosts.yml" >> $GITHUB_OUTPUT
+          echo "playbook=playbook/${ENV_NAME}/${PLAYBOOK}" >> $GITHUB_OUTPUT
 
       - name: Setup SSH
         run: |
@@ -75,7 +50,7 @@ jobs:
           echo "${{ secrets.ANSIBLE_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           
-      - name: "Run ${{ matrix.playbooks.playbook }} on ${{ matrix.playbooks.env}}"
+      - name: "Run ${{ matrix.playbook_env_mapping.playbook }} on ${{ matrix.playbook_env_mapping.env}}"
         working-directory: ansible
         env:
           ANSIBLE_VAULT_PASSWORD_FILE: ".vaultpass"
@@ -92,15 +67,21 @@ jobs:
             CHECK_MODE="--check"
           fi
 
-            pipenv run ansible-playbook -i "${{ steps.prepare.outputs.inventory }}" --private-key="~/.ssh/id_rsa" "${{ steps.prepare.outputs.playbook }}" ${CHECK_MODE} | tee "${{ steps.prepare.outputs.log_file }}" > /dev/null
+          INVENTORY="${{ steps.prepare.outputs.inventory }}"
+          PLAYBOOK="${{ steps.prepare.outputs.playbook }}"
+          LOG_FILE="${{ steps.prepare.outputs.log_file }}"
+
+          pipenv run ansible-playbook -i "$INVENTORY" --private-key="~/.ssh/id_rsa" "$PLAYBOOK" ${CHECK_MODE} | tee "$LOG_FILE" > /dev/null
 
       - name: Compress log
         run: |
-          tar -czf "${{ steps.prepare.outputs.log_file }}.tar.gz" '${{ steps.prepare.outputs.log_file }}'
+          LOG_FILE="${{ steps.prepare.outputs.log_file }}"
+          tar -czf "${LOG_FILE}.tar.gz" "$LOG_FILE"
 
       - name: Encrypt plans
         run: |
-          openssl enc -aes-256-cbc -salt -pbkdf2 -k "$SECRET_KEY" -in "${{ steps.prepare.outputs.log_file }}.tar.gz" -out "${{ steps.prepare.outputs.log_file }}.tar.gz.enc"
+          LOG_FILE="${{ steps.prepare.outputs.log_file }}"
+          openssl enc -aes-256-cbc -salt -pbkdf2 -k "$SECRET_KEY" -in "${LOG_FILE}.tar.gz" -out "${LOG_FILE}.tar.gz.enc"
 
       - name: Upload encrypted ansible log artifact
         uses: actions/upload-artifact@v4
