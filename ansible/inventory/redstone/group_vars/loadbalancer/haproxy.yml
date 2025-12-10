@@ -36,12 +36,18 @@ haproxy_frontends:
         backend_name: "vault_backend"
     options:
       - "httplog"
+  - name: "vault"
+    address: "0.0.0.0"
+    port: 8200
+    mode: "tcp"
+    default_backend: "vault_backend_tcp"
 
 haproxy_backends:
   - name: "consul_backend"
     mode: "http"
     balance: "roundrobin"
     port: 8500
+    check: true
     http_check:
       send:
         method: GET
@@ -58,11 +64,33 @@ haproxy_backends:
     mode: "http"
     balance: "first"
     port: 8200
+    ssl_enable: true
+    verify: "none"
+    check: true
     http_check:
       send:
         method: GET
         uri: /v1/sys/health
       expect: status 200
+    servers:
+      - name: vault-01.redstone
+        address: vault-01.redstone
+      - name: vault-02.redstone
+        address: vault-02.redstone
+      - name: vault-03.redstone
+        address: vault-03.redstone
+  - name: "vault_backend_tcp"
+    mode: "tcp"
+    balance: "first"
+    port: 8200
+    check: true
+    http_check:
+      send:
+        method: GET
+        uri: /v1/sys/health
+      expect: status 200
+    options:
+      - ssl-hello-chk
     servers:
       - name: vault-01.redstone
         address: vault-01.redstone
