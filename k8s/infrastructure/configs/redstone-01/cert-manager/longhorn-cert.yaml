@@ -1,0 +1,14 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: longhorn-cert
+  namespace: longhorn-system
+spec:
+  secretName: longhorn-cert-tls
+  commonName: longhorn.redstone
+  dnsNames:
+    - longhorn.redstone
+  issuerRef:
+    name: vault-issuer
+    kind: ClusterIssuer

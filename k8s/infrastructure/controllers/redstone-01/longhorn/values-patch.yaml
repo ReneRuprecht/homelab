@@ -10,3 +10,10 @@ spec:
       defaultClassReplicaCount: 1
     defaultSettings:
       defaultDataPath: /mnt/longhorn
+    ingress:
+      enabled: true
+      host: longhorn.redstone
+      tls: true
+      tlsSecret: longhorn-cert-tls
+      ingressClassName: nginx
+      path: /
