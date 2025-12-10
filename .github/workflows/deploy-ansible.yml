@@ -48,7 +48,8 @@ jobs:
 
   filter-lb:
     needs: [prepare, deploy-dns]
-    if: needs.prepare.outputs.playbook_env_mapping != '[]' &&
+    if: always() && 
+        needs.prepare.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ansible-filter-playbook.yml
     with:
@@ -67,7 +68,8 @@ jobs:
 
   filter-extra:
     needs: [prepare, deploy-dns, deploy-lb]
-    if: needs.prepare.outputs.playbook_env_mapping != '[]' &&
+    if: always() && 
+        needs.prepare.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
     runs-on: self-hosted
     container:
