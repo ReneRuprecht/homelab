@@ -58,7 +58,7 @@ jobs:
 
   deploy-lb:
     needs: [prepare, filter-lb]
-    if: needs.filter-lbs.outputs.playbook_env_mapping != '[]' &&
+    if: needs.filter-lb.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ansible-playbook.yml
     secrets: inherit
