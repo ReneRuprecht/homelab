@@ -1,6 +1,0 @@
-- name: Install nfs
-  hosts: nfs
-  gather_facts: true
-  roles:
-    - role: geerlingguy.nfs
-    - role: tinslice.ansible-role-disks

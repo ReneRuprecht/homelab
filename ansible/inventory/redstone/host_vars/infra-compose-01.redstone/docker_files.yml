@@ -1,4 +1,0 @@
----
-docker_file_urls:
-  - url: "https://raw.githubusercontent.com/ReneRuprecht/homelab/refs/heads/main/files/docker/infra-compose-01.redstone/docker-compose.yml"
-    dest: "/tmp/docker-compose.yml"
