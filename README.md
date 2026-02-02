@@ -4,6 +4,7 @@ Das Repository dokumentiert mein selbst gehostetes Homelab basierend auf Proxmox
 Ziel ist es, verschiedene Technologien, Tools und Konzepte durch praktische Erfahrungen besser zu verstehen. 
 Dabei versuche ich, so viel wie möglich zu automatisieren und die gesamte Infrastruktur als Code abzubilden.
 
+
 # 💻 Hardware
 Die eingesetzte Hardware befindet sich in einem selbstgebauten 10" Rack. 
 - Beelink S12 Mini Pro mit 32 GB RAM, einer 1 TB SSD und einer 256 GB NVMe zum Einsatz (Proxmox). 
@@ -116,3 +117,7 @@ Für die Erstellung von VMs werden folgende Environment Variablen benötigt.
 export TF_VAR_vm_user=<vm_user>
 export TF_VAR_vm_ssh_keys=<ssh_keys>
 ```
+
+### Rack
+![alt text](./images/rack.png "Rack")
+![alt text](./images/beelink.png "Beelink")
