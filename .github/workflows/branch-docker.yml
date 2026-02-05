@@ -36,6 +36,16 @@ jobs:
         working-directory: "docker/${{ matrix.image_dirs }}"
         id: build
         run: |
-          IMG_NAME=$(echo "${{ matrix.image_dirs }}" | tr '/' '-')
-          echo "Building image: $IMG_NAME"
-          docker build -t "$IMG_NAME:latest" .
+          set -euo pipefail
+
+          IMG_NAME="$(echo "${{ matrix.image_dirs }}" | tr '/' '-')"
+          IMAGE="local/${IMG_NAME}"
+
+          BRANCH="$(echo "${GITHUB_REF_NAME}" | tr '[:upper:]' '[:lower:]' | tr '/_' '--')"
+          TAG="branch-${BRANCH}-${GITHUB_SHA::7}"
+
+          echo "Building branch image: ${IMAGE}:${TAG}"
+
+          docker build \
+            -t "${IMAGE}:${TAG}" \
+            .

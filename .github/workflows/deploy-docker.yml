@@ -34,17 +34,36 @@ jobs:
         id: build
         run: |
           IMG_NAME=$(echo "${{ matrix.image_dirs }}" | tr '/' '-')
-          echo "Building image: $IMG_NAME"
-          docker build -t "${{ secrets.DOCKER_USERNAME }}/${IMG_NAME}:latest" .
+          USER="${{ secrets.DOCKER_USERNAME }}"
+          IMAGE="${USER}/${IMG_NAME}"
+          TAG="${GITHUB_SHA::7}"
+
+          echo "Building image: $IMAGE"
+          docker build -t "${IMAGE}:latest" .
+          docker build -t "${TAG}:latest" .
+
           {
-            echo "image_name<<EOF"
-            echo "$IMG_NAME"
+            echo "image<<EOF"
+            echo "$IMAGE"
+            echo "EOF"
+          } >> $GITHUB_OUTPUT
+          {
+            echo "image_tag<<EOF"
+            echo "$TAG"
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
       - name: Push
         working-directory: "docker/ci"
         run: |
-          IMG_NAME="${{ steps.build.outputs.image_name }}"
-          docker login -u "${{ secrets.DOCKER_USERNAME }}" -p "${{ secrets.DOCKER_TOKEN }}"
-          docker image push "${{ secrets.DOCKER_USERNAME }}/${IMG_NAME}:latest"
+          set -euo pipefail
+
+          IMG_NAME="${{ steps.build.outputs.image }}"
+          TAG="${{ steps.build.outputs.tag }}"
+
+          echo "${{ secrets.DOCKER_TOKEN }}" | docker login docker.io \
+            -u "${USER}" \
+            --password-stdin
+
+          docker image push "${IMAGE}:latest"
+          docker image push "${IMAGE}:${TAG}"

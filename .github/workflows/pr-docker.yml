@@ -33,6 +33,15 @@ jobs:
         working-directory: "docker/${{ matrix.image_dirs }}"
         id: build
         run: |
-          IMG_NAME=$(echo "${{ matrix.image_dirs }}" | tr '/' '-')
-          echo "Building image: $IMG_NAME"
-          docker build -t "$IMG_NAME:latest" .
+          set -euo pipefail
+
+          IMG_NAME="$(echo "${{ matrix.image_dirs }}" | tr '/' '-')"
+          IMAGE="local/${IMG_NAME}"
+
+          TAG="pr-${GITHUB_SHA::7}"
+
+          echo "Building test image: ${IMAGE}:${TAG}"
+
+          docker build \
+            -t "${IMAGE}:${TAG}" \
+            .
