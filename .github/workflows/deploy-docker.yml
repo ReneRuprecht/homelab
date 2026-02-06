@@ -58,11 +58,11 @@ jobs:
         run: |
           set -euo pipefail
 
-          IMG_NAME="${{ steps.build.outputs.image }}"
+          IMAGE="${{ steps.build.outputs.image }}"
           TAG="${{ steps.build.outputs.tag }}"
 
           echo "${{ secrets.DOCKER_TOKEN }}" | docker login docker.io \
-            -u "${USER}" \
+            -u "${{ secrets.DOCKER_USERNAME}}" \
             --password-stdin
 
           docker image push "${IMAGE}:latest"
