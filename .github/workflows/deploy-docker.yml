@@ -40,7 +40,7 @@ jobs:
 
           echo "Building image: $IMAGE"
           docker build -t "${IMAGE}:latest" .
-          docker build -t "${TAG}:latest" .
+          # docker build -t "${IMAGE}:${TAG}" .
 
           {
             echo "image<<EOF"
@@ -66,4 +66,4 @@ jobs:
             --password-stdin
 
           docker image push "${IMAGE}:latest"
-          docker image push "${IMAGE}:${TAG}"
+          # docker image push "${IMAGE}:${TAG}"
