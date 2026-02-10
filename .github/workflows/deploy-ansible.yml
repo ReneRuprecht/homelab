@@ -29,7 +29,8 @@ jobs:
 
   filter-dns:
     needs: prepare
-    if: needs.prepare.outputs.playbook_env_mapping != '[]' &&
+    if: needs.prepare.outputs.playbook_env_mapping != '' &&
+        needs.prepare.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ansible-filter-playbook.yml
     with:
@@ -38,7 +39,8 @@ jobs:
 
   deploy-dns:
     needs: [prepare, filter-dns]
-    if: needs.filter-dns.outputs.playbook_env_mapping != '[]' &&
+    if: needs.filter-dns.outputs.playbook_env_mapping != '' &&
+        needs.filter-dns.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ansible-playbook.yml
     secrets: inherit
@@ -49,6 +51,7 @@ jobs:
   filter-lb:
     needs: [prepare, deploy-dns]
     if: always() && 
+        needs.prepare.outputs.playbook_env_mapping != '' &&
         needs.prepare.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ansible-filter-playbook.yml
@@ -58,7 +61,9 @@ jobs:
 
   deploy-lb:
     needs: [prepare, filter-lb]
-    if: always() && needs.filter-lb.outputs.playbook_env_mapping != '[]' &&
+    if: always() && 
+        needs.filter-lb.outputs.playbook_env_mapping != '' &&
+        needs.filter-lb.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ansible-playbook.yml
     secrets: inherit
@@ -69,6 +74,7 @@ jobs:
   filter-extra:
     needs: [prepare, deploy-dns, deploy-lb]
     if: always() && 
+        needs.prepare.outputs.playbook_env_mapping != '' &&
         needs.prepare.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
     runs-on: self-hosted
@@ -100,6 +106,7 @@ jobs:
   deploy-extra:
     needs: [filter-extra]
     if: always() && 
+        needs.filter-extra.outputs.playbook_env_mapping != '' &&
         needs.filter-extra.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ansible-playbook.yml
