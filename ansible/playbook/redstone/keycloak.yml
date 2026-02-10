@@ -1,0 +1,9 @@
+---
+- name: Install keycloak
+  hosts: keycloak
+  gather_facts: true
+  become: true
+  roles:
+    - role: reneruprecht.general
+    - role: geerlingguy.docker
+    - role: prometheus.prometheus.node_exporter

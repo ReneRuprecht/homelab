@@ -24,3 +24,6 @@ patterns:
   monitoring.yml:
     - "monitoring-*"
     - "monitoring" 
+  keycloak.yml:
+    - "keycloak-*"
+    - "keycloak" 
