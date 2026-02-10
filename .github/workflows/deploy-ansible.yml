@@ -58,7 +58,7 @@ jobs:
 
   deploy-lb:
     needs: [prepare, filter-lb]
-    if: needs.filter-lb.outputs.playbook_env_mapping != '[]' &&
+    if: always() && needs.filter-lb.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ansible-playbook.yml
     secrets: inherit
@@ -89,6 +89,8 @@ jobs:
             )
           ]')
 
+          echo "$PLAYBOOK_ENV_MAPPING"
+
           {
             echo "playbook_env_mapping<<EOF"
             echo "$PLAYBOOK_ENV_MAPPING"
@@ -96,8 +98,9 @@ jobs:
           } >> $GITHUB_OUTPUT
 
   deploy-extra:
-    needs: [prepare, filter-extra]
-    if: needs.filter-extra.outputs.playbook_env_mapping != '[]' &&
+    needs: [filter-extra]
+    if: always() && 
+        needs.filter-extra.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ansible-playbook.yml
     secrets: inherit
