@@ -11,3 +11,4 @@
     - role: prometheus.prometheus.node_exporter
     - role: grafana.grafana.grafana
     - role: ansible-consul
+    - role: prometheus.prometheus.alertmanager

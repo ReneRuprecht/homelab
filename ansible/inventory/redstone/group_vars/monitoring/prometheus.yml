@@ -9,6 +9,7 @@ server_url_consul: !vault |
           6233313465336232623361646235383439336635663439323864
 
 _consul_exporter_targets: "{{ groups['consul'] | map('regex_replace', '^(.*)$', '\\1:9107') | list }}"
+_node_exporter_targets: "{{ groups['all'] | map('regex_replace', '^(.*)$', '\\1:9100') | list }}"
 
 prometheus_scrape_configs:
   - job_name: "prometheus"
@@ -20,6 +21,10 @@ prometheus_scrape_configs:
   - job_name: consul_exporter
     static_configs:
       - targets: "{{ _consul_exporter_targets }}"
+
+  - job_name: node_exporter
+    static_configs:
+      - targets: "{{ _node_exporter_targets }}"
 
   - job_name: "node_exporter_consul_sd"
     consul_sd_configs:
@@ -34,3 +39,22 @@ prometheus_scrape_configs:
         scheme: "https"
         services: ["bind_exporter"]
         refresh_interval: 30s
+
+prometheus_alertmanager_config:
+  - scheme: http
+    static_configs:
+      - targets: ["127.0.0.1:9093"]
+
+alertmanager_version: latest
+alertmanager_receivers:
+  - name: webhook-handler
+    webhook_configs:
+      - http_config:
+          follow_redirects: true
+          tls_config:
+            insecure_skip_verify: true
+        send_resolved: true
+        url: http://192.168.178.55:8080/api/v1/alerts
+alertmanager_route:
+  repeat_interval: 5m
+  receiver: webhook-handler
