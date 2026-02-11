@@ -7,3 +7,75 @@
     - role: reneruprecht.general
     - role: geerlingguy.docker
     - role: prometheus.prometheus.node_exporter
+  tasks:
+    - name: Create group
+      ansible.builtin.group:
+        name: keycloak
+        system: true
+        state: present
+
+    - name: Create user
+      ansible.builtin.user:
+        name: keycloak
+        system: true
+        state: present
+
+    - name: Ensure keycloak directory exists
+      ansible.builtin.file:
+        path: /home/keycloak/keycloak
+        state: directory
+        owner: keycloak
+        group: keycloak
+        mode: '0755'
+
+    - name: Uninstall
+      when: keycloak_reinstall | default(false)
+      block:
+        - name: Delete installed file
+          ansible.builtin.file:
+            path: /home/keycloak/keycloak/installed
+            state: absent
+
+        - name: Stop Keycloak and DB (delete volumes)
+          changed_when: false
+          ansible.builtin.command:
+            cmd: docker compose down -v
+            chdir: /home/keycloak/keycloak
+
+    - name: Check if Keycloak exists
+      ansible.builtin.stat:
+        path: /home/keycloak/keycloak/installed
+      register: keycloak_stat
+
+    - name: Set start command
+      when: not keycloak_stat.stat.exists
+      ansible.builtin.set_fact:
+        _keycloak_start_command: "start"
+
+    - name: Set start command after keycloak exists
+      when: keycloak_stat.stat.exists
+      ansible.builtin.set_fact:
+        _keycloak_start_command: "start --optimized"
+
+    - name: copy docker-compose
+      ansible.builtin.template:
+        src: keycloak/docker-compose.yml.j2
+        dest: /home/keycloak/keycloak/docker-compose.yml
+        owner: keycloak
+        group: keycloak
+        mode: '0644'
+
+    - name: Start Keycloak using Docker Compose
+      changed_when: false
+      ansible.builtin.command:
+        cmd: docker compose up -d
+        chdir: /home/keycloak/keycloak
+
+    - name: Set file
+      when: not keycloak_stat.stat.exists
+      ansible.builtin.file:
+        path: /home/keycloak/keycloak/installed
+        state: touch
+        owner: keycloak
+        group: keycloak
+        mode: "0644"

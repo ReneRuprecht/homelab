@@ -1,0 +1,40 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.5
+    container_name: keycloak
+    command: {{ _keycloak_start_command }}
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: {{ keycloak_bootstrap_admin_username }}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: {{ keycloak_bootstrap_admin_password }}
+      KC_DB: postgres
+      KC_DB_URL_HOST: db
+      KC_DB_URL_DATABASE: keycloak
+      KC_DB_USERNAME: {{ keycloak_db_username }}
+      KC_DB_PASSWORD: {{ keycloak_db_password }}
+      KC_HOSTNAME: {{ keycloak_hostname }}
+      KC_HTTP_ENABLED: true
+      KC_HTTP_RELATIVE_PATH: /
+      KC_HEALTH_ENABLED: true
+      KC_PROXY_HEADERS: "xforwarded"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    restart: unless-stopped
+    volumes:
+      - keycloak_data:/opt/keycloak
+
+  db:
+    image: postgres:16
+    container_name: keycloak-db
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: {{ keycloak_db_username }}
+      POSTGRES_PASSWORD: {{ keycloak_db_password }}
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  keycloak_data:
+  keycloak-db-data:

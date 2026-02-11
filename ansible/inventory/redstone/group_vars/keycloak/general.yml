@@ -8,6 +8,11 @@ general_ufw_ports:
     state: enabled
     comment: "SSH"
 
+  - port: "8080"
+    proto: tcp
+    state: enabled
+    comment: "Keycloak SERVER"
+
   - port: "9100"
     proto: tcp
     state: enabled
