@@ -34,8 +34,12 @@ haproxy_frontends:
       - acl_name: "is_vault"
         acl_condition: "hdr(host) -i vault.{{ server_url }}"
         backend_name: "vault_backend"
+      - acl_name: "is_keycloak"
+        acl_condition: "hdr(host) -i keycloak.{{ server_url }}"
+        backend_name: "keycloak_backend"
     options:
       - "httplog"
+
   - name: "vault"
     address: "0.0.0.0"
     port: 8200
@@ -60,6 +64,18 @@ haproxy_backends:
         address: consul-02.redstone
       - name: consul-03.redstone
         address: consul-03.redstone
+  - name: "keycloak_backend"
+    mode: "http"
+    balance: "first"
+    port: 8080
+    check: true
+    headers:
+      X-Forwarded-Proto: https
+      X-Forwarded-Port: 443
+      X-Forwarded-Host: "keycloak.{{ server_url }}"
+    servers:
+      - name: keycloak-01.redstone
+        address: keycloak-01.redstone
   - name: "vault_backend"
     mode: "http"
     balance: "first"
@@ -98,3 +114,4 @@ haproxy_backends:
         address: vault-02.redstone
       - name: vault-03.redstone
         address: vault-03.redstone
+
