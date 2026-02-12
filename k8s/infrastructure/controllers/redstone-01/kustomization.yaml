@@ -6,6 +6,6 @@ resources:
   - ingress-nginx
   - metallb
   - cert-manager
+  - argocd
 # - airflow
-# - argocd
 # - cloudnativepg

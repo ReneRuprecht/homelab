@@ -16,9 +16,9 @@ spec:
         namespace: gitops
       interval: 12h
   values:
-    secret:
-      annotations:
-        reconcile.external-secrets.io/managed: "true"
+    configs:
+      secret:
+        createSecret: true
     controller:
       metrics:
         enabled: true
