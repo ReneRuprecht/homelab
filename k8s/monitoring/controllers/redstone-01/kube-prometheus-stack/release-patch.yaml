@@ -1,0 +1,14 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kube-prometheus-stack
+  namespace: monitoring
+spec:
+  values:
+    prometheus:
+      prometheusSpec:
+        routePrefix: /prometheus
+        externalUrl: http://monitoring.redstone/prometheus
+    nodeExporter:
+      enabled: false

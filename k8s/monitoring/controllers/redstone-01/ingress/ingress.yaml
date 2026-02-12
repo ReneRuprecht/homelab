@@ -19,3 +19,10 @@ spec:
               name: grafana
               port:
                 number: 80
+        - path: /prometheus
+          pathType: Prefix
+          backend:
+            service:
+              name: kube-prometheus-stack-prometheus
+              port:
+                number: 9090
