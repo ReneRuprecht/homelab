@@ -6,7 +6,7 @@ metadata:
   namespace: longhorn-system
 spec:
   secretName: longhorn-cert-tls
-  commonName: bluecore
+  commonName: longhorn.bluecore
   dnsNames:
     - longhorn.bluecore
   issuerRef:

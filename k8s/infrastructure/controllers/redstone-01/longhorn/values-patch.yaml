@@ -12,7 +12,7 @@ spec:
       defaultDataPath: /mnt/longhorn
     ingress:
       enabled: true
-      host: longhorn.redstone
+      host: longhorn.bluecore
       tls: true
       tlsSecret: longhorn-cert-tls
       ingressClassName: nginx
