@@ -9,7 +9,8 @@ spec:
   tls:
     - secretName: grafana-cert-tls
   rules:
-    - http:
+    - host: monitoring.redstone
+      http:
         paths:
         - path: /grafana
           pathType: Prefix

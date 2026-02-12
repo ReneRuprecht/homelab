@@ -6,11 +6,14 @@ metadata:
   namespace: monitoring
 spec:
   values:
+    createConfigmap: false
     admin:
       existingSecret: vault-grafana
       admin-user: username
       admin-password: password
-    grafana.ini:
-      server:
-        root_url: http://192.168.178.249/grafana/
-        serve_from_sub_path: true
+    extraSecretMounts:
+      - name: auth-generic-oauth-secret-mount
+        secretName: vault-grafana
+        defaultMode: 0440
+        mountPath: /etc/secrets/auth_generic_oauth
+        readOnly: true
