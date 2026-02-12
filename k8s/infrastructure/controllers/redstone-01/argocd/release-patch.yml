@@ -8,3 +8,15 @@ spec:
   values:
     global:
       domain: argocd.bluecore
+    configs:
+      cm:
+        oidc.config: |
+          name: keycloak
+          issuer: $oidc.keycloak.issuer
+          clientID: argocd
+          clientSecret: $oidc.keycloak.clientSecret
+          refreshTokenThreshold: 2m
+          requestedScopes: ["openid", "profile", "email", "groups"]
+      rbac:
+        policy.csv: "g, ArgoCDAdmins, role:admin"
+

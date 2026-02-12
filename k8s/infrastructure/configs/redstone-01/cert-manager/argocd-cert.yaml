@@ -1,0 +1,14 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: argocd-cert
+  namespace: gitops
+spec:
+  secretName: argocd-cert-tls
+  commonName: argocd.bluecore
+  dnsNames:
+    - argocd.bluecore
+  issuerRef:
+    name: pki-int-bluecore
+    kind: ClusterIssuer

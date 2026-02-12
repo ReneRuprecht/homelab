@@ -3,3 +3,4 @@ kind: Kustomization
 resources:
 - grafana-cert.yaml
 - longhorn-cert.yaml
+- argocd-cert.yaml
