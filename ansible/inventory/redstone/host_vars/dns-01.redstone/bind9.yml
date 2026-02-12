@@ -11,15 +11,15 @@ bind9_our_neighbors:
 
 bind9_zones_dynamic:
   - name: bluecore
-    serial: 2025081124
+    serial: 2025081125
     admin: noemail.bluecore
     ns_records:
       - dns-01.redstone
       - dns-02.redstone
     rrs:
-      - label: grafana
-        type: A
-        rdata: 192.168.178.249
+      # - label: monitoring
+      #   type: A
+      #   rdata: 192.168.178.249
       - label: longhorn
         type: A
         rdata: 192.168.178.249
