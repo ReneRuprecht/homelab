@@ -6,9 +6,9 @@ metadata:
   namespace: longhorn-system
 spec:
   secretName: longhorn-cert-tls
-  commonName: longhorn.redstone
+  commonName: bluecore
   dnsNames:
-    - longhorn.redstone
+    - longhorn.bluecore
   issuerRef:
-    name: vault-issuer
+    name: pki-int-bluecore
     kind: ClusterIssuer

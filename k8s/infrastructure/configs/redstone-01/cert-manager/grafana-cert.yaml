@@ -10,5 +10,5 @@ spec:
   dnsNames:
     - monitoring.redstone
   issuerRef:
-    name: vault-issuer
+    name: pki-int-redstone
     kind: ClusterIssuer
