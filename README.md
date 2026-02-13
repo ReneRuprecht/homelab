@@ -16,6 +16,9 @@ Die VMs werden mit Terraform erstellt. Dabei werden grundlegende Ressourcen wie 
 # 🛳️ Kubernetes
 Das laufende Kubernetes Cluster soll, soweit möglich, vollständig mittels GitOps ausgestattet und konfiguriert werden. Geplant ist, interne Services wie Prometheus und Grafana mit FluxCD zu deployen und zu verwalten, während eigene Apps und Services über ArgoCD bereitgestellt und gemanagt werden. Ziel ist es, anhand praktischer Beispiele ein besseres Verständnis für beide Systeme zu entwickeln.
 
+## ⛵ ArgoCD
+ArgoCD wird verwendet um Anwendungen automatisch aus der Repository auf dem Kubernetes zu deployen.
+
 # 🚀 Pipeline
 
 Die Pipeline wird dafür genutzt das, sofern möglich, alle deployments automatisiert ausgeführt werden.
@@ -61,6 +64,7 @@ Die Umgebunj wird kontinuierlich weiterentwickelt und angepasst.
 - 3× **K8s** (1 Master und 2 Nodes)  
 - 1× **Netbox**, für die Dokumentation
 - 1× **Monitoring**, für Prometheus, Grafana
+- 1× **Keycloak**, für Grafana und ArgoCD 
 
 ## Kubernetes-Services
 - **FluxCD**  
