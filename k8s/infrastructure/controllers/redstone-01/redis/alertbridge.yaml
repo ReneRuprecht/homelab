@@ -1,0 +1,17 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-alertbridge
+  namespace: bitnami-redis
+spec:
+  podSelector:
+    matchLabels: {}
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: alertbridge
+      ports:
+        - protocol: TCP
+          port: 6379
