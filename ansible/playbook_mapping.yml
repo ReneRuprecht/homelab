@@ -27,3 +27,6 @@ patterns:
   keycloak.yml:
     - "keycloak-*"
     - "keycloak" 
+  backup.yml:
+    - "backup-*"
+    - "backup" 
