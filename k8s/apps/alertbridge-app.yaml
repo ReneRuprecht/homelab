@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: alertbridge-app
+  namespace: gitops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/ReneRuprecht/homelab.git
+    targetRevision: main
+    path: k8s/apps/alertbridge
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gitops
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

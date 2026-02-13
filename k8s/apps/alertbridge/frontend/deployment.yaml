@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertbridge-frontend
+spec:
+  replicas: 
+  selector:
+    matchLabels:
+      app: alertbridge-frontend
+  template:
+    metadata:
+      labels:
+        app: alertbridge-frontend
+    spec:
+      containers:
+        - name: alertbridge-frontend
+          image: reneruprecht/alertbridge-frontend
+          ports:
+            - containerPort: 80
+          env:
+            - name: REDIS_HOST
+              value: "alertbridge.redis"
+            - name: POSTGRES_HOST
+              value: "alertbridge.postgres"

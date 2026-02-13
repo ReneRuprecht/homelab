@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: alertbridge-backend-ingress
+  namespace: alertbridge
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: api.alertbridge.bluecore
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: alertbridge-backend
+                port:
+                  number: 8080

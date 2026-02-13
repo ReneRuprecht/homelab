@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alertbridge-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alertbridge-backend
+  template:
+    metadata:
+      labels:
+        app: alertbridge-backend
+    spec:
+      containers:
+        - name: alertbridge-backend
+          image: reneruprecht/alertbridge-backend
+          ports:
+            - containerPort: 8080
