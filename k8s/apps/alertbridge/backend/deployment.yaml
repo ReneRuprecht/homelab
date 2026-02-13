@@ -23,3 +23,5 @@ spec:
                 secretKeyRef:
                   name: alertbridge-postgres-app
                   key: jdbc-uri
+            - name: REDIS_HOST
+              value: redis-master.bitnami-redis.svc.cluster.local
