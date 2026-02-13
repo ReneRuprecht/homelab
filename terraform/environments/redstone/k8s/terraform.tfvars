@@ -6,7 +6,7 @@ vms = [
     cpu = {
       cores = 2
     }
-    memory  = 4096
+    memory  = 8192
     gateway = "192.168.178.1"
   },
   {
