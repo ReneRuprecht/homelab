@@ -33,7 +33,7 @@ bind9_zones_dynamic:
         type: A
         rdata: 192.168.178.249
   - name: redstone
-    serial: 2025081124
+    serial: 2025081125
     admin: noemail.redstone
     ns_records:
       - dns-01.redstone
@@ -96,6 +96,9 @@ bind9_zones_dynamic:
       - label: keycloak-01
         type: A
         rdata: 192.168.178.111
+      - label: backup-01
+        type: A
+        rdata: 192.168.178.112
   - name: !vault |
       $ANSIBLE_VAULT;1.1;AES256
       38383063336632363530623037366536626230303732633363363538363936643832376136313464
