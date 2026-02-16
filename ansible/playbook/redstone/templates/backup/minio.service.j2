@@ -1,0 +1,17 @@
+[Unit]
+Description=MinIO
+Documentation=https://docs.min.io
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=backup
+Group=backup
+EnvironmentFile=-/etc/default/minio
+ExecStart=/usr/local/bin/minio server /data --console-address ":9001"
+Restart=always
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

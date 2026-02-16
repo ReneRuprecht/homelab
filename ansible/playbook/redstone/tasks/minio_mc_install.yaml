@@ -1,0 +1,41 @@
+###
+# vars
+#   minio_root_user
+#   minio_root_password
+#   minio_url
+#
+---
+- name: Check mc binary
+  ansible.builtin.stat:
+    path: /usr/local/bin/mc
+  register: mc_binary
+
+- name: Download mc binary
+  when: not mc_binary.stat.exists
+  ansible.builtin.get_url:
+    url: https://dl.min.io/aistor/mc/release/linux-amd64/mc
+    dest: /usr/local/bin/mc
+    mode: "0755"
+
+- name: Set mc alias
+  changed_when: false
+  ansible.builtin.shell:
+    cmd: >
+      mc alias set minio {{ minio_url }}
+      {{ minio_root_user }} {{ minio_root_password }}
+
+- name: Ensure mc directory exists
+  become: true
+  ansible.builtin.file:
+    path: "/home/{{ minio_user }}"
+    state: directory
+    owner: "{{ minio_user }}"
+    group: "{{ minio_group }}"
+    mode: "0755"
+
+- name: Copy minio config
+  become: true
+  ansible.builtin.template:
+    src: backup/minio_mc_config.json.j2
+    dest: "/home/{{ minio_user }}/.mc/config.json"
+    mode: "0600"

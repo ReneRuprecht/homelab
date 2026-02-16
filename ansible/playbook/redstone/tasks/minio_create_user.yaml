@@ -1,0 +1,49 @@
+###
+# vars:
+#   minio_users:
+#     - name: vault-backups
+#       password: supersecurepassword
+#       policy_type: write
+#       buckets:
+#         - vault-backups
+#         - etcd-backups
+#
+---
+- name: Add user to minio
+  changed_when: false
+  ansible.builtin.shell:
+    cmd: >
+      mc admin user add minio {{ item.name }} {{ item.password }}
+  loop: "{{ minio_users }}"
+  no_log: "{{ minio_no_log | default('true') }}"
+
+- name: Copy minio policy for each user
+  ansible.builtin.template:
+    src: backup/minio_policy.json.j2
+    dest: "/tmp/{{ item.name }}-policy.json"
+    mode: "0644"
+  loop: "{{ minio_users }}"
+  loop_control:
+    loop_var: item
+  vars:
+    buckets: "{{ item.buckets }}"
+    policy_type: "{{ item.policy_type }}"
+  no_log: "{{ minio_no_log | default('true') }}"
+
+- name: Upload policy
+  changed_when: false
+  ansible.builtin.shell: >
+    mc admin policy create minio {{ item.name }}-policy /tmp/{{ item.name }}-policy.json
+  loop: "{{ minio_users }}"
+  loop_control:
+    loop_var: item
+  no_log: "{{ minio_no_log | default('true') }}"
+
+- name: Attach policy to user
+  changed_when: false
+  ansible.builtin.shell: >
+    mc admin policy attach minio {{ item.name }}-policy --user {{ item.name }}
+  loop: "{{ minio_users }}"
+  loop_control:
+    loop_var: item
+  no_log: "{{ minio_no_log | default('true') }}"

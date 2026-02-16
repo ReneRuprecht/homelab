@@ -2,8 +2,38 @@
 - name: Install Backup
   hosts: backup
   gather_facts: true
-  become: true
   roles:
     - role: reneruprecht.general
-    - role: geerlingguy.docker
     - role: prometheus.prometheus.node_exporter
+  # vars:
+  #   minio_user: "backup"
+  #   minio_group: "backup"
+  #   minio_url: "http://localhost:9000"
+  #   minio_users:
+  #     - name: vault-backups
+  #       password: supersecurepassword
+  #       policy_type: write
+  #       buckets:
+  #         - vault-backups
+  #
+  #   minio_buckets:
+  #     - name: vault-backups
+  #       state: present
+  #       versioning: true
+  tasks:
+
+    - name: minio_install
+      ansible.builtin.import_tasks:
+        file: tasks/minio.yaml
+
+    - name: minio mc install
+      ansible.builtin.import_tasks:
+        file: tasks/minio_mc_install.yaml
+
+    - name: minio create user
+      ansible.builtin.import_tasks:
+        file: tasks/minio_create_user.yaml
+
+    - name: minio buckets
+      ansible.builtin.import_tasks:
+        file: tasks/minio_buckets.yaml
