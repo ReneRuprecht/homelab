@@ -6,8 +6,10 @@
     - role: reneruprecht.general
     - role: prometheus.prometheus.node_exporter
   # vars:
-  #   minio_user: "backup"
-  #   minio_group: "backup"
+  #   minio_sys_user: "backup"
+  #   minio_sys_group: "backup"
+  #   minio_api_user: "api"
+  #   minio_api_password: "api"
   #   minio_url: "http://localhost:9000"
   #   minio_users:
   #     - name: vault-backups

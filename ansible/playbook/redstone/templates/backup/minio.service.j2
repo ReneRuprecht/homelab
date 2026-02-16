@@ -5,8 +5,8 @@ Wants=network-online.target
 After=network-online.target
 
 [Service]
-User=backup
-Group=backup
+User={{ minio_sys_user }}
+Group={{ minio_sys_user }}
 EnvironmentFile=-/etc/default/minio
 ExecStart=/usr/local/bin/minio server /data --console-address ":9001"
 Restart=always

@@ -1,7 +1,9 @@
 ###
 # vars
-#   minio_root_user
-#   minio_root_password
+#   minio_sys_user
+#   minio_sys_group
+#   minio_api_user
+#   minio_api_password
 #   minio_url
 #
 ---
@@ -22,20 +24,20 @@
   ansible.builtin.shell:
     cmd: >
       mc alias set minio {{ minio_url }}
-      {{ minio_root_user }} {{ minio_root_password }}
+      {{ minio_api_user }} {{ minio_api_password }}
 
 - name: Ensure mc directory exists
   become: true
   ansible.builtin.file:
-    path: "/home/{{ minio_user }}"
+    path: "/home/{{ minio_sys_user }}/.mc"
     state: directory
-    owner: "{{ minio_user }}"
-    group: "{{ minio_group }}"
+    owner: "{{ minio_sys_user }}"
+    group: "{{ minio_sys_group }}"
     mode: "0755"
 
 - name: Copy minio config
   become: true
   ansible.builtin.template:
     src: backup/minio_mc_config.json.j2
-    dest: "/home/{{ minio_user }}/.mc/config.json"
-    mode: "0600"
+    dest: "/home/{{ minio_sys_user }}/.mc/config.json"
+    mode: "0644"

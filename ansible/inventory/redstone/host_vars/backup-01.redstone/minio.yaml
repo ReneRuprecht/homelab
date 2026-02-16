@@ -1,6 +1,6 @@
 ---
-minio_root_user: minio
-minio_root_password: !vault |
+minio_api_user: minio
+minio_api_password: !vault |
     $ANSIBLE_VAULT;1.1;AES256
     35306134656539303935623465343335363465366364313738646235376134363536323363353136
     3766663036663932643234303331623832356637303939390a613631323963343062623263386166
@@ -8,8 +8,8 @@ minio_root_password: !vault |
     3239316365306266390a373035336262613966383132316462343463646462326464643038366166
     3530
 
-minio_user: "backup"
-minio_group: "backup"
+minio_sys_user: "backup"
+minio_sys_group: "backup"
 minio_url: "http://localhost:9000"
 minio_users:
   - name: vault-backups

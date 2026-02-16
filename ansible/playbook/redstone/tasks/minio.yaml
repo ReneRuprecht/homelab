@@ -2,26 +2,26 @@
 - name: Create group
   become: true
   ansible.builtin.group:
-    name: "{{ minio_group }}"
+    name: "{{ minio_sys_group }}"
     system: true
     state: present
 
 - name: Create user
   become: true
   ansible.builtin.user:
-    name: "{{ minio_user }}"
+    name: "{{ minio_sys_user }}"
     system: true
     shell: /bin/bash
     create_home: true
-    home: "/home/{{ minio_user }}"
+    home: "/home/{{ minio_sys_user }}"
     state: present
 
 - name: Create data dir
   become: true
   ansible.builtin.file:
     path: "/data"
-    owner: "{{ minio_user }}"
-    group: "{{ minio_group }}"
+    owner: "{{ minio_sys_user }}"
+    group: "{{ minio_sys_group }}"
     mode: "0755"
     state: directory
 
