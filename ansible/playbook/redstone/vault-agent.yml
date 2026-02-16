@@ -1,0 +1,218 @@
+---
+- name: Setup vault agent for loadbalancer
+  hosts: loadbalancer
+  gather_facts: true
+  # vars:
+  #   vault_addr: "https://vault.example.local"
+  #   is_reader_writer: true
+  tasks:
+    - name: Ensure vars exists
+      delegate_to: localhost
+      run_once: true
+      block:
+        - name: Check vault_addr
+          ansible.builtin.assert:
+            that:
+              - vault_addr is defined
+              - vault_addr != ''
+            fail_msg: "vault_addr var is empty"
+
+        - name: Check vault login
+          ansible.builtin.command:
+            cmd: "vault login $VAULT_TOKEN"
+          register: "assert_vault_token"
+          ignore_errors: true
+          changed_when: false
+
+        - name: Check vault cli output
+          ansible.builtin.assert:
+            that:
+              - assert_vault_token.rc == 0
+            fail_msg: "vault cli connection failed"
+
+    - name: Ensure Vault directories exist
+      become: true
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+      loop:
+        - "/etc/vault"
+        - "/etc/vault/templates"
+        - "/var/run/vault"
+
+    - name: Setup reader
+      when: >
+        is_reader_writer is not defined or not is_reader_writer
+      block:
+        - name: Fetch role-id for cert-reader
+          changed_when: false
+          ansible.builtin.command:
+            cmd: vault read -field=role_id auth/approle/role/cert-reader/role-id
+          register: reader_role_id
+          delegate_to: localhost
+
+        - name: Generate secret-id for cert-reader
+          changed_when: false
+          ansible.builtin.command:
+            cmd: vault write -f -field=secret_id auth/approle/role/cert-reader/secret-id
+          register: reader_secret_id
+          delegate_to: localhost
+
+        - name: Copy role-id to server
+          become: true
+          register: copy_role_id_state
+          ansible.builtin.copy:
+            content: "{{ reader_role_id.stdout }}"
+            dest: /etc/vault/role_id
+            owner: root
+            group: root
+            mode: '0600'
+
+        - name: Copy secret-id to server
+          become: true
+          register: copy_secret_id_state
+          ansible.builtin.copy:
+            content: "{{ reader_secret_id.stdout }}"
+            dest: /etc/vault/secret_id
+            owner: root
+            group: root
+            mode: '0600'
+
+    - name: Setup reader-writer
+      when:
+        - is_reader_writer is defined
+        - is_reader_writer
+      block:
+        - name: Fetch role-id for cert-reader-writer
+          changed_when: false
+          ansible.builtin.command:
+            cmd: vault read -field=role_id auth/approle/role/cert-reader-writer/role-id
+          register: reader_writer_role_id
+          delegate_to: localhost
+
+        - name: Generate secret-id for cert-reader-writer
+          changed_when: false
+          ansible.builtin.command:
+            cmd: vault write -f -field=secret_id auth/approle/role/cert-reader-writer/secret-id
+          register: reader_writer_secret_id
+          delegate_to: localhost
+
+        - name: Copy role-id to server
+          become: true
+          register: copy_role_id_state
+          ansible.builtin.copy:
+            content: "{{ reader_writer_role_id.stdout }}"
+            dest: /etc/vault/role_id
+            owner: root
+            group: root
+            mode: '0600'
+
+        - name: Copy secret-id to server
+          become: true
+          register: copy_secret_id_state
+          ansible.builtin.copy:
+            content: "{{ reader_writer_secret_id.stdout }}"
+            dest: /etc/vault/secret_id
+            owner: root
+            group: root
+            mode: '0600'
+
+    - name: Download hashicorp gpg key
+      become: true
+      ansible.builtin.get_url:
+        url: https://apt.releases.hashicorp.com/gpg
+        dest: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+        mode: '0644'
+
+    - name: Add hashicorp apt repository
+      become: true
+      ansible.builtin.deb822_repository:
+        name: hashicorp
+        types: deb
+        uris: "https://apt.releases.hashicorp.com"
+        suites: "stable"
+        components: main
+        signed_by: "https://apt.releases.hashicorp.com/gpg"
+        state: present
+
+    - name: Install vault
+      become: true
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+        name: vault
+        state: present
+
+    - name: Copy vault agent configuration
+      become: true
+      register: vault_agent_config_state
+      ansible.builtin.template:
+        src: vault/agent.hcl.j2
+        dest: /etc/vault/agent.hcl
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Ensure haproxy certs directory exists
+      become: true
+      ansible.builtin.file:
+        path: /etc/haproxy/certs
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+
+    - name: Deploy haproxy pem template
+      become: true
+      ansible.builtin.copy:
+        src: vault/haproxy.tpl
+        dest: /etc/vault/templates/haproxy.tpl
+        owner: root
+        group: root
+        mode: '0600'
+
+    - name: Create vault agent systemd service
+      become: true
+      ansible.builtin.copy:
+        dest: /etc/systemd/system/vault-agent.service
+        content: |
+          [Unit]
+          Description=Vault Agent
+          After=network.target
+
+          [Service]
+          ExecStart=/usr/bin/vault agent -config=/etc/vault/agent.hcl
+          Restart=always
+          User=root
+
+          [Install]
+          WantedBy=multi-user.target
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Reload systemd
+      become: true
+      ansible.builtin.systemd:
+        daemon_reload: true
+
+    - name: Enable and start Vault Agent
+      become: true
+      ansible.builtin.systemd:
+        name: vault-agent
+        enabled: true
+        state: started
+
+    - name: Restart Vault Agent
+      become: true
+      when: >
+        vault_agent_config_state.changed or
+        copy_role_id_state.changed or
+        copy_secret_id_state.changed
+
+      ansible.builtin.systemd:
+        name: vault-agent
+        state: restarted
