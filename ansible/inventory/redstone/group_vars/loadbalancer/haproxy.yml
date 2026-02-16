@@ -37,6 +37,9 @@ haproxy_frontends:
       - acl_name: "is_keycloak"
         acl_condition: "hdr(host) -i keycloak.{{ server_url }}"
         backend_name: "keycloak_backend"
+      - acl_name: "is_s3"
+        acl_condition: "hdr(host) -i s3.{{ server_url }}"
+        backend_name: "s3_backend"
     options:
       - "httplog"
 
@@ -114,4 +117,11 @@ haproxy_backends:
         address: vault-02.redstone
       - name: vault-03.redstone
         address: vault-03.redstone
-
+  - name: "s3_backend"
+    mode: "http"
+    balance: "leastconn"
+    port: 9000
+    check: true
+    servers:
+      - name: backup-01.redstone
+        address: backup-01.redstone
