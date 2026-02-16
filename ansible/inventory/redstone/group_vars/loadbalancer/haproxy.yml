@@ -26,7 +26,7 @@ haproxy_frontends:
     port: 443
     ssl_enable: true
     ssl_certificates:
-      - "/etc/acme/certs/wildcard.{{ server_url }}.pem"
+      - "/etc/haproxy/certs/wildcard.public.pem"
     routes:
       - acl_name: "is_consul"
         acl_condition: "hdr(host) -i consul.{{ server_url }}"

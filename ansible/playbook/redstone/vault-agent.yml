@@ -3,7 +3,7 @@
   hosts: loadbalancer
   gather_facts: true
   # vars:
-  #   vault_addr: "https://vault.example.local"
+  #   vault_agent_vault_addr: "https://vault.example.local"
   #   is_reader_writer: true
   tasks:
     - name: Ensure vars exists
@@ -13,8 +13,8 @@
         - name: Check vault_addr
           ansible.builtin.assert:
             that:
-              - vault_addr is defined
-              - vault_addr != ''
+              - vault_agent_vault_addr is defined
+              - vault_agent_vault_addr != ''
             fail_msg: "vault_addr var is empty"
 
         - name: Check vault login
@@ -63,7 +63,7 @@
 
         - name: Copy role-id to server
           become: true
-          register: copy_role_id_state
+          register: reader_copy_role_id_state
           ansible.builtin.copy:
             content: "{{ reader_role_id.stdout }}"
             dest: /etc/vault/role_id
@@ -73,7 +73,7 @@
 
         - name: Copy secret-id to server
           become: true
-          register: copy_secret_id_state
+          register: reader_copy_secret_id_state
           ansible.builtin.copy:
             content: "{{ reader_secret_id.stdout }}"
             dest: /etc/vault/secret_id
@@ -102,7 +102,7 @@
 
         - name: Copy role-id to server
           become: true
-          register: copy_role_id_state
+          register: reader_writer_copy_role_id_state
           ansible.builtin.copy:
             content: "{{ reader_writer_role_id.stdout }}"
             dest: /etc/vault/role_id
@@ -112,7 +112,7 @@
 
         - name: Copy secret-id to server
           become: true
-          register: copy_secret_id_state
+          register: reader_writer_copy_secret_id_state
           ansible.builtin.copy:
             content: "{{ reader_writer_secret_id.stdout }}"
             dest: /etc/vault/secret_id
@@ -131,10 +131,14 @@
       become: true
       ansible.builtin.deb822_repository:
         name: hashicorp
-        types: deb
-        uris: "https://apt.releases.hashicorp.com"
-        suites: "stable"
-        components: main
+        types:
+          - deb
+        uris:
+          - "https://apt.releases.hashicorp.com"
+        suites:
+          - "{{ ansible_lsb.codename | default(ansible_distribution_release) }}"
+        components:
+          - main
         signed_by: "https://apt.releases.hashicorp.com/gpg"
         state: present
 
@@ -163,7 +167,7 @@
         state: directory
         owner: root
         group: root
-        mode: '0700'
+        mode: '0755'
 
     - name: Deploy haproxy pem template
       become: true
@@ -210,8 +214,10 @@
       become: true
       when: >
         vault_agent_config_state.changed or
-        copy_role_id_state.changed or
-        copy_secret_id_state.changed
+        reader_copy_role_id_state.changed or
+        reader_copy_secret_id_state.changed or
+        reader_writer_copy_role_id_state.changed or
+        reader_writer_copy_secret_id_state.changed
 
       ansible.builtin.systemd:
         name: vault-agent
