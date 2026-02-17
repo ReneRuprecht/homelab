@@ -12,6 +12,10 @@ collections:
   - name: prometheus.prometheus
     version: 0.27.3
 roles:
+  - name: reneruprecht.minio
+    src: "https://github.com/reneruprecht/ansible-role-minio"
+    scm: git
+    verion: main
   - name: reneruprecht.acme
     src: "https://github.com/reneruprecht/ansible-role-acme"
     scm: git
