@@ -19,6 +19,15 @@
         path: "~/.bashrc"
         line: "export VAULT_ADDR=https://{{ inventory_hostname }}:8200"
         state: present
+
+
+- name: Setup vault backups
+  hosts: vault
+  gather_facts: true
+  tags:
+    - never
+    - setup_backup
+  tasks:
     - name: Setup backup to s3
       ansible.builtin.include_tasks:
         file: ./tasks/vault_backup_setup.yml

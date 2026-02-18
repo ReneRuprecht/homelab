@@ -13,3 +13,4 @@ vault_tls_private_path: "/etc/vault/tls"
 vault_tls_certs_path: /etc/vault/tls
 vault_tls_key_file: "server.key"
 vault_tls_cert_file: "fullchain.pem"
+vault_dotfile_disable: true
