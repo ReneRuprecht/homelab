@@ -6,11 +6,12 @@ vms = [
     cpu = {
       cores = 2
     }
+    target_node = "pve-01"
     memory  = 2048
     gateway = "192.168.178.1"
     scsi_disk = {
-      size = "30G"
-      size_mb = "30000"
+      size = "15G"
+      size_mb = "15000"
     }
   },
 ]
