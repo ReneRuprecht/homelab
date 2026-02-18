@@ -2,8 +2,28 @@
   hosts: netbox
   gather_facts: true
   roles:
+    - role: reneruprecht.general
     - role: geerlingguy.docker
+      become: true
+    - role: reneruprecht.minio
   post_tasks:
+    - name: Create group
+      become: true
+      ansible.builtin.group:
+        name: "netbox"
+        system: true
+        state: present
+
+    - name: Create user
+      become: true
+      ansible.builtin.user:
+        name: "netbox"
+        system: true
+        shell: /bin/bash
+        create_home: true
+        home: "/home/netbox"
+        state: present
+
     - name: Check if netbox is already cloned
       ansible.builtin.stat:
         path: /opt/netbox-git
@@ -133,7 +153,21 @@
             regexp: '      # SUPERUSER_PASSWORD: ""'
             line: '      SUPERUSER_PASSWORD: "{{ netbox_superuser_password }}"'
 
+    - name: Include netbox backup
+      ansible.builtin.include_tasks:
+        file: ./tasks/netbox_backup_setup.yml
+
+    - name: Set permissions
+      become: true
+      ansible.builtin.file:
+        path: "/opt/netbox-git"
+        mode: "0755"
+        owner: "netbox"
+        group: "netbox"
+        recurse: true
+
     - name: Start netbox
+      remote_user: "netbox"
       ansible.builtin.command:
         cmd: "docker-compose up -d"
         chdir: /opt/netbox-git

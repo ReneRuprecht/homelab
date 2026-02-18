@@ -1,0 +1,11 @@
+---
+general_ufw_ports:
+  - port: "22"
+    proto: tcp
+    state: enabled
+    comment: "SSH"
+
+  - port: "8000"
+    proto: tcp
+    state: enabled
+    comment: "Netbox - HTTP"

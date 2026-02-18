@@ -1,0 +1,37 @@
+---
+- name: Ensure backup script dir exists
+  become: true
+  ansible.builtin.file:
+    path: /opt/netbox_scripts
+    state: directory
+    recurse: true
+    owner: "{{ backup_netbox_user }}"
+    group: "{{ backup_netbox_group }}"
+    mode: '0700'
+
+- name: Ensure netbox_backup log exists
+  become: true
+  changed_when: false
+  ansible.builtin.file:
+    path: "/var/log/netbox_backup.log"
+    state: touch
+    mode: "0600"
+    owner: "{{ backup_netbox_user }}"
+
+- name: Copy backup script
+  become: true
+  ansible.builtin.template:
+    src: backup/netbox_backup.sh.j2
+    dest: "{{ backup_netbox_script_path }}"
+    owner: "{{ backup_netbox_user }}"
+    group: "{{ backup_netbox_group }}"
+    mode: '0700'
+
+- name: Setup cronjob
+  become: true
+  ansible.builtin.cron:
+    name: Vault backup
+    user: "{{ backup_netbox_user }}"
+    state: present
+    job: "{{ backup_netbox_script_path }}"
+    hour: "*/12"
