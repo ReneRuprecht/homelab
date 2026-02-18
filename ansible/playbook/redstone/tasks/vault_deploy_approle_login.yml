@@ -1,0 +1,43 @@
+---
+# vars:
+#   vault_agent_approle: 'cert-reader'
+#   vault_agent_user:
+#   vault_agent_group:
+# handlers:
+#   - name Restart vault-agent
+#
+- name: Fetch role-id for {{ vault_agent_approle }}
+  changed_when: false
+  ansible.builtin.command:
+    cmd: vault read -field=role_id auth/approle/role/{{ vault_agent_approle }}/role-id
+  register: role_id
+  delegate_to: localhost
+
+- name: Generate secret-id for {{ vault_agent_approle }}
+  changed_when: false
+  ansible.builtin.command:
+    cmd: vault write -f -field=secret_id auth/approle/role/{{ vault_agent_approle }}/secret-id
+  register: secret_id
+  delegate_to: localhost
+
+- name: Copy role-id to server
+  become: true
+  ansible.builtin.copy:
+    content: "{{ role_id.stdout }}"
+    dest: /etc/vault/role_id
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0600'
+  notify:
+    - Restart vault-agent
+
+- name: Copy secret-id to server
+  become: true
+  ansible.builtin.copy:
+    content: "{{ secret_id.stdout }}"
+    dest: /etc/vault/secret_id
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0600'
+  notify:
+    - Restart vault-agent

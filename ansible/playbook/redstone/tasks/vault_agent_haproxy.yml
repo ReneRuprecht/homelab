@@ -1,0 +1,45 @@
+---
+# vars:
+#   vault_agent_user
+#   vault_agent_group
+#   vault_agent_vault_addr
+#
+# handlers:
+#   - name: Restart vault-agent
+- name: Inlcude vault_agent_install
+  ansible.builtin.include_tasks:
+    file: ./vault_agent_install.yml
+
+- name: Copy vault agent configuration
+  become: true
+  register: vault_agent_config_state
+  ansible.builtin.template:
+    src: vault/agent.hcl.j2
+    dest: /etc/vault/agent.hcl
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0600'
+  notify:
+    - Restart vault-agent
+
+- name: Ensure haproxy certs directory exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/haproxy/certs
+    state: directory
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0755'
+  notify:
+    - Restart vault-agent
+
+- name: Deploy haproxy pem template
+  become: true
+  ansible.builtin.copy:
+    src: vault/haproxy.tpl
+    dest: /etc/vault/templates/haproxy.tpl
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0600'
+  notify:
+    - Restart vault-agent

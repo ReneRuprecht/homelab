@@ -1,4 +1,6 @@
 ---
+vault_agent_user: "haproxy"
+vault_agent_group: "haproxy"
 vault_agent_vault_addr: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           61656535656430383463356530306165373736383064306564336263633335383535326561313464

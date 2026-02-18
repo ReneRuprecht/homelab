@@ -32,7 +32,7 @@ template_config {
 template {
   source      = "/etc/vault/templates/haproxy.tpl"
   destination = "/etc/haproxy/certs/wildcard.public.pem"
-  command     = "systemctl reload haproxy"
+  command     = "sudo systemctl reload haproxy"
 }
 
 {% endif %}

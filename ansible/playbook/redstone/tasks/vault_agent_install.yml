@@ -1,0 +1,129 @@
+---
+- name: Ensure vars exists
+  delegate_to: localhost
+  run_once: true
+  block:
+    - name: Check vault_agent_addr
+      ansible.builtin.assert:
+        that:
+          - vault_agent_vault_addr is defined
+          - vault_agent_vault_addr != ''
+        fail_msg: "vault_agent_addr var is empty"
+
+    - name: Check vault login
+      ansible.builtin.command:
+        cmd: "vault login $VAULT_TOKEN"
+      register: "assert_vault_token"
+      ignore_errors: true
+      changed_when: false
+
+    - name: Check vault cli output
+      ansible.builtin.assert:
+        that:
+          - assert_vault_token.rc == 0
+        fail_msg: "vault cli connection failed"
+
+- name: Create group
+  become: true
+  ansible.builtin.group:
+    name: "{{ vault_agent_group }}"
+    system: true
+    state: present
+
+- name: Create user
+  become: true
+  ansible.builtin.user:
+    name: "{{ vault_agent_user }}"
+    system: true
+    shell: /bin/bash
+    create_home: true
+    home: "/home/{{ vault_agent_user }}"
+    state: present
+
+- name: Ensure Vault directories exist
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0700'
+  loop:
+    - "/etc/vault"
+    - "/etc/vault/templates"
+    - "/var/run/vault"
+
+- name: Prepare approle login
+  ansible.builtin.include_tasks:
+    file: ./vault_deploy_approle_login.yml
+  register: vault_approle_login
+
+- name: Download hashicorp gpg key
+  become: true
+  ansible.builtin.get_url:
+    url: https://apt.releases.hashicorp.com/gpg
+    dest: /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    mode: '0644'
+
+- name: Add hashicorp apt repository
+  become: true
+  ansible.builtin.deb822_repository:
+    name: hashicorp
+    types:
+      - deb
+    uris:
+      - "https://apt.releases.hashicorp.com"
+    suites:
+      - "{{ ansible_lsb.codename | default(ansible_distribution_release) }}"
+    components:
+      - main
+    signed_by: "https://apt.releases.hashicorp.com/gpg"
+    state: present
+
+- name: Install vault
+  become: true
+  ansible.builtin.apt:
+    update_cache: true
+    cache_valid_time: 3600
+    name: vault
+    state: present
+
+- name: Copy vault agent configuration
+  become: true
+  register: vault_agent_config_state
+  ansible.builtin.template:
+    src: vault/agent.hcl.j2
+    dest: /etc/vault/agent.hcl
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0600'
+
+- name: Create vault agent systemd service
+  become: true
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/vault-agent.service
+    content: |
+      [Unit]
+      Description=Vault Agent
+      After=network.target
+
+      [Service]
+      ExecStart=/usr/bin/vault agent -config=/etc/vault/agent.hcl
+      Restart=always
+      User=root
+
+      [Install]
+      WantedBy=multi-user.target
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0644'
+  notify:
+    - Restart vault-agent
+
+- name: Enable and start Vault Agent
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: vault-agent
+    enabled: true
+    state: started

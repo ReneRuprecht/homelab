@@ -1,4 +1,7 @@
 ---
+acme_user: haproxy
+acme_group: haproxy
+
 acme_vault_addr: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           61656535656430383463356530306165373736383064306564336263633335383535326561313464
