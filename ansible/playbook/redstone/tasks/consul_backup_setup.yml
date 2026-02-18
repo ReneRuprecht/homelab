@@ -1,0 +1,41 @@
+# vars:
+#   backup_consul_user: ""
+#   backup_consul_group: ""
+#   backup_consul_script_path: ""
+
+- name: Ensure backup script dir exists
+  become: true
+  ansible.builtin.file:
+    path: /opt/consul_scripts
+    state: directory
+    recurse: true
+    owner: "{{ backup_consul_user }}"
+    group: "{{ backup_consul_group }}"
+    mode: '0700'
+
+- name: Ensure consul_backup log exists
+  become: true
+  changed_when: false
+  ansible.builtin.file:
+    path: "/var/log/consul_backup.log"
+    state: touch
+    mode: "0600"
+    owner: "{{ backup_consul_user }}"
+
+- name: Copy backup script
+  become: true
+  ansible.builtin.template:
+    src: backup/consul_backup.sh.j2
+    dest: "{{ backup_consul_script_path }}"
+    owner: "{{ backup_consul_user }}"
+    group: "{{ backup_consul_group }}"
+    mode: '0700'
+
+- name: Setup cronjob
+  become: true
+  ansible.builtin.cron:
+    name: Vault backup
+    user: "{{ backup_consul_user }}"
+    state: present
+    job: "{{ backup_consul_script_path }}"
+    hour: "*/12"

@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o pipefail
+set -o nounset
+
+# -------------
+# Konfiguration logging
+# -------------
+
+SERVICE_NAME="consul_backup"
+ENVIRONMENT="${ENVIRONMENT:-dev}"
+LOG_FILE="/var/log/${SERVICE_NAME}.log"
+RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)-$$"
+
+log() {
+    local level="$1"
+    shift
+    local message="$*"
+
+    printf '{"ts":"%s","level":"%s","service":"%s","env":"%s","run_id":"%s","msg":"%s"}\n' \
+        "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+        "$level" \
+        "$SERVICE_NAME" \
+        "$ENVIRONMENT" \
+        "$RUN_ID" \
+        "$(echo "$message" | sed 's/"/\\"/g')" \
+        >> "$LOG_FILE"
+}
+
+log_info()  { log INFO "$@"; }
+log_warn()  { log WARN "$@"; }
+log_error() { log ERROR "$@"; }
+
+trap 'log_error "Script failed (exit=$?)"' ERR
+
+# -------------
+# Konfiguration backup
+# -------------
+
+SNAPSHOT_DIR="${SNAPSHOT_DIR:-/tmp/consul/snapshots}"
+SNAPSHOT_FILE="consul-$HOSTNAME-$(date +%Y%m%dT%H%M%S).snap"
+SNAPSHOT_FILE_LATEST="consul-$HOSTNAME-latest.snap"
+
+MC_ALIAS="{{ backup_minio_alias }}"
+S3_BUCKET="{{ backup_minio_bucket }}"
+
+log_info "Backup gestartet"
+
+# -------------
+# consul snapshot
+# -------------
+
+mkdir -p "$SNAPSHOT_DIR"
+SNAPSHOT_PATH="$SNAPSHOT_DIR/$SNAPSHOT_FILE"
+
+if ! consul snapshot save "$SNAPSHOT_PATH" >/dev/null 2>&1; then
+    log_error "Consul Snapshot fehlgeschlagen (Command Error)"
+    exit 1
+fi
+
+if [[ ! -f "$SNAPSHOT_PATH" ]]; then
+    log_error "Consul Snapshot fehlgeschlagen (Datei nicht erzeugt)"
+    exit 1
+fi
+
+if [[ ! -s "$SNAPSHOT_PATH" ]]; then
+    log_error "Consul Snapshot fehlgeschlagen (Datei leer)"
+    exit 1
+fi
+
+log_info "Snapshot erstellt: $SNAPSHOT_PATH"
+
+# -------------
+# s3
+# -------------
+
+log_info "Lade Snapshot nach S3 hoch..."
+
+if ! mc cp "$SNAPSHOT_PATH" "$MC_ALIAS/$S3_BUCKET/$SNAPSHOT_FILE" >/dev/null 2>&1; then
+    log_error "Upload nach S3 fehlgeschlagen (versioned file)"
+    exit 1
+fi
+
+if ! mc cp "$SNAPSHOT_PATH" "$MC_ALIAS/$S3_BUCKET/$SNAPSHOT_FILE_LATEST" >/dev/null 2>&1; then
+    log_error "Upload nach S3 fehlgeschlagen (latest file)"
+    exit 1
+fi
+
+log_info "Upload nach S3 erfolgreich abgeschlossen"
+
+# -------------
+# delete snapshot
+# -------------
+
+rm -f "$SNAPSHOT_PATH"
+log_info "Lokales Snapshot gelöscht"

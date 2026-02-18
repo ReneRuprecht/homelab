@@ -1,6 +1,7 @@
 ---
 general_debian_extra_packages:
   - acl
+  - cron
 
 general_ufw_ports:
   - port: "{{ general_ssh_port }}"

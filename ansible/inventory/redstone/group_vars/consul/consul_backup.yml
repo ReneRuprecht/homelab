@@ -1,0 +1,6 @@
+---
+backup_consul_user: "consul"
+backup_consul_group: "consul"
+backup_consul_script_path: "/opt/consul_scripts/consul_backup.sh"
+backup_minio_alias: "minio"
+backup_minio_bucket: "consul-backups"

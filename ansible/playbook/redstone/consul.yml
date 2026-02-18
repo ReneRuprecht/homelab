@@ -1,11 +1,17 @@
 ---
 - name: Install consul
   hosts: consul
-  become: true
   gather_facts: true
   roles:
     - role: reneruprecht.general
     - role: ansible-consul
+      become: true
     - role: grafana.grafana.promtail
+      become: true
     - role: prometheus.prometheus.node_exporter
     - role: prometheus.prometheus.consul_exporter
+    - role: reneruprecht.minio
+  post_tasks:
+    - name: Include consul backup
+      ansible.builtin.include_tasks:
+        file: ./tasks/consul_backup_setup.yml
