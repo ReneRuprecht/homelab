@@ -60,3 +60,6 @@ general_ufw_ports:
     proto: tcp
     state: enabled
     comment: "Consul Exporter"
+
+general_gpg_create_key: true
+general_gpg_user: "consul"

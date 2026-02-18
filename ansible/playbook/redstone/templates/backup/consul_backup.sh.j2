@@ -69,6 +69,23 @@ if [[ ! -s "$SNAPSHOT_PATH" ]]; then
 fi
 
 log_info "Snapshot erstellt: $SNAPSHOT_PATH"
+#
+# -------------
+# gpg
+# -------------
+
+GPG_OUTPUT="${SNAPSHOT_PATH}.gpg"
+
+if ! gpg --batch --yes --trust-model always \
+    --encrypt \
+    {{ '--sign --local-user ' + backup_gpg_signing_key if backup_gpg_signing_key is defined else '' }} \
+    --recipient "{{ backup_gpg_recipient }}" \
+    --output "$GPG_OUTPUT" \
+    "$SNAPSHOT_PATH" >/dev/null 2>&1; then
+
+    log_error "GPG encryption fehlgeschlagen (Command Error)"
+    exit 1
+fi
 
 # -------------
 # s3
@@ -76,12 +93,12 @@ log_info "Snapshot erstellt: $SNAPSHOT_PATH"
 
 log_info "Lade Snapshot nach S3 hoch..."
 
-if ! mc cp "$SNAPSHOT_PATH" "$MC_ALIAS/$S3_BUCKET/$SNAPSHOT_FILE" >/dev/null 2>&1; then
+if ! mc cp "$GPG_OUTPUT" "$MC_ALIAS/$S3_BUCKET/${SNAPSHOT_FILE}.gpg" >/dev/null 2>&1; then
     log_error "Upload nach S3 fehlgeschlagen (versioned file)"
     exit 1
 fi
 
-if ! mc cp "$SNAPSHOT_PATH" "$MC_ALIAS/$S3_BUCKET/$SNAPSHOT_FILE_LATEST" >/dev/null 2>&1; then
+if ! mc cp "$GPG_OUTPUT" "$MC_ALIAS/$S3_BUCKET/${SNAPSHOT_FILE_LATEST}.gpg" >/dev/null 2>&1; then
     log_error "Upload nach S3 fehlgeschlagen (latest file)"
     exit 1
 fi
@@ -93,4 +110,5 @@ log_info "Upload nach S3 erfolgreich abgeschlossen"
 # -------------
 
 rm -f "$SNAPSHOT_PATH"
+rm -f "$GPG_OUTPUT"
 log_info "Lokales Snapshot gelöscht"
