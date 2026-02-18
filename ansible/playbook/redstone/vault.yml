@@ -1,22 +1,22 @@
 - name: Install vault
   hosts: vault
-  become: true
   gather_facts: true
   roles:
     - role: reneruprecht.general
     - role: ansible-consul
+      become: true
     - role: grafana.grafana.promtail
+      become: true
     - role: prometheus.prometheus.node_exporter
     - role: ansible-community.ansible-vault
+      become: true
+    - role: reneruprecht.minio
   post_tasks:
-    - name: Set vault environment
-      ansible.builtin.lineinfile:
-        path: "~/.bashrc"
-        line: "export VAULT_ADDR={{ vault_api_addr }}"
-        state: present
-    - name: Set vault environment
-      become: false
-      ansible.builtin.lineinfile:
-        path: "~/.bashrc"
-        line: "export VAULT_ADDR={{ vault_api_addr }}"
-        state: present
+    # - name: Set vault environment
+    #   ansible.builtin.lineinfile:
+    #     path: "~/.bashrc"
+    #     line: "export VAULT_ADDR={{ vault_api_addr }}"
+    #     state: present
+    - name: Setup backup to s3
+      ansible.builtin.include_tasks:
+        file: ./tasks/vault_backup_setup.yml

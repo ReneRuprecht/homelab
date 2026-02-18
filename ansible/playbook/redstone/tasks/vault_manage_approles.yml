@@ -1,3 +1,5 @@
+# Needs local vault cli connection
+#
 - name: Create approle for {{ role.name }}
   when:
     - role.policies is defined

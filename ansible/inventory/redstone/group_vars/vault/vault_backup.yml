@@ -1,0 +1,8 @@
+---
+backup_vault_user: "vault"
+backup_vault_group: "vault"
+backup_approle: "backup"
+backup_script_path: "/opt/vault_scripts/vault_backup.sh"
+backup_vault_addr: "https://{{ inventory_hostname }}:8200"
+backup_minio_alias: minio
+backup_minio_bucket: "vault-backups"

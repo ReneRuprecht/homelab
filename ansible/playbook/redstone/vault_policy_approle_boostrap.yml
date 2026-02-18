@@ -1,3 +1,5 @@
+# Needs local vault cli connection
+#
 ---
 - name: Bootstrap vault with policies and approles
   hosts: localhost

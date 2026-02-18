@@ -1,4 +1,6 @@
 ---
+# Needs local vault cli connection
+#
 # vars:
 #   vault_agent_approle: 'cert-reader'
 #   vault_agent_user:

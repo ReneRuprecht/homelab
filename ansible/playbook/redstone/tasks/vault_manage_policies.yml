@@ -1,3 +1,5 @@
+# Needs local vault cli connection
+#
 - name: Deploy {{ policy.name }} policy
   ansible.builtin.template:
     src: "vault/{{ policy.name }}.hcl.j2"

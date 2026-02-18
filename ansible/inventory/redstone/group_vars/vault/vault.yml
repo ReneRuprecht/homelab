@@ -7,3 +7,9 @@ server_url: !vault |
   3437336564323936390a316666353735623335303531346238613162303366613561386262323066
   66393334386265396165643132613336353466636430306533366337303439393064
 vault_api_addr: "https://vault.{{ server_url }}"
+vault_tls_disable: 'false'
+vault_tls_copy_keys: "false"
+vault_tls_private_path: "/etc/vault/tls"
+vault_tls_certs_path: /etc/vault/tls
+vault_tls_key_file: "server.key"
+vault_tls_cert_file: "fullchain.pem"

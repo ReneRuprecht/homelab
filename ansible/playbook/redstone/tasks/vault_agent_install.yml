@@ -1,3 +1,5 @@
+# Needs local vault cli connection
+#
 ---
 - name: Ensure vars exists
   delegate_to: localhost

@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o pipefail
+set -o nounset
+
+# -------------
+# Konfiguration logging
+# -------------
+
+SERVICE_NAME="vault_backup"
+ENVIRONMENT="${ENVIRONMENT:-dev}"
+LOG_FILE="/var/log/${SERVICE_NAME}.log"
+RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)-$$"
+
+log() {
+    local level="$1"
+    shift
+    local message="$*"
+
+    printf '{"ts":"%s","level":"%s","service":"%s","env":"%s","run_id":"%s","msg":"%s"}\n' \
+        "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+        "$level" \
+        "$SERVICE_NAME" \
+        "$ENVIRONMENT" \
+        "$RUN_ID" \
+        "$(echo "$message" | sed 's/"/\\"/g')" \
+        >> "$LOG_FILE"
+}
+
+log_info()  { log INFO "$@"; }
+log_warn()  { log WARN "$@"; }
+log_error() { log ERROR "$@"; }
+
+trap 'log_error "Script failed (exit=$?)"' ERR
+
+# -------------
+# Konfiguration backup
+# -------------
+
+VAULT_ADDR="{{ backup_vault_addr }}"
+ROLE_ID_FILE="/etc/vault/role_id"
+SECRET_ID_FILE="/etc/vault/secret_id"
+export VAULT_ADDR
+
+SNAPSHOT_DIR="${SNAPSHOT_DIR:-/tmp/vault/snapshots}"
+SNAPSHOT_FILE="vault-$(date +%Y%m%dT%H%M%S).snap"
+SNAPSHOT_FILE_LATEST="vault-latest.snap"
+
+MC_ALIAS="{{ backup_minio_alias }}"
+S3_BUCKET="{{ backup_minio_bucket }}"
+
+
+log_info "Backup gestartet"
+
+# -------------
+# find vault leader
+# -------------
+
+IS_LEADER=$(vault read -format=json sys/leader | jq -r '.data.is_self')
+
+if [[ "$IS_LEADER" != "true" ]]; then
+    log_info "Diese Vault-Instanz ist kein Leader. Beende"
+    exit 0
+fi
+
+log_info "Leader gefunden: $(hostname)"
+
+
+# -------------
+# vault login
+# -------------
+
+ROLE_ID=$(cat "$ROLE_ID_FILE")
+SECRET_ID=$(cat "$SECRET_ID_FILE")
+
+if ! VAULT_TOKEN=$(vault write -field=token auth/approle/login \
+    role_id="$ROLE_ID" \
+    secret_id="$SECRET_ID" 2>/dev/null); then
+
+    log_error "Vault Login fehlgeschlagen (vault command error)"
+    exit 1
+fi
+
+if [[ -z "${VAULT_TOKEN:-}" ]]; then
+    log_error "Vault Login fehlgeschlagen (Token leer)"
+    exit 1
+fi
+
+export VAULT_TOKEN
+
+log_info "Erfolgreich bei Vault eingeloggt"
+
+# -------------
+# vault snapshot
+# -------------
+
+mkdir -p "$SNAPSHOT_DIR"
+SNAPSHOT_PATH="$SNAPSHOT_DIR/$SNAPSHOT_FILE"
+
+if ! vault operator raft snapshot save "$SNAPSHOT_PATH" >/dev/null 2>&1; then
+    log_error "Vault Snapshot fehlgeschlagen (Command Error)"
+    exit 1
+fi
+
+if [[ ! -f "$SNAPSHOT_PATH" ]]; then
+    log_error "Vault Snapshot fehlgeschlagen (Datei nicht erzeugt)"
+    exit 1
+fi
+
+if [[ ! -s "$SNAPSHOT_PATH" ]]; then
+    log_error "Vault Snapshot fehlgeschlagen (Datei leer)"
+    exit 1
+fi
+
+log_info "Snapshot erstellt: $SNAPSHOT_PATH"
+
+# -------------
+# s3
+# -------------
+
+log_info "Lade Snapshot nach S3 hoch..."
+
+if ! mc cp "$SNAPSHOT_PATH" "$MC_ALIAS/$S3_BUCKET/$SNAPSHOT_FILE" >/dev/null 2>&1; then
+    log_error "Upload nach S3 fehlgeschlagen (versioned file)"
+    exit 1
+fi
+
+if ! mc cp "$SNAPSHOT_PATH" "$MC_ALIAS/$S3_BUCKET/$SNAPSHOT_FILE_LATEST" >/dev/null 2>&1; then
+    log_error "Upload nach S3 fehlgeschlagen (latest file)"
+    exit 1
+fi
+
+log_info "Upload nach S3 erfolgreich abgeschlossen"
+
+# -------------
+# delete snapshot
+# -------------
+
+rm -f "$SNAPSHOT_PATH"
+log_info "Lokales Snapshot gelöscht"
