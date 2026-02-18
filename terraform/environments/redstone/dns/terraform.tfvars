@@ -12,6 +12,7 @@ vms = [
   {
     name     = "dns-02.redstone"
     vm_state = "running"
+    target_node = "pve-02"
     cpu = {
       cores = 2
     }
