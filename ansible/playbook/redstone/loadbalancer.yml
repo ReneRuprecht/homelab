@@ -14,13 +14,15 @@
 
 - name: Install loadbalancer
   hosts: loadbalancer
-  become: true
   gather_facts: true
   roles:
     - role: ansible-consul
+      become: true
     - role: reneruprecht.haproxy
     - role: evrardjp.keepalived
+      become: true
     - role: grafana.grafana.promtail
+      become: true
     - role: prometheus.prometheus.node_exporter
   post_tasks:
     - name: Include haproxy_vault_agent
