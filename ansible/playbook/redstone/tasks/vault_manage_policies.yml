@@ -1,0 +1,17 @@
+- name: Deploy {{ policy.name }} policy
+  ansible.builtin.template:
+    src: "vault/{{ policy.name }}.hcl.j2"
+    dest: "/tmp/{{ policy.name }}.hcl"
+    mode: "0600"
+
+- name: Apply {{ policy.name }} policy in Vault
+  ansible.builtin.command:
+    cmd: >
+      vault policy write {{ policy.name }}
+      /tmp/{{ policy.name }}.hcl
+  changed_when: false
+
+- name: Remove temp {{ policy.name }} policy
+  ansible.builtin.file:
+    path: "/tmp/{{ policy.name }}.hcl"
+    state: absent

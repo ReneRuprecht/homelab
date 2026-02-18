@@ -1,0 +1,10 @@
+- name: Create approle for {{ role.name }}
+  when:
+    - role.policies is defined
+    - role.policies | length > 0
+  ansible.builtin.command: >
+    vault write auth/approle/role/{{ role.name }}
+    token_ttl={{ role.token_ttl | default(vault_token_ttl) }}
+    token_max_ttl={{ role.token_max_ttl | default(vault_token_max_ttl) }}
+    token_policies="{{ role.policies | join(',') }}"
+  changed_when: false

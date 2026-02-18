@@ -1,0 +1,72 @@
+---
+- name: Bootstrap vault with policies and approles
+  hosts: localhost
+  gather_facts: true
+  vars:
+    vault_token_ttl: 20m
+    vault_token_max_ttl: 30m
+
+    vault_policies:
+      - name: cert-writer
+        path: "secret/data/certs/*"
+      - name: cert-reader
+        path: "secret/data/certs/*"
+      - name: cert-reader-writer
+        path: "secret/data/certs/*"
+    vault_approles:
+      - name: cert-writer
+        token_ttl: 20m
+        token_max_ttl: 30m
+        policies:
+          - "cert-writer"
+      - name: cert-reader
+        token_ttl: 20m
+        token_max_ttl: 30m
+        policies:
+          - "cert-reader"
+      - name: cert-reader-writer
+        token_ttl: 20m
+        token_max_ttl: 30m
+        policies:
+          - "cert-reader-writer"
+  tasks:
+    - name: Ensure vault cli is working
+      block:
+        - name: Check vault login
+          ansible.builtin.command:
+            cmd: "vault login $VAULT_TOKEN"
+          register: "assert_vault_token"
+          ignore_errors: true
+          changed_when: false
+          no_log: true
+
+        - name: Check vault cli output
+          ansible.builtin.assert:
+            that:
+              - assert_vault_token.rc == 0
+            fail_msg: "vault cli connection failed"
+
+    - name: Enable approle auth method
+      ansible.builtin.command:
+        cmd: vault auth enable approle
+      register: approle_enable
+      failed_when: approle_enable.rc != 0 and "path is already in use" not in approle_enable.stderr
+      changed_when: approle_enable.rc == 0
+
+    - name: Ensure policies exist
+      when: vault_policies is defined and vault_policies | length > 0
+      ansible.builtin.include_tasks:
+        file: ./tasks/vault_manage_policies.yml
+      loop: "{{ vault_policies }}"
+      loop_control:
+        loop_var: policy
+
+    - name: Ensure approles exist
+      when:
+        - vault_approles is defined
+        - vault_approles | length > 0
+      ansible.builtin.include_tasks:
+        file: ./tasks/vault_manage_approles.yml
+      loop: "{{ vault_approles }}"
+      loop_control:
+        loop_var: role
