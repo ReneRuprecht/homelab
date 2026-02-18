@@ -12,11 +12,13 @@
       become: true
     - role: reneruprecht.minio
   post_tasks:
-    # - name: Set vault environment
-    #   ansible.builtin.lineinfile:
-    #     path: "~/.bashrc"
-    #     line: "export VAULT_ADDR={{ vault_api_addr }}"
-    #     state: present
+    - name: Set vault environment
+      become: true
+      become_user: "vault"
+      ansible.builtin.lineinfile:
+        path: "~/.bashrc"
+        line: "export VAULT_ADDR=https://{{ inventory_hostname }}:8200"
+        state: present
     - name: Setup backup to s3
       ansible.builtin.include_tasks:
         file: ./tasks/vault_backup_setup.yml

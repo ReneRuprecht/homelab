@@ -6,3 +6,4 @@ backup_script_path: "/opt/vault_scripts/vault_backup.sh"
 backup_vault_addr: "https://{{ inventory_hostname }}:8200"
 backup_minio_alias: minio
 backup_minio_bucket: "vault-backups"
+backup_gpg_recipient: "main@redstone"
