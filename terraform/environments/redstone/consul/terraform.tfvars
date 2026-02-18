@@ -25,6 +25,7 @@ vms = [
     cpu = {
       cores = 2
     }
+    target_node = "pve-02"
     memory  = 2048
     ip      = "192.168.178.94/24"
     gateway = "192.168.178.1"
