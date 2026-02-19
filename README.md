@@ -13,6 +13,10 @@ Die eingesetzte Hardware befindet sich in einem selbstgebauten 10" Rack.
 # 🖥️ Proxmox
 Die VMs werden mit Terraform erstellt. Dabei werden grundlegende Ressourcen wie CPU, RAM, Netzwerk und Speicher definiert und anschließend in Proxmox bereitgestellt. Die Installation und Konfiguration der Software übernimmt Ansible. Mithilfe von Ansible Playbooks wird die benötigte Software sowie deren Konfiguration konsistent eingerichtet und bereitgestellt.
 
+![alt text](./images/proxmox.png "Proxmox")
+
+![alt text](./images/backup.png "Backup")
+
 # 🛳️ Kubernetes
 Das laufende Kubernetes Cluster soll, soweit möglich, vollständig mittels GitOps ausgestattet und konfiguriert werden. Geplant ist, interne Services wie Prometheus und Grafana mit FluxCD zu deployen und zu verwalten, während eigene Apps und Services über ArgoCD bereitgestellt und gemanagt werden. Ziel ist es, anhand praktischer Beispiele ein besseres Verständnis für beide Systeme zu entwickeln.
 
@@ -65,11 +69,14 @@ Die Umgebunj wird kontinuierlich weiterentwickelt und angepasst.
 - 1× **Netbox**, für die Dokumentation
 - 1× **Monitoring**, für Prometheus, Grafana
 - 1× **Keycloak**, für Grafana und ArgoCD 
+- 2× **Backup**, für S3 storage
 
 ## Kubernetes-Services
 - **FluxCD**  
 - **External Secrets**  
 - **Longhorn**  
+- **Cert-Manager**  
+- **CNPG**  
 
 # 🤖 Ansible
 Für die VMs im Homelab wurden und werden eigene Ansible Rollen entwickelt. 
