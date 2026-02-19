@@ -3,6 +3,6 @@
   hosts: backup
   gather_facts: true
   roles:
-    # - role: reneruprecht.general
-    # - role: prometheus.prometheus.node_exporter
+    - role: reneruprecht.general
+    - role: prometheus.prometheus.node_exporter
     - role: reneruprecht.minio
