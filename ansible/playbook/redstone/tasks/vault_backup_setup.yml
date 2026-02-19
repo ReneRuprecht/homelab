@@ -77,8 +77,9 @@
   ansible.builtin.file:
     path: "/var/log/vault_backup.log"
     state: touch
-    mode: "0600"
+    mode: "0640"
     owner: "{{ backup_vault_user }}"
+    group: "logs"
 
 - name: Copy backup script
   become: true

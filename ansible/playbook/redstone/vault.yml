@@ -28,6 +28,23 @@
     - never
     - setup_backup
   tasks:
+    - name: Create log group
+      become: true
+      ansible.builtin.group:
+        name: logs
+        state: present
+
+    - name: Add user to logs group
+      become: true
+      ansible.builtin.user:
+        name: "{{ item }}"
+        append: true
+        groups:
+          - logs
+      loop:
+        - "promtail"
+        - "vault"
+
     - name: Setup backup to s3
       ansible.builtin.include_tasks:
         file: ./tasks/vault_backup_setup.yml
