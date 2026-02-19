@@ -7,6 +7,8 @@ set -o nounset
 # Konfiguration logging
 # -------------
 
+export PATH=$PATH:/usr/local/bin
+
 SERVICE_NAME="vault_backup"
 ENVIRONMENT="${ENVIRONMENT:-dev}"
 LOG_FILE="/var/log/${SERVICE_NAME}.log"
