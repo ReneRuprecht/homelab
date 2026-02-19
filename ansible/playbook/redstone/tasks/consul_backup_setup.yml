@@ -19,8 +19,9 @@
   ansible.builtin.file:
     path: "/var/log/consul_backup.log"
     state: touch
-    mode: "0600"
+    mode: "0640"
     owner: "{{ backup_consul_user }}"
+    group: "logs"
 
 - name: Copy backup script
   become: true

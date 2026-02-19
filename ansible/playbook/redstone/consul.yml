@@ -12,6 +12,23 @@
     - role: prometheus.prometheus.consul_exporter
     - role: reneruprecht.minio
   post_tasks:
+    - name: Create logs group
+      become: true
+      ansible.builtin.group:
+        name: logs
+        state: present
+
+    - name: Add user to logs group
+      become: true
+      ansible.builtin.user:
+        name: "{{ item }}"
+        append: true
+        groups:
+          - logs
+      loop:
+        - "promtail"
+        - "consul"
+
     - name: Include consul backup
       ansible.builtin.include_tasks:
         file: ./tasks/consul_backup_setup.yml
