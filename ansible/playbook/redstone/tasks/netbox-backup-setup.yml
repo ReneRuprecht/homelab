@@ -2,18 +2,18 @@
 - name: Ensure backup script dir exists
   become: true
   ansible.builtin.file:
-    path: /opt/netbox_scripts
+    path: /opt/netbox-scripts
     state: directory
     recurse: true
     owner: "{{ backup_netbox_user }}"
     group: "{{ backup_netbox_group }}"
     mode: '0700'
 
-- name: Ensure netbox_backup log exists
+- name: Ensure netbox-backup log exists
   become: true
   changed_when: false
   ansible.builtin.file:
-    path: "/var/log/netbox_backup.log"
+    path: "/var/log/netbox-backup.log"
     state: touch
     mode: "0600"
     owner: "{{ backup_netbox_user }}"
@@ -21,7 +21,7 @@
 - name: Copy backup script
   become: true
   ansible.builtin.template:
-    src: backup/netbox_backup.sh.j2
+    src: backup/netbox-backup.sh.j2
     dest: "{{ backup_netbox_script_path }}"
     owner: "{{ backup_netbox_user }}"
     group: "{{ backup_netbox_group }}"

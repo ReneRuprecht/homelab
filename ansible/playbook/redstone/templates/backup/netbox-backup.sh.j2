@@ -9,7 +9,7 @@ set -o nounset
 
 export PATH=$PATH:/usr/local/bin
 
-SERVICE_NAME="netbox_backup"
+SERVICE_NAME="netbox-backup"
 ENVIRONMENT="${ENVIRONMENT:-dev}"
 LOG_FILE="/var/log/${SERVICE_NAME}.log"
 RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)-$$"
@@ -40,8 +40,8 @@ trap 'log_error "Script failed (exit=$?)"' ERR
 # -------------
 
 SNAPSHOT_DIR="${SNAPSHOT_DIR:-/tmp/netbox/snapshots}"
-SNAPSHOT_FILE="netbox-$(date +%Y%m%dT%H%M%S)_db.dump"
-SNAPSHOT_FILE_LATEST="netbox-latest_db.dump"
+SNAPSHOT_FILE="netbox-$(date +%Y%m%dT%H%M%S)-db.dump"
+SNAPSHOT_FILE_LATEST="netbox-latest-db.dump"
 
 
 DB_CONTAINER="{{ backup_netbox_db_container }}"

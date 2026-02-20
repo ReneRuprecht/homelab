@@ -155,7 +155,7 @@
 
     - name: Include netbox backup
       ansible.builtin.include_tasks:
-        file: ./tasks/netbox_backup_setup.yml
+        file: ./tasks/netbox-backup-setup.yml
 
     - name: Set permissions
       become: true
