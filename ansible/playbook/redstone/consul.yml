@@ -28,7 +28,15 @@
       loop:
         - "promtail"
         - "consul"
+      register: add_user_group
+
+    - name: Restart promtail
+      become: true
+      ansible.builtin.service:
+        name: "promtail"
+        state: restarted
+      when: add_user_group.changed
 
     - name: Include consul backup
       ansible.builtin.include_tasks:
-        file: ./tasks/consul_backup_setup.yml
+        file: ./tasks/consul-backup-setup.yml

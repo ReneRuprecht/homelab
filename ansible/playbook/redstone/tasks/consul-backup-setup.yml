@@ -6,18 +6,18 @@
 - name: Ensure backup script dir exists
   become: true
   ansible.builtin.file:
-    path: /opt/consul_scripts
+    path: /opt/consul-scripts
     state: directory
     recurse: true
     owner: "{{ backup_consul_user }}"
     group: "{{ backup_consul_group }}"
     mode: '0700'
 
-- name: Ensure consul_backup log exists
+- name: Ensure consul-backup log exists
   become: true
   changed_when: false
   ansible.builtin.file:
-    path: "/var/log/consul_backup.log"
+    path: "/var/log/consul-backup.log"
     state: touch
     mode: "0640"
     owner: "{{ backup_consul_user }}"
@@ -26,7 +26,7 @@
 - name: Copy backup script
   become: true
   ansible.builtin.template:
-    src: backup/consul_backup.sh.j2
+    src: backup/consul-backup.sh.j2
     dest: "{{ backup_consul_script_path }}"
     owner: "{{ backup_consul_user }}"
     group: "{{ backup_consul_group }}"

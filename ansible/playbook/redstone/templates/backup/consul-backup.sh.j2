@@ -9,7 +9,7 @@ set -o nounset
 
 export PATH=$PATH:/usr/local/bin
 
-SERVICE_NAME="consul_backup"
+SERVICE_NAME="consul-backup"
 ENVIRONMENT="${ENVIRONMENT:-dev}"
 LOG_FILE="/var/log/${SERVICE_NAME}.log"
 RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)-$$"
@@ -19,10 +19,11 @@ log() {
     shift
     local message="$*"
 
-    printf '{"ts":"%s","level":"%s","service":"%s","env":"%s","run_id":"%s","msg":"%s"}\n' \
+    printf '{"ts":"%s","level":"%s","service":"%s","hostname":"%s","env":"%s","run_id":"%s","msg":"%s"}\n' \
         "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
         "$level" \
         "$SERVICE_NAME" \
+        "$HOSTNAME" \
         "$ENVIRONMENT" \
         "$RUN_ID" \
         "$(echo "$message" | sed 's/"/\\"/g')" \
