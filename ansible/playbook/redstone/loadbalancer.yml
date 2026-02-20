@@ -27,7 +27,7 @@
   post_tasks:
     - name: Include haproxy_vault_agent
       ansible.builtin.include_tasks:
-        file: ./tasks/vault_agent_haproxy.yml
+        file: ./tasks/vault-agent-haproxy.yml
   handlers:
     - name: Restart vault-agent
       become: true
