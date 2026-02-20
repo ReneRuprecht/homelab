@@ -27,55 +27,30 @@
           - assert_vault_token.rc == 0
         fail_msg: "vault cli connection failed"
 
-- name: Fetch role-id for backup
-  changed_when: false
-  ansible.builtin.command:
-    cmd: vault read -field=role_id auth/approle/role/{{ backup_approle }}/role-id
-  register: backup_role_id
-  delegate_to: localhost
-
-- name: Generate secret-id for backup
-  changed_when: false
-  ansible.builtin.command:
-    cmd: vault write -f -field=secret_id auth/approle/role/{{ backup_approle }}/secret-id
-  register: backup_secret_id
-  delegate_to: localhost
-
-- name: Copy role-id to server
-  become: true
-  register: backup_copy_role_id_state
-  ansible.builtin.copy:
-    content: "{{ backup_role_id.stdout }}"
-    dest: /etc/vault/role_id
+- name: Prepare approle login
+  ansible.builtin.include_tasks:
+    file: ./vault-deploy-approle-login.yml
+  vars:
+    approle: "{{ backup_approle }}"
     owner: "{{ backup_vault_user }}"
     group: "{{ backup_vault_group }}"
-    mode: '0600'
-
-- name: Copy secret-id to server
-  become: true
-  register: backup_copy_secret_id_state
-  ansible.builtin.copy:
-    content: "{{ backup_secret_id.stdout }}"
-    dest: /etc/vault/secret_id
-    owner: "{{ backup_vault_user }}"
-    group: "{{ backup_vault_group }}"
-    mode: '0600'
+  register: vault_approle_login
 
 - name: Ensure backup script dir exists
   become: true
   ansible.builtin.file:
-    path: /opt/vault_scripts
+    path: /opt/vault-scripts
     state: directory
     recurse: true
     owner: "{{ backup_vault_user }}"
     group: "{{ backup_vault_group }}"
     mode: '0700'
 
-- name: Ensure vault_backup log exists
+- name: Ensure vault-backup log exists
   become: true
   changed_when: false
   ansible.builtin.file:
-    path: "/var/log/vault_backup.log"
+    path: "/var/log/vault-backup.log"
     state: touch
     mode: "0640"
     owner: "{{ backup_vault_user }}"
@@ -84,7 +59,7 @@
 - name: Copy backup script
   become: true
   ansible.builtin.template:
-    src: backup/vault_backup.sh.j2
+    src: backup/vault-backup.sh.j2
     dest: "{{ backup_script_path }}"
     owner: "{{ backup_vault_user }}"
     group: "{{ backup_vault_group }}"

@@ -15,6 +15,8 @@
         path: "secret/data/certs/*"
       - name: cert-reader-writer
         path: "secret/data/certs/*"
+      - name: backup
+        path: "sys/storage/raft/snapshot"
     vault_approles:
       - name: cert-writer
         token_ttl: 20m
@@ -31,6 +33,11 @@
         token_max_ttl: 30m
         policies:
           - "cert-reader-writer"
+      - name: backup
+        token_ttl: 20m
+        token_max_ttl: 30m
+        policies:
+          - "backup"
   tasks:
     - name: Ensure vault cli is working
       block:
@@ -58,7 +65,7 @@
     - name: Ensure policies exist
       when: vault_policies is defined and vault_policies | length > 0
       ansible.builtin.include_tasks:
-        file: ./tasks/vault_manage_policies.yml
+        file: ./tasks/vault-manage-policies.yml
       loop: "{{ vault_policies }}"
       loop_control:
         loop_var: policy
@@ -68,7 +75,7 @@
         - vault_approles is defined
         - vault_approles | length > 0
       ansible.builtin.include_tasks:
-        file: ./tasks/vault_manage_approles.yml
+        file: ./tasks/vault-manage-approles.yml
       loop: "{{ vault_approles }}"
       loop_control:
         loop_var: role

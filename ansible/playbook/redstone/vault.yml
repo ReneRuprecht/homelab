@@ -45,6 +45,12 @@
         - "promtail"
         - "vault"
 
+    - name: Restart promtail
+      become: true
+      ansible.builtin.service:
+        name: "promtail"
+        state: restarted
+
     - name: Setup backup to s3
       ansible.builtin.include_tasks:
-        file: ./tasks/vault_backup_setup.yml
+        file: ./tasks/vault-backup-setup.yml

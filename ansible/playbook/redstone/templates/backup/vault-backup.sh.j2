@@ -9,20 +9,23 @@ set -o nounset
 
 export PATH=$PATH:/usr/local/bin
 
-SERVICE_NAME="vault_backup"
+SERVICE_NAME="vault-backup"
 ENVIRONMENT="${ENVIRONMENT:-dev}"
 LOG_FILE="/var/log/${SERVICE_NAME}.log"
 RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)-$$"
+ROLE="node"
 
 log() {
     local level="$1"
     shift
     local message="$*"
 
-    printf '{"ts":"%s","level":"%s","service":"%s","env":"%s","run_id":"%s","msg":"%s"}\n' \
+    printf '{"ts":"%s","level":"%s","service":"%s","role":"%s","hostname":"%s","env":"%s","run_id":"%s","msg":"%s"}\n' \
         "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
         "$level" \
         "$SERVICE_NAME" \
+        "$ROLE" \
+        "$HOSTNAME" \
         "$ENVIRONMENT" \
         "$RUN_ID" \
         "$(echo "$message" | sed 's/"/\\"/g')" \
@@ -40,8 +43,8 @@ trap 'log_error "Script failed (exit=$?)"' ERR
 # -------------
 
 VAULT_ADDR="{{ backup_vault_addr }}"
-ROLE_ID_FILE="/etc/vault/role_id"
-SECRET_ID_FILE="/etc/vault/secret_id"
+ROLE_ID_FILE="/etc/vault/role-id"
+SECRET_ID_FILE="/etc/vault/secret-id"
 export VAULT_ADDR
 
 SNAPSHOT_DIR="${SNAPSHOT_DIR:-/tmp/vault/snapshots}"
@@ -67,6 +70,7 @@ fi
 
 log_info "Leader gefunden: $(hostname)"
 
+ROLE="leader"
 
 # -------------
 # vault login

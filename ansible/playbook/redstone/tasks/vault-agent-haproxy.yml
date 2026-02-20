@@ -10,7 +10,7 @@
 #   - name: Restart vault-agent
 - name: Inlcude vault_agent_install
   ansible.builtin.include_tasks:
-    file: ./vault_agent_install.yml
+    file: ./vault-agent-install.yml
 
 - name: Copy vault agent configuration
   become: true

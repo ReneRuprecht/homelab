@@ -1,0 +1,48 @@
+---
+# Needs local vault cli connection
+#
+# vars:
+#   approle: 'cert-reader'
+#   owner:
+#   group:
+#
+- name: Ensure Vault directory exist
+  become: true
+  ansible.builtin.file:
+    path: "/etc/vault"
+    state: directory
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+    mode: '0700'
+
+- name: Fetch role-id for {{ approle }}
+  changed_when: false
+  ansible.builtin.command:
+    cmd: vault read -field=role_id auth/approle/role/{{ approle }}/role-id
+  register: role_id
+  delegate_to: localhost
+
+- name: Generate secret-id for {{ approle }}
+  changed_when: false
+  ansible.builtin.command:
+    cmd: vault write -f -field=secret_id auth/approle/role/{{ approle }}/secret-id
+  register: secret_id
+  delegate_to: localhost
+
+- name: Copy role-id to server
+  become: true
+  ansible.builtin.copy:
+    content: "{{ role_id.stdout }}"
+    dest: /etc/vault/role-id
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+    mode: '0600'
+
+- name: Copy secret-id to server
+  become: true
+  ansible.builtin.copy:
+    content: "{{ secret_id.stdout }}"
+    dest: /etc/vault/secret-id
+    owner: "{{ owner }}"
+    group: "{{ group }}"
+    mode: '0600'
