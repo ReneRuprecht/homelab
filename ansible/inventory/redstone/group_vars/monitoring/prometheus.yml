@@ -79,7 +79,7 @@ prometheus_scrape_configs:
     metrics_path: /minio/v2/metrics/cluster
     scheme: http
     static_configs:
-      - targets: ['backup-01.redstone:9000', 'backup-02.redstone:9000']
+      - targets: ['backup-01.redstone:9000']
     relabel_configs:
       - source_labels: [__address__]
         regex: "([^:]+):.*"
