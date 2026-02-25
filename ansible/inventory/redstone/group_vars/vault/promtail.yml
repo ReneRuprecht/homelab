@@ -1,0 +1,36 @@
+---
+promtail_scrape_configs:
+  - job_name: fail2ban
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: fail2ban
+          instance: "{{ ansible_facts['fqdn'] }}"
+          __path__: /var/log/fail2ban.log
+  - job_name: journal
+    journal:
+      path: /var/log/journal
+      json: false
+      max_age: 12h
+      labels:
+        job: systemd-journal
+        instance: "{{ ansible_facts['fqdn'] }}"
+    relabel_configs:
+      - source_labels:
+          - __journal__hostname
+        target_label: hostname
+      - source_labels:
+          - __journal__systemd_unit
+        target_label: unit
+      - source_labels:
+          - __journal_priority_keyword
+        target_label: level
+  - job_name: vault-backup
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: vault-backup
+          instance: "{{ ansible_facts['fqdn'] }}"
+          __path__: /var/log/vault-backup.log
