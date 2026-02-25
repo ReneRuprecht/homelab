@@ -34,4 +34,5 @@
     user: "{{ backup_netbox_user }}"
     state: present
     job: "{{ backup_netbox_script_path }}"
+    minute: 0
     hour: "*/12"

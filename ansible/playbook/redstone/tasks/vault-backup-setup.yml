@@ -72,4 +72,5 @@
     user: "{{ backup_vault_user }}"
     state: present
     job: "{{ backup_script_path }}"
+    minute: 0
     hour: "*/12"

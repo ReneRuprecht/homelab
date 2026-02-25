@@ -39,4 +39,5 @@
     user: "{{ backup_consul_user }}"
     state: present
     job: "{{ backup_consul_script_path }}"
+    minute: 0
     hour: "*/12"
