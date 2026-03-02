@@ -58,13 +58,7 @@
 - name: Prepare approle login
   ansible.builtin.include_tasks:
     file: ./vault-deploy-approle-login.yml
-  vars:
-    approle: "{{ vault_approle_login }}"
-    owner: "{{ vault_agent_user }}"
-    group: "{{ vault_agent_group }}"
   register: vault_approle_login
-  notify:
-    - Restart vault-agent
 
 - name: Download hashicorp gpg key
   become: true

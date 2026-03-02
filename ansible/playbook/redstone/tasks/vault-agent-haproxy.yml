@@ -2,6 +2,7 @@
 # Needs local vault cli connection
 #
 # vars:
+#   vault_agent_approle
 #   vault_agent_user
 #   vault_agent_group
 #   vault_agent_vault_addr
