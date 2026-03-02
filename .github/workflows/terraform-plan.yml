@@ -11,6 +11,8 @@ env:
   PM_API_TOKEN_ID: ${{ secrets.PM_API_TOKEN_ID }}
   PM_API_TOKEN_SECRET: ${{ secrets.PM_API_TOKEN_SECRET }}
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  TF_VAR_vault_address: ${{ secrets.VAULT_ADDRESS }}
+  TF_VAR_vault_token: ${{ secrets.VAULT_TOKEN }}
 
 on:
   workflow_call:
