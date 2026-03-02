@@ -2,13 +2,25 @@
 - name: Install monitoring vms
   hosts: monitoring
   gather_facts: true
-  become: true
   roles:
     - role: reneruprecht.general
     - role: grafana.grafana.loki
     - role: grafana.grafana.promtail
+      become: true
     - role: prometheus.prometheus.prometheus
     - role: prometheus.prometheus.node_exporter
     - role: grafana.grafana.grafana
     - role: ansible-consul
+      become: true
     - role: prometheus.prometheus.alertmanager
+  pre_tasks:
+    - name: Install vault agent
+      ansible.builtin.include_tasks:
+        file: ./tasks/vault-agent-prometheus.yml
+
+  handlers:
+    - name: Restart vault-agent
+      become: true
+      ansible.builtin.systemd:
+        name: vault-agent
+        state: restarted

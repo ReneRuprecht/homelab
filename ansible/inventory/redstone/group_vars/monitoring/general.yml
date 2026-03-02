@@ -1,4 +1,8 @@
 ---
+general_debian_extra_packages:
+  - jq
+  - cron
+
 general_ufw_ports:
   - port: "22"
     proto: tcp
