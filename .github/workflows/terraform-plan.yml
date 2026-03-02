@@ -13,6 +13,8 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
   TF_VAR_vault_address: ${{ secrets.VAULT_ADDRESS }}
   TF_VAR_vault_token: ${{ secrets.VAULT_TOKEN }}
+  TF_VAR_k8s_ca_cert: ${{ secrets.K8S_CA_CERT }}
+  TF_VAR_k8s_host: ${{ secrets.K8S_HOST }}
 
 on:
   workflow_call:
