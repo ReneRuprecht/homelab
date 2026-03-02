@@ -31,9 +31,9 @@
   ansible.builtin.include_tasks:
     file: ./vault-deploy-approle-login.yml
   vars:
-    approle: "{{ backup_approle }}"
-    owner: "{{ backup_vault_user }}"
-    group: "{{ backup_vault_group }}"
+    vault_agent_approle: "{{ backup_approle }}"
+    vault_agent_user: "{{ backup_vault_user }}"
+    vault_agent_group: "{{ backup_vault_group }}"
   register: vault_approle_login
 
 - name: Ensure backup script dir exists
