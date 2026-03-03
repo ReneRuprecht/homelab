@@ -86,6 +86,8 @@ haproxy_backends:
     ssl_enable: true
     verify: "none"
     check: true
+    options:
+      - httpchk
     http_check:
       send:
         method: GET
