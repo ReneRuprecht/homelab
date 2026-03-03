@@ -4,6 +4,8 @@ env:
   ANSIBLE_VAULT: ${{ secrets.ANSIBLE_VAULT }}
   ANSIBLE_SSH_KEY: ${{ secrets.SSH_KEY }}
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
+  VAULT_ADDR: ${{ secrets.VAULT_ADDRESS }}
+  VAULT_TOKEN: ${{ secrets.VAULT_TOKEN }}
 
 on:
   workflow_call:
