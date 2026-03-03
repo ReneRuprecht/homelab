@@ -41,7 +41,7 @@ jobs:
           echo "log_dir=$ANSIBLE_LOG" >> $GITHUB_OUTPUT
           echo "log_file=${ANSIBLE_LOG}/${ENV_NAME}_${PLAYBOOK}.log" >> $GITHUB_OUTPUT
           echo "log_name=${ENV_NAME}_${PLAYBOOK}.log" >> $GITHUB_OUTPUT
-          echo "inventory=inventory/${ENV_NAME}/hosts.yml" >> $GITHUB_OUTPUT
+          echo "inventory=inventory/${ENV_NAME}/" >> $GITHUB_OUTPUT
           echo "playbook=playbook/${ENV_NAME}/${PLAYBOOK}" >> $GITHUB_OUTPUT
 
       - name: Setup SSH

@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 passlib = "*"
 ansible-core = "==2.17"
+requests = "*"
 
 [dev-packages]
 ansible-lint = "*"

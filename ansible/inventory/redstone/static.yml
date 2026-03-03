@@ -1,0 +1,9 @@
+all:
+  children:
+    vault_raft_servers:
+      children:
+        vault:
+    k8s-01:
+      children:
+        k8s-01-masters:
+        k8s-01-nodes:

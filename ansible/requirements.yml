@@ -11,6 +11,8 @@ collections:
     version: 6.0.6
   - name: prometheus.prometheus
     version: 0.27.3
+  - name: community.proxmox
+    version: 1.5.0
 roles:
   - name: reneruprecht.minio
     src: "https://github.com/reneruprecht/ansible-role-minio"
