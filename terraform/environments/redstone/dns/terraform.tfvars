@@ -5,19 +5,21 @@ vms = [
     cpu = {
       cores = 2
     }
-    memory  = 2048
-    ip      = "192.168.178.95/24"
-    gateway = "192.168.178.1"
+    memory             = 2048
+    ip                 = "192.168.178.95/24"
+    gateway            = "192.168.178.1"
+    start_at_node_boot = true
   },
   {
-    name     = "dns-02.redstone"
-    vm_state = "running"
+    name        = "dns-02.redstone"
+    vm_state    = "running"
     target_node = "pve-02"
     cpu = {
       cores = 2
     }
-    memory  = 2048
-    ip      = "192.168.178.96/24"
-    gateway = "192.168.178.1"
+    memory             = 2048
+    ip                 = "192.168.178.96/24"
+    gateway            = "192.168.178.1"
+    start_at_node_boot = true
   },
 ]

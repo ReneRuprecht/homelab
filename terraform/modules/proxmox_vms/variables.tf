@@ -103,4 +103,9 @@ variable "vm_scsi_extra_disks" {
 
 }
 
+variable "vm_start_at_node_boot" {
+  description = "VM start at node boot"
+  type        = bool
+  default     = false
+}
 

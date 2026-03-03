@@ -7,3 +7,17 @@ module "netbox_proxmox_vms" {
   vms          = var.vms
 }
 
+resource "dns_a_record_set" "vms" {
+  depends_on = [module.netbox_proxmox_vms]
+
+  for_each = module.netbox_proxmox_vms.proxmox_vms
+
+  zone = "redstone."
+  name = split(".redstone", each.key)[0]
+
+  addresses = [
+    each.value
+  ]
+
+  ttl = 300
+}

@@ -33,9 +33,10 @@ variable "vms" {
     cpu = object({
       cores = optional(number, 1)
     })
-    vm_state = string
-    tags     = optional(string, "")
-    clone    = optional(string, "debian-13-cloud")
+    vm_state           = string
+    tags               = optional(string, "")
+    clone              = optional(string, "debian-13-cloud")
+    start_at_node_boot = optional(bool, false)
 
     cloudinit = optional(object({
       storage = optional(string, "internal-storage")

@@ -21,9 +21,10 @@ variable "vms" {
     cpu = object({
       cores = optional(number, 1)
     })
-    vm_state = string
-    tags     = optional(string)
-    clone    = optional(string, "debian-12-cloud")
+    vm_state           = string
+    tags               = optional(string)
+    clone              = optional(string, "debian-12-cloud")
+    start_at_node_boot = optional(bool, false)
 
     cloudinit = optional(object({
       storage = optional(string, "internal-storage")
@@ -51,7 +52,7 @@ variable "vms" {
     })), [])
 
     cluster_name = optional(string, "Proxmox PVE-02")
-    prefix = optional(string, "192.168.178.0/24")
+    prefix       = optional(string, "192.168.178.0/24")
   }))
 }
 

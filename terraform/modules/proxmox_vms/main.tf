@@ -1,11 +1,18 @@
 resource "proxmox_vm_qemu" "vm" {
-  name        = var.vm_name
-  target_node = var.vm_target_node
-  clone       = var.vm_clone
-  full_clone  = true
-  memory      = var.vm_memory
-  agent       = 1
-  os_type     = "cloud-init"
+  name               = var.vm_name
+  target_node        = var.vm_target_node
+  clone              = var.vm_clone
+  full_clone         = true
+  memory             = var.vm_memory
+  agent              = 1
+  os_type            = "cloud-init"
+  start_at_node_boot = var.vm_start_at_node_boot
+
+  startup_shutdown {
+    order            = -1
+    shutdown_timeout = -1
+    startup_delay    = -1
+  }
 
   cpu {
     cores   = var.vm_cpu.cores
