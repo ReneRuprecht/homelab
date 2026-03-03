@@ -19,11 +19,6 @@ RUN apk add --update --virtual .deps --no-cache gnupg && \
 
 FROM python:3.12-alpine3.22
 
-ARG USER=default
-ENV HOME=/home/$USER
-
-RUN adduser -D $USER
-
 RUN mkdir ~/.ssh
 
 RUN pip install \
@@ -40,6 +35,3 @@ RUN apk add \
 
 COPY --from=builder /usr/local/bin/vault /usr/local/bin/vault
 RUN chmod +x /usr/local/bin/vault
-
-USER ${USER}
-WORKDIR ${HOME}
