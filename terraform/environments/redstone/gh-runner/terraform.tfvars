@@ -5,12 +5,16 @@ vms = [
     cpu = {
       cores = 2
     }
+    scsi_disk = {
+      size = "20G",
+      size_mb = 20000
+    }
     memory  = 4096
     gateway = "192.168.178.1"
   },
   {
     name     = "gh-runner-02.redstone"
-    vm_state = "running"
+    vm_state = "stopped"
     cpu = {
       cores = 2
     }
