@@ -1,4 +1,5 @@
 ---
+bind9_zonedir: "/var/lib/bind"
 bind9_authoritative: true
 bind9_forward: true
 bind9_recursor: true
@@ -8,6 +9,21 @@ bind9_slaves:
   - 192.168.178.96
 bind9_our_neighbors:
   - 192.168.178.96
+
+bind9_zones_static:
+  - name: redstone
+    update_policy_grant: "zonesub any"
+    update_key_secret: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          38396665393663323437336431626262363139363533366536646237623639633539626536343037
+          3265626663323837303835336531363864636666616432630a306432343438613461313766343030
+          64386136343532646139393731383330623535646638376530323065393930613331653363333537
+          6263623538626665380a383564656662343431316561616466653966616339303436646533356563
+          61646236373337333331623239313633346363393431326432396536356364393732653435613561
+          38333633333036653661393030323735356539396238643633306632303933333330363666623734
+          39303831333262626662646131373430613763343138663530643731393630373635353338666630
+          37373933316436646465303466613038646638373438643936373364653831623634313331303935
+          3464
 
 bind9_zones_dynamic:
   - name: bluecore
@@ -32,76 +48,6 @@ bind9_zones_dynamic:
       - label: argocd
         type: A
         rdata: 192.168.178.249
-  - name: redstone
-    serial: 2025081126
-    admin: noemail.redstone
-    ns_records:
-      - dns-01.redstone
-      - dns-02.redstone
-    rrs:
-      - label: netbox-01
-        type: A
-        rdata: 192.168.178.91
-      - label: consul-01
-        type: A
-        rdata: 192.168.178.92
-      - label: consul-02
-        type: A
-        rdata: 192.168.178.93
-      - label: consul-03
-        type: A
-        rdata: 192.168.178.94
-      - label: dns-01
-        type: A
-        rdata: 192.168.178.95
-      - label: dns-02
-        type: A
-        rdata: 192.168.178.96
-      - label: pve-01
-        type: A
-        rdata: 192.168.178.81
-      - label: loadbalancer-01
-        type: A
-        rdata: 192.168.178.101
-      - label: loadbalancer-02
-        type: A
-        rdata: 192.168.178.100
-      - label: gh-runner-01
-        type: A
-        rdata: 192.168.178.102
-      - label: gh-runner-02
-        type: A
-        rdata: 192.168.178.103
-      - label: monitoring-01
-        type: A
-        rdata: 192.168.178.104
-      - label: vault-01
-        type: A
-        rdata: 192.168.178.105
-      - label: vault-02
-        type: A
-        rdata: 192.168.178.107
-      - label: vault-03
-        type: A
-        rdata: 192.168.178.106
-      - label: k8s-master-01
-        type: A
-        rdata: 192.168.178.108
-      - label: k8s-node-01
-        type: A
-        rdata: 192.168.178.109
-      - label: k8s-node-02
-        type: A
-        rdata: 192.168.178.110
-      - label: keycloak-01
-        type: A
-        rdata: 192.168.178.111
-      - label: backup-01
-        type: A
-        rdata: 192.168.178.112
-      - label: backup-02
-        type: A
-        rdata: 192.168.178.113
   - name: !vault |
       $ANSIBLE_VAULT;1.1;AES256
       38383063336632363530623037366536626230303732633363363538363936643832376136313464

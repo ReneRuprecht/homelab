@@ -1,4 +1,42 @@
 ---
+- name: Initial dns setup
+  hosts: dns
+  gather_facts: true
+  become: true
+  tags:
+    - never
+    - setup_dns
+  pre_tasks:
+    - name: Create group
+      become: true
+      ansible.builtin.group:
+        name: "bind"
+        system: true
+        state: present
+
+    - name: Create user
+      become: true
+      ansible.builtin.user:
+        name: "bind"
+        system: true
+        shell: /bin/bash
+        create_home: true
+        home: "/home/bind"
+        state: present
+
+    - name: Ensure /var/lib/bind dir exists
+      become: true
+      ansible.builtin.file:
+        path: /var/lib/bind
+        recurse: true
+        owner: bind
+        group: bind
+        mode: "0755"
+
+  roles:
+    - role: reneruprecht.general
+    - role: systemli.bind9
+
 - name: Install dns
   hosts: dns
   gather_facts: true
@@ -6,7 +44,6 @@
   roles:
     - role: reneruprecht.general
     - role: ansible-consul
-    - role: systemli.bind9
     - role: grafana.grafana.promtail
     - role: prometheus.prometheus.node_exporter
     - role: prometheus.prometheus.bind_exporter
