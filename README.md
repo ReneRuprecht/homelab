@@ -60,7 +60,7 @@ Aktuell wird eine Kombination aus virtuellen Maschinen und Kubernetes-Services b
 Die Umgebunj wird kontinuierlich weiterentwickelt und angepasst.
 
 ## Virtuelle Maschinen (VMs)
-- 3× **Consul**, Terraform State für die Pipeline
+- ~~3× **Consul**, Terraform State für die Pipeline~~ aktuell nicht aktiv
 - 2× **DNS**
 - 2× **Github Runner**, für die Pipeline
 - 3× **Vault**, die derzeit für Kubernetes-Secrets verwendet werden  
@@ -69,14 +69,15 @@ Die Umgebunj wird kontinuierlich weiterentwickelt und angepasst.
 - 1× **Netbox**, für die Dokumentation
 - 1× **Monitoring**, für Prometheus, Grafana
 - 1× **Keycloak**, für Grafana und ArgoCD 
-- 2× **Backup**, für S3 storage
+- 2× **Backup**, für S3 storage und Terraform State
 
 ## Kubernetes-Services
 - **FluxCD**  
 - **External Secrets**  
 - **Longhorn**  
 - **Cert-Manager**  
-- **CNPG**  
+- **CNPG** 
+- **Github-Runner-Scale-Set**
 
 # 🤖 Ansible
 Für die VMs im Homelab wurden und werden eigene Ansible Rollen entwickelt. 
@@ -114,6 +115,15 @@ export NETBOX_API_TOKEN=<TOKEN>
 
 export TF_VAR_netbox_url=<URL>
 export TF_VAR_netbox_token=<TOKEN>
+
+# Bootstrap
+export TF_VAR_minio_server=<MINIO_SERVER>
+export TF_VAR_minio_user=<MINIO_USER>
+export TF_VAR_minio_password=<MINIO_PASSWORD>
+
+# S3 backend
+export AWS_ACCESS_KEY_ID=<MINIO_USER>
+export AWS_SECRET_ACCESS_KEY=<MINIO_PASSWORD>
 ```
 ### Proxmox
 Für die Verbindung zum Proxmox werden folgende Environment Variablen benötigt.
