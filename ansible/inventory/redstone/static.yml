@@ -3,7 +3,7 @@ all:
     vault_raft_servers:
       children:
         vault:
-    k8s-01:
+    k8s_01:
       children:
-        k8s-01-masters:
-        k8s-01-nodes:
+        k8s_01_masters:
+        k8s_01_nodes:

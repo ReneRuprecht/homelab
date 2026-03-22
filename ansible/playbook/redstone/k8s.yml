@@ -1,12 +1,12 @@
 - name: Setup k8s node disks
-  hosts: k8s-01-nodes
+  hosts: k8s_01_nodes
   gather_facts: true
   become: true
   roles:
     - role: tinslice.ansible-role-disks
 
 - name: Install k8s
-  hosts: k8s-01
+  hosts: k8s_01
   gather_facts: true
   become: true
   pre_tasks:
@@ -21,7 +21,9 @@
         state: present
   roles:
     - role: reneruprecht.general
-    - role: ansible-consul
+    - role: geerlingguy.docker
+      become: true
+    # - role: ansible-consul
     - role: grafana.grafana.promtail
     - role: prometheus.prometheus.node_exporter
     - role: reneruprecht.kubernetes
