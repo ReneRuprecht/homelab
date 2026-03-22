@@ -1,6 +1,7 @@
 resource "minio_s3_bucket" "terraform_state" {
-  bucket = "terraform-state"
-  acl    = "private"
+  bucket         = "terraform-state"
+  acl            = "private"
+  object_locking = true
 }
 resource "minio_s3_bucket_versioning" "example" {
   depends_on = [minio_s3_bucket.terraform_state]
