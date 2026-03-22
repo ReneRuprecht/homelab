@@ -9,4 +9,5 @@ resources:
   - argocd
   - cloudnativepg
   - redis
+  - gha-runner-scale-set-controller
 # - airflow
