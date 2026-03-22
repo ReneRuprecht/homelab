@@ -1,0 +1,57 @@
+resource "minio_s3_bucket" "terraform_state" {
+  bucket = "terraform-state"
+  acl    = "private"
+}
+resource "minio_s3_bucket_versioning" "example" {
+  depends_on = [minio_s3_bucket.terraform_state]
+  bucket     = minio_s3_bucket.terraform_state.bucket
+
+  versioning_configuration {
+    status = "Enabled"
+  }
+}
+
+resource "random_password" "terraform_user" {
+  length           = 24
+  special          = true
+  override_special = "!#$%$&*()-_=+[]{}<>:?"
+
+  lifecycle {
+    ignore_changes = [
+      length,
+      special
+    ]
+  }
+}
+
+resource "minio_iam_user" "terraform" {
+  depends_on = [random_password.terraform_user]
+  name       = "terraform"
+  secret     = random_password.terraform_user.result
+}
+
+resource "minio_iam_policy" "terraform_state" {
+  name = "terraform-state-policy"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["s3:ListBucket"]
+        Resource = ["arn:aws:s3:::terraform-state/*"]
+      },
+      {
+        Effect   = "Allow"
+        Action   = ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
+        Resource = ["arn:aws:s3:::terraform-state/*"]
+      }
+    ]
+  })
+}
+
+resource "minio_iam_user_policy_attachment" "terraform" {
+  depends_on  = [minio_iam_user.terraform, minio_iam_policy.terraform_state]
+  user_name   = minio_iam_user.terraform.name
+  policy_name = minio_iam_policy.terraform_state.name
+}
