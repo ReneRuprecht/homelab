@@ -27,11 +27,11 @@ jobs:
   get-dirs:
     runs-on: homelab
     container:
-      image: reneruprecht/ci-node22
+      image: reneruprecht/ci-node24
     outputs:
       dirs: ${{ steps.get-dirs.outputs.dirs }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
 

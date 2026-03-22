@@ -24,7 +24,7 @@ jobs:
       playbook_env_mapping: ${{ steps.filter.outputs.playbook_env_mapping }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
 

@@ -34,7 +34,7 @@ jobs:
     if: ${{ inputs.dirs != '[]' }}
     runs-on: homelab
     container:
-      image: reneruprecht/ci-node22
+      image: reneruprecht/ci-node24
     outputs:
       plan_dir: ${{ steps.setup_vars_and_dirs.outputs.plan_dir }}
       plan_name: ${{ steps.setup_vars_and_dirs.outputs.plan_name }}
@@ -47,7 +47,7 @@ jobs:
         env_name: ${{ fromJSON(inputs.dirs) }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Vars and Dirs
         id: setup_vars_and_dirs

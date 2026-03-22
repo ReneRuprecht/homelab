@@ -33,13 +33,13 @@ jobs:
     if: ${{ inputs.dirs != '[]' }}
     runs-on: homelab
     container:
-      image: reneruprecht/ci-node22
+      image: reneruprecht/ci-node24
     strategy:
       matrix:
         env_name: ${{ fromJSON(inputs.dirs) }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup vars
         id: vars
