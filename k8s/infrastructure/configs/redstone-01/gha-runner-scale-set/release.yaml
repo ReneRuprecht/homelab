@@ -1,0 +1,20 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gha-runner-scale-set-homelab
+  namespace: arc-runners
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: gha-runner-scale-set
+      version: "0.14.0"
+      sourceRef:
+        kind: HelmRepository
+        name: gha-runner-scale-set-controller
+        namespace: arc-systems
+      interval: 12h
+  values:
+    githubConfigUrl: "https://github.com/reneruprecht/homelab"
+
+    githubConfigSecret: gha-runner-scale-set-homelab
