@@ -20,3 +20,5 @@ spec:
     githubConfigSecret: gha-runner-scale-set-homelab
     minRunners: 1
     maxRunners: 3
+    scaleSetLabels:
+      - homelab
