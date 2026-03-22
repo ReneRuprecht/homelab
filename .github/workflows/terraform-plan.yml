@@ -32,7 +32,7 @@ on:
 jobs:
   plan:
     if: ${{ inputs.dirs != '[]' }}
-    runs-on: self-hosted
+    runs-on: homelab
     container:
       image: reneruprecht/ci-node22
     outputs:

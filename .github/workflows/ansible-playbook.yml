@@ -22,7 +22,7 @@ on:
 
 jobs:
   playbooks:
-    runs-on: self-hosted
+    runs-on: homelab
     container:
       image:  reneruprecht/ci-python312
     strategy:

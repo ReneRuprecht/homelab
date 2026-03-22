@@ -25,7 +25,7 @@ on:
 
 jobs:
   get-dirs:
-    runs-on: self-hosted
+    runs-on: homelab
     container:
       image: reneruprecht/ci-node22
     outputs:

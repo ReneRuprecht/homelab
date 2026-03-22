@@ -22,7 +22,7 @@ jobs:
     container:
       image:  "docker:28.3.3-dind-alpine3.22"
     needs: get-dirs
-    runs-on: self-hosted
+    runs-on: homelab
     strategy:
       matrix:
         image_dirs: ${{ fromJSON(needs.get-dirs.outputs.dirs) }}

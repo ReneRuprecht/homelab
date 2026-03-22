@@ -17,7 +17,7 @@ on:
 
 jobs:
   filter:
-    runs-on: self-hosted
+    runs-on: homelab
     container:
       image: reneruprecht/ci-python312
     outputs:

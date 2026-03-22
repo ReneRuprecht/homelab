@@ -77,7 +77,7 @@ jobs:
         needs.prepare.outputs.playbook_env_mapping != '' &&
         needs.prepare.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
-    runs-on: self-hosted
+    runs-on: homelab
     container:
       image: reneruprecht/ci-python312
     outputs:
