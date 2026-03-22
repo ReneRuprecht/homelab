@@ -3,4 +3,4 @@ kind: Kustomization
 resources:
 - metallb
 - cert-manager
-- gha-runner-scale-set
+# - gha-runner-scale-set
