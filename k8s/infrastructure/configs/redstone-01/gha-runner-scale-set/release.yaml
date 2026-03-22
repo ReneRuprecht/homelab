@@ -22,3 +22,5 @@ spec:
     maxRunners: 3
     scaleSetLabels:
       - homelab
+    containerMode:
+      type: "dind"
