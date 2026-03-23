@@ -35,6 +35,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Fix git safe directory error
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
       - name: Info Banner
         run: |
           CHOICE="$(echo ${{ inputs.processing_mode }} | tr [a-z] [A-Z])"
