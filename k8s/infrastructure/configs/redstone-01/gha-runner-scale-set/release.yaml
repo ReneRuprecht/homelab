@@ -24,3 +24,30 @@ spec:
       - homelab
     containerMode:
       type: "dind"
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: gha-runner-scale-set-gha-testing
+  namespace: arc-runners
+spec:
+  interval: 10m
+  chart:
+    spec:
+      chart: gha-runner-scale-set
+      version: "0.14.0"
+      sourceRef:
+        kind: HelmRepository
+        name: gha-runner-scale-set-controller
+        namespace: arc-systems
+      interval: 12h
+  values:
+    githubConfigUrl: "https://github.com/reneruprecht/gha-testing"
+
+    githubConfigSecret: gha-runner-scale-set-homelab
+    minRunners: 1
+    maxRunners: 3
+    scaleSetLabels:
+      - homelab
+    containerMode:
+      type: "dind"
