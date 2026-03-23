@@ -29,6 +29,9 @@ jobs:
       matrix:
         playbook_env_mapping: ${{ fromJSON(inputs.playbook_env_mapping) }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
       - name: Prepare
         id: prepare
         run: |
