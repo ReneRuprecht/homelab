@@ -28,11 +28,13 @@ compose:
 
 groups:
   consul: "'consul' in proxmox_name"
-  vault: "'vault' in proxmox_name"
+  vault: "proxmox_name.startswith('vault')"
   loadbalancer: "'loadbalancer' in proxmox_name"
   dns: "'dns' in proxmox_name"
   k8s_01_masters: "'k8s-master' in proxmox_name"
   k8s_01_nodes: "'k8s-node' in proxmox_name"
+  k8s_vault_01_nodes: "'k8s-vault-node' in proxmox_name"
+  k8s_vault_01_masters: "'k8s-vault-master' in proxmox_name"
   gh_runner: "'gh-runner' in proxmox_name"
   monitoring: "'monitoring' in proxmox_name"
   netbox: "'netbox' in proxmox_name"

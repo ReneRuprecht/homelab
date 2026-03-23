@@ -7,3 +7,7 @@ all:
       children:
         k8s_01_masters:
         k8s_01_nodes:
+    k8s_vault_01:
+      children:
+        k8s_vault_01_masters:
+        k8s_vault_01_nodes:

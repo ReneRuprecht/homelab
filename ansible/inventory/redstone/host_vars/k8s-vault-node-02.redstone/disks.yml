@@ -1,0 +1,7 @@
+---
+disks:
+  - name: scsi1
+    mount: /mnt/longhorn
+    state: present
+    mount_state: mounted
+    fstype: ext4

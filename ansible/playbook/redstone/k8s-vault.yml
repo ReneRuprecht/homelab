@@ -1,0 +1,47 @@
+- name: Setup k8s node disks
+  hosts: k8s_vault_01_nodes
+  gather_facts: true
+  become: true
+  roles:
+    - role: tinslice.ansible-role-disks
+
+- name: Install k8s
+  hosts: k8s_vault_01
+  gather_facts: true
+  become: true
+  pre_tasks:
+    - name: Install conntrack
+      ansible.builtin.package:
+        name: conntrack
+        state: present
+
+    - name: Install acl
+      ansible.builtin.package:
+        name: acl
+        state: present
+  roles:
+    - role: reneruprecht.general
+    - role: grafana.grafana.promtail
+    - role: prometheus.prometheus.node_exporter
+    - role: reneruprecht.kubernetes
+  post_tasks:
+    - name: Link cni binaries
+      become: true
+      ansible.builtin.command:
+        cmd: "ln -s /opt/cni/bin /usr/lib/cni"
+        creates: /usr/lib/cni/flannel
+
+    - name: Loghorn setup
+      block:
+        - name: Install packages
+          ansible.builtin.package:
+            name:
+              - open-iscsi
+              - nfs-common
+              - cryptsetup
+            state: present
+
+        - name: Add the dm-crypt module
+          community.general.modprobe:
+            name: dm-crypt
+            state: present

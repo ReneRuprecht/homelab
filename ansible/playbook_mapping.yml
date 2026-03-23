@@ -19,8 +19,13 @@ patterns:
     - "vault-*"
     - "vault" 
   k8s.yml:
-    - "k8s-*"
-    - "k8s" 
+    - "k8s_01_*"
+    - "k8s-master-*"
+    - "k8s-node-*"
+    - "k8s-node-*"
+  k8s-vault.yml:
+    - "k8s_vault_*"
+    - "k8s-vault-*"
   monitoring.yml:
     - "monitoring-*"
     - "monitoring" 

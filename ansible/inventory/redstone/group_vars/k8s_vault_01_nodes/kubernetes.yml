@@ -1,0 +1,4 @@
+---
+kubernetes_version: "1.34"
+kubernetes_is_control_plane: false
+kubernetes_ansible_inventory_group: "k8s_vault_01"
