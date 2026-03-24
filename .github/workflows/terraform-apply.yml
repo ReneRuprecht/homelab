@@ -20,6 +20,7 @@ env:
   TF_VAR_dns_update_key_secret: ${{ secrets.DNS_UPDATE_KEY_SECRET }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  VAULT_CACERT: ${{ secrets.VAULT_CACERT }}
 
 on:
   workflow_call:
