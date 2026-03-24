@@ -1,0 +1,12 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: longhorn-release
+  namespace: longhorn-system
+spec:
+  values:
+    persistence:
+      defaultClassReplicaCount: 1
+    defaultSettings:
+      defaultDataPath: /mnt/longhorn
