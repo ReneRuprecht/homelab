@@ -1,0 +1,66 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: vault
+  namespace: vault
+spec:
+  values:
+    global:
+       enabled: true
+       tlsDisable: false
+    injector:
+       enabled: true
+    server:
+       ingress:
+        enabled: true
+        ingressClassName: nginx
+        annotations:
+          nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+
+        hosts:
+          - host: vault.redstone
+            paths:
+              - /
+        tls:
+          - secretName: vault-tls
+            hosts:
+              - vault.redstone
+
+       extraEnvironmentVars:
+          VAULT_CACERT: /vault/userconfig/vault-ha-tls/vault.ca
+          VAULT_TLSCERT: /vault/userconfig/vault-ha-tls/vault.crt
+          VAULT_TLSKEY: /vault/userconfig/vault-ha-tls/vault.key
+       volumes:
+          - name: userconfig-vault-ha-tls
+            secret:
+             defaultMode: 420
+             secretName: vault-ha-tls
+       volumeMounts:
+          - mountPath: /vault/userconfig/vault-ha-tls
+            name: userconfig-vault-ha-tls
+            readOnly: true
+       standalone:
+          enabled: false
+       affinity: ""
+       ha:
+          enabled: true
+          replicas: 3
+          raft:
+             enabled: true
+             setNodeId: true
+             config: |
+                cluster_name = "vault-integrated-storage"
+                ui = true
+                listener "tcp" {
+                   tls_disable = 0
+                   address = "[::]:8200"
+                   cluster_address = "[::]:8201"
+                   tls_cert_file = "/vault/userconfig/vault-ha-tls/vault.crt"
+                   tls_key_file  = "/vault/userconfig/vault-ha-tls/vault.key"
+                   tls_client_ca_file = "/vault/userconfig/vault-ha-tls/vault.ca"
+                }
+                storage "raft" {
+                   path = "/vault/data"
+                }
+                disable_mlock = true
+                service_registration "kubernetes" {}
