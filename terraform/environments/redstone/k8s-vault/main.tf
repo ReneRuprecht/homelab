@@ -1,10 +1,10 @@
 module "netbox_proxmox_vms" {
   source = "../../../modules/netbox_proxmox_vms"
 
-  vm_user      = var.vm_user
-  vm_ssh_keys  = var.vm_ssh_keys
+  vm_user     = var.vm_user
+  vm_ssh_keys = var.vm_ssh_keys
 
-  vms          = var.vms
+  vms = var.vms
 }
 
 resource "dns_a_record_set" "vms" {
@@ -17,6 +17,17 @@ resource "dns_a_record_set" "vms" {
 
   addresses = [
     each.value
+  ]
+
+  ttl = 300
+}
+
+resource "dns_a_record_set" "vault" {
+  zone = "redstone."
+  name = "vault"
+
+  addresses = [
+    "192.168.178.245"
   ]
 
   ttl = 300
