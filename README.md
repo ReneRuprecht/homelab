@@ -15,10 +15,14 @@ Die VMs werden mit Terraform erstellt. Dabei werden grundlegende Ressourcen wie 
 
 ![alt text](./images/proxmox.png "Proxmox")
 
+## VM Consul und Vault Backup
+
 ![alt text](./images/backup.png "Backup")
 
 # 🛳️ Kubernetes
 Das laufende Kubernetes Cluster soll, soweit möglich, vollständig mittels GitOps ausgestattet und konfiguriert werden. Geplant ist, interne Services wie Prometheus und Grafana mit FluxCD zu deployen und zu verwalten, während eigene Apps und Services über ArgoCD bereitgestellt und gemanagt werden. Ziel ist es, anhand praktischer Beispiele ein besseres Verständnis für beide Systeme zu entwickeln.
+
+![alt text](./images/k8s.png "Kubernetes")
 
 ## ⛵ ArgoCD
 ArgoCD wird verwendet um Anwendungen automatisch aus der Repository auf dem Kubernetes zu deployen.
@@ -63,21 +67,30 @@ Die Umgebunj wird kontinuierlich weiterentwickelt und angepasst.
 - ~~3× **Consul**, Terraform State für die Pipeline~~ aktuell nicht aktiv
 - 2× **DNS**
 - 2× **Github Runner**, für die Pipeline
-- 3× **Vault**, die derzeit für Kubernetes-Secrets verwendet werden  
+- ~~3× **Vault**, die derzeit für Kubernetes-Secrets verwendet werden~~ aktuell auf kubernetes
 - 2× **Loadbalancer**, der Anfragen z.B. an die Vault-Instanzen weiterleitet  
 - 3× **K8s** (1 Master und 2 Nodes)  
 - 1× **Netbox**, für die Dokumentation
 - 1× **Monitoring**, für Prometheus, Grafana
 - 1× **Keycloak**, für Grafana und ArgoCD 
 - 2× **Backup**, für S3 storage und Terraform State
+- 3× **K8s-vault** (1 Master und 2 Nodes)  
 
 ## Kubernetes-Services
+### k8s-01
 - **FluxCD**  
 - **External Secrets**  
 - **Longhorn**  
 - **Cert-Manager**  
 - **CNPG** 
 - **Github-Runner-Scale-Set**
+- **Redis**
+- **ArgoCD**
+
+### K8s-Vault-01
+- **FluxCD**  
+- **Longhorn**  
+- **Vault**  
 
 # 🤖 Ansible
 Für die VMs im Homelab wurden und werden eigene Ansible Rollen entwickelt. 
@@ -89,6 +102,7 @@ Jede VM sollte die `General`, `Consul`, `Promtail`, `Node_Exporter` Rolle im Pla
 - General
 - Kubernetes
 - HAProxy
+- Minio
 
 # 🛡️ Monitoring
 Aktuell wird eine VM mit Prometheus, Grafana und Loki verwendet.
@@ -116,6 +130,10 @@ export NETBOX_API_TOKEN=<TOKEN>
 export TF_VAR_netbox_url=<URL>
 export TF_VAR_netbox_token=<TOKEN>
 
+```
+
+### Minio
+```sh
 # Bootstrap
 export TF_VAR_minio_server=<MINIO_SERVER>
 export TF_VAR_minio_user=<MINIO_USER>
@@ -124,6 +142,19 @@ export TF_VAR_minio_password=<MINIO_PASSWORD>
 # S3 backend
 export AWS_ACCESS_KEY_ID=<MINIO_USER>
 export AWS_SECRET_ACCESS_KEY=<MINIO_PASSWORD>
+```
+### Vault
+```sh
+export TF_VAR_vault_address=<VAULT_ADDR>
+export TF_VAR_vault_token=<VAULT_TOKEN>
+```
+
+### DNS
+```sh
+export TF_VAR_dns_update_server=<DNS_SERVER>
+export TF_VAR_dns_update_key_name=<DNS_UPDATE_KEY_NAME>
+export TF_VAR_dns_update_key_algorithm=<DNS_UPDATE_KEY_ALGO>
+export TF_VAR_dns_update_key_secret=<DNS_UPDATE_KEY_SECRET>
 ```
 ### Proxmox
 Für die Verbindung zum Proxmox werden folgende Environment Variablen benötigt.
