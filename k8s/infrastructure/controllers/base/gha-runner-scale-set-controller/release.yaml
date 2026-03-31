@@ -14,3 +14,11 @@ spec:
         name: gha-runner-scale-set-controller
         namespace: arc-systems
       interval: 12h
+  values:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
