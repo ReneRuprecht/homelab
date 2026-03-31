@@ -21,7 +21,7 @@ env:
   TF_VAR_dns_update_key_secret: ${{ secrets.DNS_UPDATE_KEY_SECRET }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  VAULT_CACERT: ${{ secrets.VAULT_CACERT }}
+  VAULT_CA_B64: ${{ secrets.VAULT_CA_B64 }}
 
 on:
   workflow_call:
@@ -73,8 +73,15 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      - name: Setup Vault CA
+        working-directory: ${{ steps.vars.outputs.workdir }}
+        run: |
+          echo "$VAULT_CA_B64" | base64 -d > vault.ca
+
       - name: Terraform Init
         working-directory: ${{ steps.setup_vars_and_dirs.outputs.workdir }}
+        env:
+          VAULT_CACERT: vault.ca
         run: |
           echo "# ===Terraform init started==="
           terraform init -backend-config="access_key=$AWS_ACCESS_KEY_ID" -backend-config="secret_key=$AWS_SECRET_ACCESS_KEY" > /dev/null
@@ -82,6 +89,8 @@ jobs:
 
       - name: Terraform Plan
         working-directory: ${{ steps.setup_vars_and_dirs.outputs.workdir }}
+        env:
+          VAULT_CACERT: vault.ca
         run: |
           PLAN_FILE="${{ steps.setup_vars_and_dirs.outputs.plan_file }}"
           PLAN_FILE_TXT="${{ steps.setup_vars_and_dirs.outputs.plan_file_txt }}"
