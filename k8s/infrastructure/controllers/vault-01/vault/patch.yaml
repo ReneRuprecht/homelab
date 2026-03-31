@@ -11,6 +11,14 @@ spec:
     injector:
        enabled: true
     server:
+       resources:
+        requests:
+          memory: 256Mi
+          cpu: 250m
+        limits:
+          memory: 256Mi
+          cpu: 250m
+
        ingress:
         enabled: true
         ingressClassName: nginx
