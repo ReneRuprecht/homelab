@@ -11,3 +11,4 @@ resources:
   # - redis
   - gha-runner-scale-set-controller
 # - airflow
+  - harbor

@@ -1,0 +1,19 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: harbor
+  namespace: harbor
+spec:
+  values:
+    existingSecretAdminPassword: "harbor-admin"
+    harborAdminPassword: ""
+    expose:
+      tls:
+        certSource: secret
+        secret:
+          secretName: harbor-cert-tls
+      ingress:
+        hosts:
+          core: core.harbor.bluecore
+        className: "nginx"
+    externalURL: https://harbor.bluecore
