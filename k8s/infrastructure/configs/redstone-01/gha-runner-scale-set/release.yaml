@@ -51,3 +51,50 @@ spec:
       - homelab
     containerMode:
       type: "dind"
+
+    template:
+      spec:
+        initContainers:
+        - name: dind
+          image: docker:dind
+          args:
+            - dockerd
+            - --insecure-registry core.harbor.bluecore
+            - --host=unix:///var/run/docker.sock
+            - --group=$(DOCKER_GROUP_GID)
+          env:
+            - name: DOCKER_GROUP_GID
+              value: "123"
+          securityContext:
+            privileged: true
+          restartPolicy: Always
+          startupProbe:
+            exec:
+              command:
+                - docker
+                - info
+            initialDelaySeconds: 0
+            failureThreshold: 24
+            periodSeconds: 5
+          volumeMounts:
+            - name: work
+              mountPath: /home/runner/_work
+            - name: dind-sock
+              mountPath: /var/run
+            - name: dind-externals
+              mountPath: /home/runner/externals
+            - name: harbor-ca
+              mountPath: /etc/docker/certs.d/core.harbor.bluecore/ca.crt
+              subPath: ca.crt
+        volumes:
+          - name: harbor-ca
+            secret:
+              secretName: harbor-ca
+        containers:
+          - name: runner
+            image: ghcr.io/actions/actions-runner:latest
+            command: ["/bin/sh", "-c", "sudo update-ca-certificates && /home/runner/run.sh"]
+            volumeMounts:
+              - name: harbor-ca
+                mountPath: /usr/local/share/ca-certificates/harbor.crt
+                subPath: ca.crt
