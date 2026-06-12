@@ -6,8 +6,8 @@ vms = [
       cores = 2
     }
     scsi_disk = {
-      size = "20G",
-      size_mb = 20000
+      size = "30G",
+      size_mb = 30000
     }
     memory  = 8192
     gateway = "192.168.178.1"
@@ -19,8 +19,8 @@ vms = [
       cores = 2
     }
     scsi_disk = {
-      size = "20G",
-      size_mb = 20000
+      size = "40G",
+      size_mb = 40000
     }
     target_node = "pve-02"
     cluster_name = "Proxmox PVE-02"
