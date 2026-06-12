@@ -8,5 +8,6 @@ RUN apk add \
     unzip \
     openssh \
     openssl \
-    git
-
+    git \
+    docker-cli \
+    docker-compose
