@@ -43,7 +43,6 @@
   become: true
   roles:
     - role: reneruprecht.general
-    - role: ansible-consul
-    - role: grafana.grafana.promtail
+    # - role: grafana.grafana.promtail
     - role: prometheus.prometheus.node_exporter
     - role: prometheus.prometheus.bind_exporter
