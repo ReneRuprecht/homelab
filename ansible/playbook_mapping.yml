@@ -1,4 +1,8 @@
 patterns:
+  opnsense.yml:
+    - "opnsense"
+    - "opnsense-*"
+    - "firewalls"
   dns.yml:
     - "dns-*"
     - "dns" 

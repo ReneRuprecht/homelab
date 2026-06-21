@@ -1,6 +1,7 @@
 ---
 collections:
   - name: community.general
+    version: 13.1.0
   - name: ansible.utils
     version: 2.6.1
   - name: ansible.windows
@@ -8,11 +9,14 @@ collections:
   - name: community.windows
     version: 2.1.0
   - name: grafana.grafana
-    version: 6.0.6
+    version: 6.1.0
   - name: prometheus.prometheus
     version: 0.27.3
   - name: community.proxmox
     version: 1.5.0
+  - name: oxlorg.opnsense
+    version: 25.7.8
+
 roles:
   - name: reneruprecht.minio
     src: "https://github.com/reneruprecht/ansible-role-minio"
