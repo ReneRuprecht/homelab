@@ -61,8 +61,20 @@ resource "proxmox_vm_qemu" "vm" {
   }
 
   network {
-    id     = 0
-    bridge = "vmbr0"
-    model  = "virtio"
+    id     = var.vm_network.id
+    bridge = var.vm_network.bridge
+    model  = var.vm_network.model
+    tag    = var.vm_network.tag
   }
+
+  dynamic "network" {
+    for_each = var.vm_network_extra
+    content {
+      id     = network.value.id
+      bridge = network.value.bridge
+      model  = network.value.model
+      tag    = network.value.tag
+    }
+  }
+
 }

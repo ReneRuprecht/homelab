@@ -109,3 +109,29 @@ variable "vm_start_at_node_boot" {
   default     = false
 }
 
+variable "vm_network" {
+  description = "VM network"
+  type = object({
+    id     = optional(number, 0)
+    bridge = optional(string, "vmbr0")
+    model  = optional(string, "virtio")
+    tag    = optional(string)
+  })
+  default = {
+    id     = 0
+    bridge = "vmbr0"
+    model  = "virtio"
+  }
+}
+variable "vm_network_extra" {
+  description = "VM extra networks"
+  type = list(
+    object({
+      id     = number
+      bridge = string
+      model  = string
+      tag    = optional(number)
+    })
+  )
+  default = []
+}

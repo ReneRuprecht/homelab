@@ -37,4 +37,7 @@ module "proxmox_vms" {
   vm_tags        = var.vms[count.index].tags
   vm_target_node = var.vms[count.index].target_node
 
+  vm_network       = var.vms[count.index].vm_network
+  vm_network_extra = var.vms[count.index].vm_network_extra
+
 }
