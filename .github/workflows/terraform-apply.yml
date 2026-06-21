@@ -25,19 +25,20 @@ env:
 on:
   workflow_call:
     inputs:
-      dirs:
+      matrix_data:
         required: true
         type: string
 
 jobs:
   apply:
-    if: ${{ inputs.dirs != '[]' }}
+    if: ${{ inputs.matrix_data != '[]' }}
     runs-on: homelab
     container:
       image: reneruprecht/ci-node24
     strategy:
       matrix:
-        env_name: ${{ fromJSON(inputs.dirs) }}
+        include: ${{ fromJSON(inputs.matrix_data) }}
+    environment: ${{ matrix.env }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -45,14 +46,14 @@ jobs:
       - name: Setup vars
         id: vars
         run: |
-          ENV_NAME=$(echo "${{ matrix.env_name }}" | cut -d'/' -f1)
+          ENV_NAME=$(echo "${{ matrix.env }}")
           {
             echo "env_name<<EOF"
             echo "${ENV_NAME}"
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
-          COMPONENT=$(echo "${{ matrix.env_name }}" | cut -d'/' -f2)
+          COMPONENT=$(echo "${{ matrix.component }}")
           {
             echo "component<<EOF"
             echo "${COMPONENT}"

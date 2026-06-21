@@ -19,8 +19,8 @@ on:
         description: "Max depth for the find"
         default: "2"
     outputs:
-      dirs:
-        value: ${{ jobs.get-dirs.outputs.dirs }}
+      matrix_data:
+        value: ${{ jobs.get-dirs.outputs.matrix_data }}
         description: "Json of directories (all or changed)"
 
 jobs:
@@ -29,7 +29,7 @@ jobs:
     container:
       image: reneruprecht/ci-node24
     outputs:
-      dirs: ${{ steps.get-dirs.outputs.dirs }}
+      matrix_data: ${{ steps.get-dirs.outputs.matrix_data }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -69,19 +69,26 @@ jobs:
           fi
 
           if [ -z "$DIRS" ]; then
-            JSON="[]"
+            MATRIX="[]"
           else
-            JSON=$(echo "$DIRS" | jq -R . | jq -s .)
+            MATRIX=$(echo "$DIRS" | awk -F'/' '
+              {
+                path=$0;
+                env=$1;
+                component=$2;
+                print "{\"env\":\"" env "\",\"component\":\"" component "\",\"path\":\"" path "\"}"
+              }
+            ' | jq -s '.')
           fi
 
           {
-            echo "dirs<<EOF"
-            echo "$JSON"
+            echo "matrix_data<<EOF"
+            echo "$MATRIX"
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
 
-          if [ "$JSON" = "[]" ]; then
+          if [ "$MATRIX" = "[]" ]; then
             {
               echo "# Nothing was changed"
             } >> $GITHUB_STEP_SUMMARY

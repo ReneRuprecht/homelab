@@ -26,7 +26,7 @@ jobs:
     needs: get-dirs
     uses: ./.github/workflows/ansible-playbook-prepare.yml
     with:
-      dirs: "${{ needs.get-dirs.outputs.dirs}}"
+      matrix_data: "${{ needs.get-dirs.outputs.matrix_data }}"
 
   ansible-playbooks-check:
     needs: ansible-playbook-prepare

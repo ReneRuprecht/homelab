@@ -26,13 +26,13 @@ env:
 on:
   workflow_call:
     inputs:
-      dirs:
+      matrix_data:
         required: true
         type: string
 
 jobs:
   plan:
-    if: ${{ inputs.dirs != '[]' }}
+    if: ${{ inputs.matrix_data != '[]' }}
     runs-on: homelab
     container:
       image: reneruprecht/ci-node24
@@ -45,7 +45,8 @@ jobs:
       workdir: ${{ steps.setup_vars_and_dirs.outputs.workdir }}
     strategy:
       matrix:
-        env_name: ${{ fromJSON(inputs.dirs) }}
+        include: ${{ fromJSON(inputs.matrix_data) }}
+    environment: ${{ matrix.env }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -53,8 +54,10 @@ jobs:
       - name: Setup Vars and Dirs
         id: setup_vars_and_dirs
         run: |
-          ENV_NAME=$(echo "${{ matrix.env_name }}" | cut -d'/' -f1)
-          COMPONENT=$(echo "${{ matrix.env_name }}" | cut -d'/' -f2)
+
+
+          ENV_NAME=$(echo "${{ matrix.env }}")
+          COMPONENT=$(echo "${{ matrix.component }}")
           PLAN_DIR=$(echo "/${ENV_NAME}_${COMPONENT}")
           PLAN_SAVE_SUFFIX="-plans"
 
@@ -69,12 +72,14 @@ jobs:
           echo "plan_file_txt=${PLAN_DIR}/${ENV_NAME}_${COMPONENT}.txt" >> $GITHUB_OUTPUT
           echo "plan_save_suffix=$PLAN_SAVE_SUFFIX" >> $GITHUB_OUTPUT
 
+          echo "env=$ENV_NAME" >> $GITHUB_OUTPUT
+          echo "component=$COMPONENT" >> $GITHUB_OUTPUT
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
 
       - name: Setup Vault CA
-        working-directory: ${{ steps.vars.outputs.workdir }}
+        working-directory: ${{ steps.setup_vars_and_dirs.outputs.workdir }}
         run: |
           echo "$VAULT_CA_B64" | base64 -d > vault.ca
 
@@ -91,6 +96,14 @@ jobs:
         working-directory: ${{ steps.setup_vars_and_dirs.outputs.workdir }}
         env:
           VAULT_CACERT: vault.ca
+          TF_VAR_env: ${{ steps.setup_vars_and_dirs.outputs.env }}
+          TF_VAR_component: ${{ steps.setup_vars_and_dirs.outputs.component }}
+
+          TF_VAR_dns_update_server: ${{ secrets.DNS_UPDATE_SERVER }}
+          TF_VAR_dns_update_key_name: ${{ secrets.DNS_UPDATE_KEY_NAME }}
+          TF_VAR_dns_update_key_algorithm: ${{ secrets.DNS_UPDATE_KEY_ALGORITHM }}
+
+          TF_VAR_dns_update_key_secret: ${{ secrets[format('DNS_%s_KEY_SECRET', steps.setup_vars_and_dirs.outputs.env)] }}
         run: |
           PLAN_FILE="${{ steps.setup_vars_and_dirs.outputs.plan_file }}"
           PLAN_FILE_TXT="${{ steps.setup_vars_and_dirs.outputs.plan_file_txt }}"

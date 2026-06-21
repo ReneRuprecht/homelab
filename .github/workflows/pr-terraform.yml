@@ -19,4 +19,4 @@ jobs:
     needs: get-dirs
     secrets: inherit
     with:
-      dirs: "${{ needs.get-dirs.outputs.dirs }}"
+      matrix_data: "${{ needs.get-dirs.outputs.matrix_data }}"

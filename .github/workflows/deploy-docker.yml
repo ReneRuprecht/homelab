@@ -15,14 +15,14 @@ jobs:
       processing_mode: "changed"
 
   docker:
-    if: ${{ needs.get-dirs.outputs.dirs != '[]' }}
+    if: ${{ needs.get-dirs.outputs.matrix_data != '[]' }}
     container:
       image:  "docker:28.3.3-dind-alpine3.22"
     needs: get-dirs
     runs-on: homelab
     strategy:
       matrix:
-        image_dirs: ${{ fromJSON(needs.get-dirs.outputs.dirs) }}
+        include: ${{ fromJSON(needs.get-dirs.outputs.matrix_data) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -30,10 +30,10 @@ jobs:
           fetch-depth: 0
 
       - name: Build
-        working-directory: "docker/${{ matrix.image_dirs }}"
+        working-directory: "docker/${{ matrix.path }}"
         id: build
         run: |
-          IMG_NAME=$(echo "${{ matrix.image_dirs }}" | tr '/' '-')
+          IMG_NAME=$(echo "${{ matrix.path }}" | tr '/' '-')
           USER="${{ secrets.DOCKER_USERNAME }}"
           IMAGE="${USER}/${IMG_NAME}"
           TAG="${GITHUB_SHA::7}"

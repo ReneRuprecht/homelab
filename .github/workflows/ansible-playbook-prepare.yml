@@ -7,7 +7,7 @@ on:
         value: ${{ jobs.prepare.outputs.playbook_env_mapping }}
         description: "Playbook and Env mapping"
     inputs:
-      dirs:
+      matrix_data:
         required: true
         type: string
 
@@ -27,10 +27,12 @@ jobs:
       - name: Setup Playbooks mapping
         working-directory: "ansible"
         env:
-          DIRS: "${{ inputs.dirs }}"
+          MATRIX: "${{ inputs.matrix_data }}"
         id: setup
         run: |
-          RESULT=$(python3 select_playbook.py "$DIRS" | jq -c .)
+
+          PATHS_JSON=$(echo "$MATRIX" | jq -c '[.[].path]')
+          RESULT=$(python3 select_playbook.py "$PATHS_JSON" | jq -c .)
 
           echo "$RESULT"
 
