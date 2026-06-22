@@ -27,7 +27,7 @@ bind9_zones_static:
 
 bind9_zones_dynamic:
   - name: core.internal
-    serial: 2025081126
+    serial: 2025081127
     admin: noemail.core.internal
     ns_records:
       - dns-01.redstone
@@ -36,6 +36,23 @@ bind9_zones_dynamic:
       - label: opnsense-01
         type: A
         rdata: 192.168.178.80
+
+      - label: dns-01
+        type: A
+        rdata: 10.1.100.11
+      - label: dns-02
+        type: A
+        rdata: 10.1.100.12
+      - label: netbox-01
+        type: A
+        rdata: 10.1.100.13
+      - label: backup-01
+        type: A
+        rdata: 10.1.100.14
+      - label: backup-02
+        type: A
+        rdata: 10.1.100.15
+
   - name: bluecore
     serial: 2025081126
     admin: noemail.bluecore

@@ -46,3 +46,4 @@
     # - role: grafana.grafana.promtail
     - role: prometheus.prometheus.node_exporter
     - role: prometheus.prometheus.bind_exporter
+    - role: systemli.bind9
