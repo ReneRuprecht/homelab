@@ -89,7 +89,7 @@ jobs:
           openssl enc -aes-256-cbc -salt -pbkdf2 -k "$SECRET_KEY" -in "${LOG_FILE}.tar.gz" -out "${LOG_FILE}.tar.gz.enc"
 
       - name: Upload encrypted ansible log artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: "${{ steps.prepare.outputs.log_name }}"
           path: "${{ steps.prepare.outputs.log_file }}.tar.gz.enc"

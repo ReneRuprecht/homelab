@@ -210,7 +210,7 @@ jobs:
 
       - name: Upload encrypted terraform plans artifact
         if: steps.check_plan.outputs.has_no_changes == 'false'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: "${{ steps.setup_vars_and_dirs.outputs.plan_name }}${{ steps.setup_vars_and_dirs.outputs.plan_save_suffix }}"
           path: "${{ steps.setup_vars_and_dirs.outputs.plan_name }}.tar.gz.enc"
