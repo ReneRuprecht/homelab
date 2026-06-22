@@ -129,7 +129,7 @@ variable "vm_network_extra" {
     object({
       id     = number
       bridge = string
-      model  = string
+      model  = optional(string, "virtio")
       tag    = optional(number)
     })
   )

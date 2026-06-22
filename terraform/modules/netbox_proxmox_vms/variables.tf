@@ -68,7 +68,7 @@ variable "vms" {
     vm_network_extra = optional(list(object({
       id     = number
       bridge = string
-      model  = number
+      model  = optional(string, "virtio")
       tag    = optional(number)
     })), [])
   }))
