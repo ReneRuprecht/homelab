@@ -11,15 +11,14 @@ on:
       - 'chore/**'
 
 jobs:
-  get-dirs:
-    uses: ./.github/workflows/get-dirs.yml
+  resolve:
+    uses: ./.github/workflows/resolve-changes.yml
     with:
-      base_dir: "terraform/environments"
-      processing_mode: "changed"
+      mode: "terraform"
 
   terraform-plan:
     uses: ./.github/workflows/terraform-plan.yml
-    needs: get-dirs
+    needs: resolve
     secrets: inherit
     with:
-      matrix_data: "${{ needs.get-dirs.outputs.matrix_data }}"
+      matrix_data: "${{ needs.resolve.outputs.matrix_data }}"

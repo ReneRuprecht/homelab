@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - 'ansible/inventory/**/**'
-      - 'ansible/playbooks/**/**'
+      - 'ansible/playbook/**/**'
     branches:
       - main
 
@@ -14,24 +14,15 @@ env:
   ANSIBLE_SSH_KEY: ${{ secrets.SSH_KEY }}
 
 jobs:
-  get-dirs:
-    uses: ./.github/workflows/get-dirs.yml
+  resolve:
+    uses: ./.github/workflows/resolve-changes.yml
     with:
-      base_dir: "ansible/inventory"
-      processing_mode: "changed"
-      min_depth: "3"
-      max_depth: "4"
-
-  ansible-playbook-prepare:
-    needs: get-dirs
-    uses: ./.github/workflows/ansible-playbook-prepare.yml
-    with:
-      matrix_data: "${{ needs.get-dirs.outputs.matrix_data }}"
+      mode: "ansible"
 
   ansible-playbooks-check:
-    needs: ansible-playbook-prepare
+    needs: resolve
     uses: ./.github/workflows/ansible-playbook.yml
     secrets: inherit
     with:
-      playbook_env_mapping: "${{ needs.ansible-playbook-prepare.outputs.playbook_env_mapping }}"
+      playbook_env_mapping: "${{ needs.resolve.outputs.matrix_data }}"
       check_mode: "true"

@@ -11,21 +11,20 @@ on:
       - 'chore/**'
 
 jobs:
-  get-dirs:
-    uses: ./.github/workflows/get-dirs.yml
+  resolve:
+    uses: ./.github/workflows/resolve-changes.yml
     with:
-      base_dir: "docker"
-      processing_mode: "changed"
+      mode: "docker"
 
   docker:
-    if: ${{ needs.get-dirs.outputs.matrix_data != '[]' }}
+    if: ${{ needs.resolve.outputs.matrix_data != '[]' }}
     container:
       image:  "docker:28.3.3-dind-alpine3.22"
-    needs: get-dirs
+    needs: resolve
     runs-on: homelab
     strategy:
       matrix:
-        include: ${{ fromJSON(needs.get-dirs.outputs.matrix_data) }}
+        include: ${{ fromJSON(needs.resolve.outputs.matrix_data) }}
     steps:
       - name: Checkout
         uses: actions/checkout@v6

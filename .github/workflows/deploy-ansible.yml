@@ -4,7 +4,7 @@ on:
   push:
     paths:
       - 'ansible/inventory/**/**'
-      - 'ansible/playbooks/**/**'
+      - 'ansible/playbook/**/**'
     branches:
       - main
 
@@ -14,31 +14,23 @@ env:
   SECRET_KEY: ${{ secrets.SECRET_KEY }}
 
 jobs:
-  get-dirs:
-    uses: ./.github/workflows/get-dirs.yml
+  resolve:
+    uses: ./.github/workflows/resolve-changes.yml
     with:
-      base_dir: "ansible/inventory"
-      min_depth: "3"
-      max_depth: "4"
-
-  prepare:
-    needs: get-dirs
-    uses: ./.github/workflows/ansible-playbook-prepare.yml
-    with:
-      matrix_data: "${{ needs.get-dirs.outputs.matrix_data }}"
+      mode: "ansible"
 
   filter-dns:
-    needs: prepare
-    if: needs.prepare.outputs.playbook_env_mapping != '' &&
-        needs.prepare.outputs.playbook_env_mapping != '[]' &&
+    needs: resolve
+    if: needs.resolve.outputs.matrix_data != '' &&
+        needs.resolve.outputs.matrix_data != '[]' &&
         github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ansible-filter-playbook.yml
     with:
       filter: "dns"
-      playbook_env_mapping: "${{ needs.prepare.outputs.playbook_env_mapping }}"
+      playbook_env_mapping: "${{ needs.resolve.outputs.matrix_data }}"
 
   deploy-dns:
-    needs: [prepare, filter-dns]
+    needs: [resolve, filter-dns]
     if: needs.filter-dns.outputs.playbook_env_mapping != '' &&
         needs.filter-dns.outputs.playbook_env_mapping != '[]' &&
         github.ref == 'refs/heads/main'
@@ -49,18 +41,18 @@ jobs:
       check_mode: "false"
 
   filter-lb:
-    needs: [prepare, deploy-dns]
+    needs: [resolve, deploy-dns]
     if: always() && 
-        needs.prepare.outputs.playbook_env_mapping != '' &&
-        needs.prepare.outputs.playbook_env_mapping != '[]' &&
+        needs.resolve.outputs.matrix_data != '' &&
+        needs.resolve.outputs.matrix_data != '[]' &&
         github.ref == 'refs/heads/main'
     uses: ./.github/workflows/ansible-filter-playbook.yml
     with:
       filter: "loadbalancer"
-      playbook_env_mapping: "${{ needs.prepare.outputs.playbook_env_mapping }}"
+      playbook_env_mapping: "${{ needs.resolve.outputs.matrix_data }}"
 
   deploy-lb:
-    needs: [prepare, filter-lb]
+    needs: [resolve, filter-lb]
     if: always() && 
         needs.filter-lb.outputs.playbook_env_mapping != '' &&
         needs.filter-lb.outputs.playbook_env_mapping != '[]' &&
@@ -72,10 +64,10 @@ jobs:
       check_mode: "false"
 
   filter-extra:
-    needs: [prepare, deploy-dns, deploy-lb]
+    needs: [resolve, deploy-dns, deploy-lb]
     if: always() && 
-        needs.prepare.outputs.playbook_env_mapping != '' &&
-        needs.prepare.outputs.playbook_env_mapping != '[]' &&
+        needs.resolve.outputs.matrix_data != '' &&
+        needs.resolve.outputs.matrix_data != '[]' &&
         github.ref == 'refs/heads/main'
     runs-on: homelab
     container:
@@ -86,7 +78,7 @@ jobs:
       - name: filter_extra
         id: filter_extra
         run: |
-          INPUT_PLAYBOOK_ENV_MAPPING='${{ needs.prepare.outputs.playbook_env_mapping }}'
+          INPUT_PLAYBOOK_ENV_MAPPING='${{ needs.resolve.outputs.matrix_data }}'
 
           PLAYBOOK_ENV_MAPPING=$(echo "$INPUT_PLAYBOOK_ENV_MAPPING" | jq -c '[
             .[] | select(

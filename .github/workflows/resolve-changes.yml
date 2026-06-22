@@ -1,0 +1,99 @@
+name: Resolve Changes
+
+on:
+  workflow_call:
+    inputs:
+      mode:
+        type: string
+        required: true
+    outputs:
+      matrix_data:
+        value: ${{ jobs.changes.outputs.matrix_data }}
+        description: "Matrix data of changed directories"
+
+jobs:
+  changes:
+    runs-on: homelab
+    container:
+      image: reneruprecht/ci-python312
+    outputs:
+      matrix_data: ${{ steps.resolve.outputs.matrix_data }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Fix git safe directory error
+        run: git config --global --add safe.directory $GITHUB_WORKSPACE
+
+      - name: Build matrix
+        id: resolve
+        run: |
+          git diff --name-only --diff-filter=d HEAD~1 HEAD \
+            | jq -R . | jq -s . \
+            > changed.json
+
+          OUTPUT=$(python resolver.py --mode "${{ inputs.mode }}" --input "$(cat changed.json)")
+
+          {
+            echo "matrix_data<<EOF"
+            echo "$OUTPUT"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+          echo $OUTPUT
+
+
+      - name: Terraform Summary
+        if: inputs.mode == 'terraform'
+        run: |
+          JSON='${{ steps.resolve.outputs.matrix_data }}'
+
+          if [ "$JSON" = "[]" ]; then
+            echo "# No changes detected" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
+          {
+            echo "# Terraform Plan"
+            echo ""
+            echo "| Env | Component |"
+            echo "|-----|-----------|"
+            echo "$JSON" | jq -r '.[] | "| \(.env) | \(.component) |"'
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Ansible Summary
+        if: inputs.mode == 'ansible'
+        run: |
+          JSON='${{ steps.resolve.outputs.matrix_data }}'
+
+          if [ "$JSON" = "[]" ]; then
+            echo "# No changes detected" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
+          {
+            echo "# Ansible Plan"
+            echo ""
+            echo "| Env | Playbook |"
+            echo "|-----|----------|"
+            echo "$JSON" | jq -r '.[] | "| \(.env) | \(.playbook) |"'
+          } >> $GITHUB_STEP_SUMMARY
+
+      - name: Docker Summary
+        if: inputs.mode == 'docker'
+        run: |
+          JSON='${{ steps.resolve.outputs.matrix_data }}'
+
+          if [ "$JSON" = "[]" ]; then
+            echo "# No changes detected" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
+          {
+            echo "# Docker Plan"
+            echo ""
+            echo "| Path |"
+            echo "|------|"
+            echo "$JSON" | jq -r '.[] | "| \(.path) |"'
+          } >> $GITHUB_STEP_SUMMARY
