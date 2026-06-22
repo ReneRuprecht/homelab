@@ -36,6 +36,9 @@
       - vlan: 100
         interface: "vtnet1"
         description: "Core"
+      - vlan: 200
+        interface: "vtnet1"
+        description: "Redstone"
 
   tasks:
     - name: Setup Vlans
