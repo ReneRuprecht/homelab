@@ -73,6 +73,24 @@ variable "vms" {
       slot    = string
     })), [])
 
+    vm_network = optional(object({
+      id     = optional(number, 0)
+      bridge = optional(string, "vmbr0")
+      model  = optional(string, "virtio")
+      tag    = optional(string)
+      }), {
+      id     = 0
+      bridge = "vmbr0"
+      model  = "virtio"
+    })
+
+    vm_network_extra = optional(list(object({
+      id     = number
+      bridge = string
+      model  = optional(string, "virtio")
+      tag    = optional(number)
+    })), [])
+
     cluster_name = optional(string, "Proxmox PVE-01")
     prefix = optional(string, "192.168.178.0/24")
   }))
