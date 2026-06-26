@@ -7,8 +7,10 @@ bind9_forward_servers:
   - 1.1.1.1
 bind9_slaves:
   - 192.168.178.96
+  - 10.1.100.12
 bind9_our_neighbors:
   - 192.168.178.96
+  - 10.1.100.12
 
 bind9_zones_static:
   - name: redstone
