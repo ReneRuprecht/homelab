@@ -9,6 +9,11 @@ vms = [
     ip                 = "192.168.178.95/24"
     gateway            = "192.168.178.1"
     start_at_node_boot = true
+    vm_network_extra = [{
+      id     = 1
+      bridge = "vmbr1"
+      tag    = "100"
+    }]
   },
   {
     name        = "dns-02.redstone"
