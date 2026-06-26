@@ -31,6 +31,9 @@
 
     oxlorg.opnsense.list:
       target: 'interface_vlan'
+
+    oxlorg.opnsense.rule:
+      match_fields: ['description']
   vars:
     vlans:
       - vlan: 100
@@ -39,6 +42,57 @@
       - vlan: 200
         interface: "vtnet1"
         description: "Redstone"
+    rules:
+      allow_mgmt_to_opnsense_https:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: '192.168.178.80'
+        dest_port: 'https'
+        quick: true
+        log: true
+        seq: 100
+        state: 'present'
+
+      allow_mgmt_to_core_ssh:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: '10.1.100.0/24'
+        dest_port: 'ssh'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_mgmt_to_core_icmp:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'icmp'
+        src: '192.168.178.0/24'
+        dest: '10.0.0.0/8'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_vlan_core_out:
+        action: 'pass'
+        int: ['opt1']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'any'
+        src: '10.1.100.0/24'
+        dest: 'any'
+        quick: true
+        log: true
+        state: 'present'
 
   tasks:
     - name: Setup Vlans
@@ -47,3 +101,35 @@
         interface: "{{ item.interface }}"
         vlan: "{{ item.vlan }}"
       loop: "{{ vlans }}"
+
+    - name: Setup Firewall Rules
+      oxlorg.opnsense.rule:
+        description: "{{ rule_id }}"
+
+        action: "{{ rule.action | default(omit) }}"
+        interface: "{{ rule.int | default(omit) }}"
+        direction: "{{ rule.dir | default(omit) }}"
+        ip_protocol: "{{ rule.ip_proto | default(omit) }}"
+        protocol: "{{ rule.proto | default(omit) }}"
+
+        source_invert: "{{ rule.src_invert | default(omit) }}"
+        source_net: "{{ rule.src | default(omit) }}"
+        source_port: "{{ rule.src_port | default(omit) }}"
+        destination_invert: "{{ rule.dest_invert | default(omit) }}"
+        destination_net: "{{ rule.dest | default(omit) }}"
+        destination_port: "{{ rule.dest_port | default(omit) }}"
+
+        sequence: "{{ rule.seq | default(omit) }}"
+        quick: "{{ rule.quick | default(omit) }}"
+        log: "{{ rule.log | default(omit) }}"
+        gateway: "{{ rule.gw | default(omit) }}"
+        state: "{{ rule.state | default(omit) }}"
+        enabled: "{{ rule.enabled | default(true) }}"
+        # debug: "{{ rule.debug | default(false) }}"
+
+      vars:
+        rule: "{{ rule_item.value }}"
+        rule_id: "{{ rule_item.key }}"
+      loop_control:
+        loop_var: rule_item
+      with_dict: "{{ rules }}"
