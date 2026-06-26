@@ -17,3 +17,10 @@ bind9_zones_dynamic:
     masters:
       - 192.168.178.95
       - 10.1.100.11
+
+bind9_recursor: true
+bind9_our_networks:
+  - localhost
+  - localnets
+  - 192.168.178.0/24
+  - 10.1.100.0/24
