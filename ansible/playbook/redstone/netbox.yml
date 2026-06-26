@@ -5,7 +5,7 @@
     - role: reneruprecht.general
     - role: geerlingguy.docker
       become: true
-    - role: reneruprecht.minio
+    # - role: reneruprecht.minio
   post_tasks:
     - name: Create group
       become: true
@@ -153,9 +153,9 @@
             regexp: '      # SUPERUSER_PASSWORD: ""'
             line: '      SUPERUSER_PASSWORD: "{{ netbox_superuser_password }}"'
 
-    - name: Include netbox backup
-      ansible.builtin.include_tasks:
-        file: ./tasks/netbox-backup-setup.yml
+    # - name: Include netbox backup
+    #   ansible.builtin.include_tasks:
+    #     file: ./tasks/netbox-backup-setup.yml
 
     - name: Set permissions
       become: true
