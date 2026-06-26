@@ -13,5 +13,10 @@ vms = [
       size = "15G"
       size_mb = "15000"
     }
+    vm_network_extra = [{
+      id     = 1
+      bridge = "vmbr1"
+      tag    = "100"
+    }]
   },
 ]
