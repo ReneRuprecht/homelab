@@ -29,5 +29,5 @@ github_account: !vault |
           3066
 
 github_repo: "homelab"
-runner_version: "2.321.0"
+runner_version: "2.335.1"
 runner_dir: "/opt/actions-runner-homelab"
