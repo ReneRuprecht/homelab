@@ -132,6 +132,19 @@
         quick: true
         log: true
         state: 'present'
+
+      allow_mgmt_to_netbox_http:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: '10.1.100.13'
+        dest_port: '8000'
+        quick: true
+        log: true
+        state: 'present'
     aliases:
       - name: 'CORE_BACKUP'
         content: ['10.1.100.14', '10.1.100.15']
