@@ -7,6 +7,7 @@ vms = [
     }
     ip      = "10.1.100.16/24"
     gateway = "10.1.100.1"
+    tags    = "core"
     scsi_disk = {
       size    = "30G",
       size_mb = 30000
