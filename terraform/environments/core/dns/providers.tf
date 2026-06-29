@@ -1,10 +1,10 @@
 terraform {
   backend "s3" {
     endpoints = {
-      s3 = "http://backup-01.redstone:9000"
+      s3 = "http://backup-01.core.internal:9000"
     }
     bucket                      = "terraform-state"
-    key                         = "redstone/dns/terraform.tfstate"
+    key                         = "core/dns/terraform.tfstate"
     region                      = "main"
     use_path_style              = true
     skip_credentials_validation = true
