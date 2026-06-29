@@ -94,7 +94,57 @@
         log: true
         state: 'present'
 
+      allow_mgmt_to_core_dns:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP/UDP'
+        src: '192.168.178.0/24'
+        dest: 'CORE_DNS'
+        dest_port: '53'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_mgmt_to_minio_http:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: 'CORE_BACKUP'
+        dest_port: '9001'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_mgmt_to_minio_api:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: 'CORE_BACKUP'
+        dest_port: '9000'
+        quick: true
+        log: true
+        state: 'present'
+    aliases:
+      - name: 'CORE_BACKUP'
+        content: ['10.1.100.14', '10.1.100.15']
+      - name: 'CORE_DNS'
+        content: ['10.1.100.11', '10.1.100.12']
+
   tasks:
+    - name: Setup Aliases
+      oxlorg.opnsense.alias:
+        name: "{{ item. name }}"
+        content: "{{ item.content }}"
+      loop: "{{ aliases }}"
+
     - name: Setup Vlans
       oxlorg.opnsense.interface_vlan:
         description: "{{ item.description }}"
@@ -133,3 +183,4 @@
       loop_control:
         loop_var: rule_item
       with_dict: "{{ rules }}"
+
