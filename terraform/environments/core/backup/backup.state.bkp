@@ -1,0 +1,1075 @@
+{
+  "version": 4,
+  "terraform_version": "1.15.7",
+  "serial": 1,
+  "lineage": "595e24d5-b01f-a871-f9e4-aa1846fabb74",
+  "outputs": {},
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "dns_a_record_set",
+      "name": "vms",
+      "provider": "provider[\"registry.terraform.io/hashicorp/dns\"]",
+      "instances": [
+        {
+          "index_key": "backup-01.redstone",
+          "schema_version": 0,
+          "attributes": {
+            "addresses": [
+              "192.168.178.112"
+            ],
+            "id": "backup-01.redstone.",
+            "name": "backup-01",
+            "ttl": 300,
+            "zone": "redstone."
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster",
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_prefix.prefix",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_available_ip_address.ip",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_interface.eth0",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_primary_ip.primary",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_disk.extra_disks",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_disk.main_disk",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_machine.vm",
+            "module.netbox_proxmox_vms.module.proxmox_vms.proxmox_vm_qemu.vm"
+          ]
+        },
+        {
+          "index_key": "backup-02.redstone",
+          "schema_version": 0,
+          "attributes": {
+            "addresses": [
+              "192.168.178.113"
+            ],
+            "id": "backup-02.redstone.",
+            "name": "backup-02",
+            "ttl": 300,
+            "zone": "redstone."
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster",
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_prefix.prefix",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_available_ip_address.ip",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_interface.eth0",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_primary_ip.primary",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_disk.extra_disks",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_disk.main_disk",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_machine.vm",
+            "module.netbox_proxmox_vms.module.proxmox_vms.proxmox_vm_qemu.vm"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[0]",
+      "mode": "data",
+      "type": "netbox_cluster",
+      "name": "cluster",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "cluster_group_id": 0,
+            "cluster_id": 1,
+            "cluster_type_id": 1,
+            "comments": "",
+            "custom_fields": {},
+            "description": "",
+            "id": "1",
+            "location_id": null,
+            "name": "Proxmox PVE-01",
+            "region_id": null,
+            "scope_id": null,
+            "scope_type": null,
+            "site_group_id": null,
+            "site_id": null,
+            "tags": []
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[0]",
+      "mode": "data",
+      "type": "netbox_prefix",
+      "name": "prefix",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "cidr": "192.168.178.0/24",
+            "custom_fields": null,
+            "description": "",
+            "family": 4,
+            "id": 1,
+            "location_id": 0,
+            "prefix": "192.168.178.0/24",
+            "region_id": 0,
+            "role_id": null,
+            "site_group_id": 0,
+            "site_id": 0,
+            "status": "active",
+            "tag": null,
+            "tag__n": null,
+            "tags": [],
+            "tenant_id": null,
+            "vlan_id": null,
+            "vlan_vid": null,
+            "vrf_id": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[0]",
+      "mode": "managed",
+      "type": "netbox_available_ip_address",
+      "name": "ip",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "description": "",
+            "device_interface_id": null,
+            "dns_name": null,
+            "id": "146",
+            "interface_id": 128,
+            "ip_address": "192.168.178.112/24",
+            "ip_range_id": null,
+            "object_type": "virtualization.vminterface",
+            "prefix_id": 1,
+            "role": null,
+            "status": "active",
+            "tags": [],
+            "tags_all": [],
+            "tenant_id": 0,
+            "virtual_machine_interface_id": null,
+            "vrf_id": 0
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster",
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_prefix.prefix",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_interface.eth0",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_machine.vm"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[0]",
+      "mode": "managed",
+      "type": "netbox_interface",
+      "name": "eth0",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "description": "",
+            "enabled": true,
+            "id": "128",
+            "mac_address": "",
+            "mode": null,
+            "mtu": 0,
+            "name": "eth0",
+            "tagged_vlans": [],
+            "tags": [],
+            "tags_all": [],
+            "type": null,
+            "untagged_vlan": null,
+            "virtual_machine_id": 128
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_machine.vm"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[0]",
+      "mode": "managed",
+      "type": "netbox_primary_ip",
+      "name": "primary",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "128",
+            "ip_address_id": 146,
+            "ip_address_version": 4,
+            "virtual_machine_id": 128
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster",
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_prefix.prefix",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_available_ip_address.ip",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_interface.eth0",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_machine.vm"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[0]",
+      "mode": "managed",
+      "type": "netbox_virtual_disk",
+      "name": "main_disk",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "custom_fields": null,
+            "description": "Main disk",
+            "id": "139",
+            "name": "scsi0",
+            "size_mb": 15000,
+            "tags": [],
+            "tags_all": [],
+            "virtual_machine_id": 128
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_machine.vm"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[0]",
+      "mode": "managed",
+      "type": "netbox_virtual_machine",
+      "name": "vm",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 2,
+          "attributes": {
+            "cluster_id": 1,
+            "comments": "",
+            "custom_fields": null,
+            "description": "",
+            "device_id": 0,
+            "disk_size_mb": 15000,
+            "id": "128",
+            "local_context_data": "",
+            "memory_mb": 2048,
+            "name": "backup-01.redstone",
+            "platform_id": 0,
+            "primary_ipv4": 146,
+            "primary_ipv6": 0,
+            "role_id": 0,
+            "site_id": 0,
+            "status": "active",
+            "tags": [],
+            "tags_all": [],
+            "tenant_id": 0,
+            "vcpus": 2
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjIifQ==",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[1]",
+      "mode": "data",
+      "type": "netbox_cluster",
+      "name": "cluster",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "cluster_group_id": 0,
+            "cluster_id": 3,
+            "cluster_type_id": 1,
+            "comments": "",
+            "custom_fields": {},
+            "description": "",
+            "id": "3",
+            "location_id": null,
+            "name": "Proxmox PVE-02",
+            "region_id": null,
+            "scope_id": null,
+            "scope_type": null,
+            "site_group_id": null,
+            "site_id": null,
+            "tags": []
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[1]",
+      "mode": "data",
+      "type": "netbox_prefix",
+      "name": "prefix",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "cidr": "192.168.178.0/24",
+            "custom_fields": null,
+            "description": "",
+            "family": 4,
+            "id": 1,
+            "location_id": 0,
+            "prefix": "192.168.178.0/24",
+            "region_id": 0,
+            "role_id": null,
+            "site_group_id": 0,
+            "site_id": 0,
+            "status": "active",
+            "tag": null,
+            "tag__n": null,
+            "tags": [],
+            "tenant_id": null,
+            "vlan_id": null,
+            "vlan_vid": null,
+            "vrf_id": null
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[1]",
+      "mode": "managed",
+      "type": "netbox_available_ip_address",
+      "name": "ip",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "description": "",
+            "device_interface_id": null,
+            "dns_name": null,
+            "id": "147",
+            "interface_id": 129,
+            "ip_address": "192.168.178.113/24",
+            "ip_range_id": null,
+            "object_type": "virtualization.vminterface",
+            "prefix_id": 1,
+            "role": null,
+            "status": "active",
+            "tags": [],
+            "tags_all": [],
+            "tenant_id": 0,
+            "virtual_machine_interface_id": null,
+            "vrf_id": 0
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster",
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_prefix.prefix",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_interface.eth0",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_machine.vm"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[1]",
+      "mode": "managed",
+      "type": "netbox_interface",
+      "name": "eth0",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "description": "",
+            "enabled": true,
+            "id": "129",
+            "mac_address": "",
+            "mode": null,
+            "mtu": 0,
+            "name": "eth0",
+            "tagged_vlans": [],
+            "tags": [],
+            "tags_all": [],
+            "type": null,
+            "untagged_vlan": null,
+            "virtual_machine_id": 129
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_machine.vm"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[1]",
+      "mode": "managed",
+      "type": "netbox_primary_ip",
+      "name": "primary",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "id": "129",
+            "ip_address_id": 147,
+            "ip_address_version": 4,
+            "virtual_machine_id": 129
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "bnVsbA==",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster",
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_prefix.prefix",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_available_ip_address.ip",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_interface.eth0",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_machine.vm"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[1]",
+      "mode": "managed",
+      "type": "netbox_virtual_disk",
+      "name": "main_disk",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 1,
+          "attributes": {
+            "custom_fields": null,
+            "description": "Main disk",
+            "id": "140",
+            "name": "scsi0",
+            "size_mb": 15000,
+            "tags": [],
+            "tags_all": [],
+            "virtual_machine_id": 129
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjEifQ==",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_machine.vm"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.netbox_vms[1]",
+      "mode": "managed",
+      "type": "netbox_virtual_machine",
+      "name": "vm",
+      "provider": "provider[\"registry.terraform.io/e-breuninger/netbox\"]",
+      "instances": [
+        {
+          "schema_version": 2,
+          "attributes": {
+            "cluster_id": 3,
+            "comments": "",
+            "custom_fields": null,
+            "description": "",
+            "device_id": 0,
+            "disk_size_mb": 15000,
+            "id": "129",
+            "local_context_data": "",
+            "memory_mb": 2048,
+            "name": "backup-02.redstone",
+            "platform_id": 0,
+            "primary_ipv4": 147,
+            "primary_ipv6": 0,
+            "role_id": 0,
+            "site_id": 0,
+            "status": "active",
+            "tags": [],
+            "tags_all": [],
+            "tenant_id": 0,
+            "vcpus": 2
+          },
+          "sensitive_attributes": [],
+          "identity_schema_version": 0,
+          "private": "eyJzY2hlbWFfdmVyc2lvbiI6IjIifQ==",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.proxmox_vms[0]",
+      "mode": "managed",
+      "type": "proxmox_vm_qemu",
+      "name": "vm",
+      "provider": "provider[\"registry.terraform.io/telmate/proxmox\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "additional_wait": 5,
+            "agent": 1,
+            "agent_timeout": 90,
+            "args": "",
+            "automatic_reboot": true,
+            "automatic_reboot_severity": "error",
+            "balloon": 0,
+            "bios": "seabios",
+            "boot": "order=scsi0",
+            "bootdisk": "",
+            "ci_wait": null,
+            "cicustom": null,
+            "cipassword": "",
+            "ciupgrade": true,
+            "ciuser": "ansible",
+            "clone": "debian-13-cloud",
+            "clone_id": null,
+            "clone_wait": 10,
+            "cores": 0,
+            "cpu": [
+              {
+                "affinity": "",
+                "cores": 2,
+                "flags": [],
+                "limit": 0,
+                "numa": false,
+                "sockets": 1,
+                "type": "host",
+                "units": 0,
+                "vcores": 0
+              }
+            ],
+            "cpu_type": "",
+            "current_node": "pve-01",
+            "default_ipv4_address": "192.168.178.112",
+            "default_ipv6_address": "",
+            "define_connection_info": true,
+            "desc": null,
+            "description": "Managed by Terraform.",
+            "disk": [
+              {
+                "asyncio": "",
+                "backup": true,
+                "cache": "",
+                "discard": false,
+                "disk_file": "",
+                "emulatessd": false,
+                "format": "",
+                "id": 0,
+                "iops_r_burst": 0,
+                "iops_r_burst_length": 0,
+                "iops_r_concurrent": 0,
+                "iops_wr_burst": 0,
+                "iops_wr_burst_length": 0,
+                "iops_wr_concurrent": 0,
+                "iothread": false,
+                "iso": "",
+                "linked_disk_id": 0,
+                "mbps_r_burst": 0,
+                "mbps_r_concurrent": 0,
+                "mbps_wr_burst": 0,
+                "mbps_wr_concurrent": 0,
+                "passthrough": false,
+                "readonly": false,
+                "replicate": false,
+                "serial": "",
+                "size": "",
+                "slot": "ide2",
+                "storage": "internal-storage",
+                "type": "cloudinit",
+                "wwn": ""
+              },
+              {
+                "asyncio": "",
+                "backup": true,
+                "cache": "",
+                "discard": false,
+                "disk_file": "",
+                "emulatessd": false,
+                "format": "raw",
+                "id": 0,
+                "iops_r_burst": 0,
+                "iops_r_burst_length": 0,
+                "iops_r_concurrent": 0,
+                "iops_wr_burst": 0,
+                "iops_wr_burst_length": 0,
+                "iops_wr_concurrent": 0,
+                "iothread": false,
+                "iso": "",
+                "linked_disk_id": -1,
+                "mbps_r_burst": 0,
+                "mbps_r_concurrent": 0,
+                "mbps_wr_burst": 0,
+                "mbps_wr_concurrent": 0,
+                "passthrough": false,
+                "readonly": false,
+                "replicate": false,
+                "serial": "",
+                "size": "15G",
+                "slot": "scsi0",
+                "storage": "internal-storage",
+                "type": "disk",
+                "wwn": ""
+              }
+            ],
+            "disks": [],
+            "efidisk": [],
+            "force_create": false,
+            "force_recreate_on_change_of": null,
+            "full_clone": true,
+            "hagroup": "",
+            "hastate": "",
+            "hostpci": [],
+            "hotplug": "network,disk,usb",
+            "id": "pve-01/qemu/120",
+            "ipconfig0": "ip=192.168.178.112/24,gw=192.168.178.1",
+            "ipconfig1": null,
+            "ipconfig10": null,
+            "ipconfig11": null,
+            "ipconfig12": null,
+            "ipconfig13": null,
+            "ipconfig14": null,
+            "ipconfig15": null,
+            "ipconfig2": null,
+            "ipconfig3": null,
+            "ipconfig4": null,
+            "ipconfig5": null,
+            "ipconfig6": null,
+            "ipconfig7": null,
+            "ipconfig8": null,
+            "ipconfig9": null,
+            "kvm": true,
+            "linked_vmid": 0,
+            "machine": "",
+            "memory": 2048,
+            "name": "backup-01.redstone",
+            "nameserver": "192.168.178.95 192.168.178.96",
+            "network": [
+              {
+                "bridge": "vmbr0",
+                "firewall": false,
+                "id": 0,
+                "link_down": false,
+                "macaddr": "bc:24:11:b0:7f:05",
+                "model": "virtio",
+                "mtu": 0,
+                "queues": 0,
+                "rate": 0,
+                "tag": 0
+              },
+              {
+                "bridge": "vmbr1",
+                "firewall": false,
+                "id": 1,
+                "link_down": false,
+                "macaddr": "bc:24:11:cb:8e:f7",
+                "model": "virtio",
+                "mtu": 0,
+                "queues": 0,
+                "rate": 0,
+                "tag": 100
+              }
+            ],
+            "numa": false,
+            "onboot": false,
+            "os_network_config": null,
+            "os_type": "cloud-init",
+            "pci": [],
+            "pcis": [],
+            "pool": "",
+            "protection": false,
+            "pxe": null,
+            "qemu_os": "other",
+            "reboot_required": false,
+            "rng": [],
+            "scsihw": "virtio-scsi-single",
+            "searchdomain": "",
+            "serial": [
+              {
+                "id": 0,
+                "type": "socket"
+              }
+            ],
+            "skip_ipv4": false,
+            "skip_ipv6": true,
+            "smbios": [
+              {
+                "family": "",
+                "manufacturer": "",
+                "product": "",
+                "serial": "",
+                "sku": "",
+                "uuid": "76945e10-bf48-46c3-ba10-cb6d9dd47746",
+                "version": ""
+              }
+            ],
+            "sockets": 0,
+            "ssh_forward_ip": null,
+            "ssh_host": "192.168.178.112",
+            "ssh_port": "22",
+            "ssh_private_key": null,
+            "ssh_user": null,
+            "sshkeys": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGogucYhjkrMYghJkldq80ipTfG/8ogBD/aMTtAeXswW\nssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILhrbDGOo6AewrJXJFoV1sidQCVKITiMgQvsCwQdbZuk\n",
+            "start_at_node_boot": false,
+            "startup": "",
+            "startup_shutdown": [
+              {
+                "order": -1,
+                "shutdown_timeout": -1,
+                "startup_delay": -1
+              }
+            ],
+            "tablet": true,
+            "tags": "",
+            "target_node": "pve-01",
+            "target_nodes": null,
+            "timeouts": null,
+            "tpm_state": [],
+            "unused_disk": [],
+            "usb": [],
+            "usbs": [],
+            "vcpus": 0,
+            "vga": [],
+            "vm_state": "running",
+            "vmid": 120
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "cipassword"
+              }
+            ],
+            [
+              {
+                "type": "get_attr",
+                "value": "ssh_private_key"
+              }
+            ]
+          ],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWZhdWx0IjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInJlYWQiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster",
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_prefix.prefix",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_available_ip_address.ip",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_interface.eth0",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_primary_ip.primary",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_disk.extra_disks",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_disk.main_disk",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_machine.vm"
+          ]
+        }
+      ]
+    },
+    {
+      "module": "module.netbox_proxmox_vms.module.proxmox_vms[1]",
+      "mode": "managed",
+      "type": "proxmox_vm_qemu",
+      "name": "vm",
+      "provider": "provider[\"registry.terraform.io/telmate/proxmox\"]",
+      "instances": [
+        {
+          "schema_version": 0,
+          "attributes": {
+            "additional_wait": 5,
+            "agent": 1,
+            "agent_timeout": 90,
+            "args": "",
+            "automatic_reboot": true,
+            "automatic_reboot_severity": "error",
+            "balloon": 0,
+            "bios": "seabios",
+            "boot": "order=scsi0",
+            "bootdisk": "",
+            "ci_wait": null,
+            "cicustom": null,
+            "cipassword": "",
+            "ciupgrade": true,
+            "ciuser": "ansible",
+            "clone": "debian-13-cloud",
+            "clone_id": null,
+            "clone_wait": 10,
+            "cores": 0,
+            "cpu": [
+              {
+                "affinity": "",
+                "cores": 2,
+                "flags": [],
+                "limit": 0,
+                "numa": false,
+                "sockets": 1,
+                "type": "host",
+                "units": 0,
+                "vcores": 0
+              }
+            ],
+            "cpu_type": "",
+            "current_node": "pve-02",
+            "default_ipv4_address": "192.168.178.113",
+            "default_ipv6_address": "",
+            "define_connection_info": true,
+            "desc": null,
+            "description": "Managed by Terraform.",
+            "disk": [
+              {
+                "asyncio": "",
+                "backup": true,
+                "cache": "",
+                "discard": false,
+                "disk_file": "",
+                "emulatessd": false,
+                "format": "",
+                "id": 0,
+                "iops_r_burst": 0,
+                "iops_r_burst_length": 0,
+                "iops_r_concurrent": 0,
+                "iops_wr_burst": 0,
+                "iops_wr_burst_length": 0,
+                "iops_wr_concurrent": 0,
+                "iothread": false,
+                "iso": "",
+                "linked_disk_id": 0,
+                "mbps_r_burst": 0,
+                "mbps_r_concurrent": 0,
+                "mbps_wr_burst": 0,
+                "mbps_wr_concurrent": 0,
+                "passthrough": false,
+                "readonly": false,
+                "replicate": false,
+                "serial": "",
+                "size": "",
+                "slot": "ide2",
+                "storage": "internal-storage",
+                "type": "cloudinit",
+                "wwn": ""
+              },
+              {
+                "asyncio": "",
+                "backup": true,
+                "cache": "",
+                "discard": false,
+                "disk_file": "",
+                "emulatessd": false,
+                "format": "raw",
+                "id": 0,
+                "iops_r_burst": 0,
+                "iops_r_burst_length": 0,
+                "iops_r_concurrent": 0,
+                "iops_wr_burst": 0,
+                "iops_wr_burst_length": 0,
+                "iops_wr_concurrent": 0,
+                "iothread": false,
+                "iso": "",
+                "linked_disk_id": -1,
+                "mbps_r_burst": 0,
+                "mbps_r_concurrent": 0,
+                "mbps_wr_burst": 0,
+                "mbps_wr_concurrent": 0,
+                "passthrough": false,
+                "readonly": false,
+                "replicate": false,
+                "serial": "",
+                "size": "15G",
+                "slot": "scsi0",
+                "storage": "internal-storage",
+                "type": "disk",
+                "wwn": ""
+              }
+            ],
+            "disks": [],
+            "efidisk": [],
+            "force_create": false,
+            "force_recreate_on_change_of": null,
+            "full_clone": true,
+            "hagroup": "",
+            "hastate": "",
+            "hostpci": [],
+            "hotplug": "network,disk,usb",
+            "id": "pve-02/qemu/118",
+            "ipconfig0": "ip=192.168.178.113/24,gw=192.168.178.1",
+            "ipconfig1": null,
+            "ipconfig10": null,
+            "ipconfig11": null,
+            "ipconfig12": null,
+            "ipconfig13": null,
+            "ipconfig14": null,
+            "ipconfig15": null,
+            "ipconfig2": null,
+            "ipconfig3": null,
+            "ipconfig4": null,
+            "ipconfig5": null,
+            "ipconfig6": null,
+            "ipconfig7": null,
+            "ipconfig8": null,
+            "ipconfig9": null,
+            "kvm": true,
+            "linked_vmid": 0,
+            "machine": "",
+            "memory": 2048,
+            "name": "backup-02.redstone",
+            "nameserver": "192.168.178.95 192.168.178.96",
+            "network": [
+              {
+                "bridge": "vmbr0",
+                "firewall": false,
+                "id": 0,
+                "link_down": false,
+                "macaddr": "bc:24:11:be:42:86",
+                "model": "virtio",
+                "mtu": 0,
+                "queues": 0,
+                "rate": 0,
+                "tag": 0
+              },
+              {
+                "bridge": "vmbr1",
+                "firewall": false,
+                "id": 1,
+                "link_down": false,
+                "macaddr": "bc:24:11:98:b0:a9",
+                "model": "virtio",
+                "mtu": 0,
+                "queues": 0,
+                "rate": 0,
+                "tag": 100
+              }
+            ],
+            "numa": false,
+            "onboot": false,
+            "os_network_config": null,
+            "os_type": "cloud-init",
+            "pci": [],
+            "pcis": [],
+            "pool": "",
+            "protection": false,
+            "pxe": null,
+            "qemu_os": "other",
+            "reboot_required": false,
+            "rng": [],
+            "scsihw": "virtio-scsi-single",
+            "searchdomain": "",
+            "serial": [
+              {
+                "id": 0,
+                "type": "socket"
+              }
+            ],
+            "skip_ipv4": false,
+            "skip_ipv6": true,
+            "smbios": [
+              {
+                "family": "",
+                "manufacturer": "",
+                "product": "",
+                "serial": "",
+                "sku": "",
+                "uuid": "30d13b37-0873-411a-8160-8b3d6aaca846",
+                "version": ""
+              }
+            ],
+            "sockets": 0,
+            "ssh_forward_ip": null,
+            "ssh_host": "192.168.178.113",
+            "ssh_port": "22",
+            "ssh_private_key": null,
+            "ssh_user": null,
+            "sshkeys": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGogucYhjkrMYghJkldq80ipTfG/8ogBD/aMTtAeXswW\nssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILhrbDGOo6AewrJXJFoV1sidQCVKITiMgQvsCwQdbZuk\n",
+            "start_at_node_boot": false,
+            "startup": "",
+            "startup_shutdown": [
+              {
+                "order": -1,
+                "shutdown_timeout": -1,
+                "startup_delay": -1
+              }
+            ],
+            "tablet": true,
+            "tags": "",
+            "target_node": "pve-02",
+            "target_nodes": null,
+            "timeouts": null,
+            "tpm_state": [],
+            "unused_disk": [],
+            "usb": [],
+            "usbs": [],
+            "vcpus": 0,
+            "vga": [],
+            "vm_state": "running",
+            "vmid": 118
+          },
+          "sensitive_attributes": [
+            [
+              {
+                "type": "get_attr",
+                "value": "cipassword"
+              }
+            ],
+            [
+              {
+                "type": "get_attr",
+                "value": "ssh_private_key"
+              }
+            ]
+          ],
+          "identity_schema_version": 0,
+          "private": "eyJlMmJmYjczMC1lY2FhLTExZTYtOGY4OC0zNDM2M2JjN2M0YzAiOnsiY3JlYXRlIjoxMjAwMDAwMDAwMDAwLCJkZWZhdWx0IjoxMjAwMDAwMDAwMDAwLCJkZWxldGUiOjEyMDAwMDAwMDAwMDAsInJlYWQiOjEyMDAwMDAwMDAwMDAsInVwZGF0ZSI6MTIwMDAwMDAwMDAwMH19",
+          "dependencies": [
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_cluster.cluster",
+            "module.netbox_proxmox_vms.module.netbox_vms.data.netbox_prefix.prefix",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_available_ip_address.ip",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_interface.eth0",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_primary_ip.primary",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_disk.extra_disks",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_disk.main_disk",
+            "module.netbox_proxmox_vms.module.netbox_vms.netbox_virtual_machine.vm"
+          ]
+        }
+      ]
+    }
+  ],
+  "check_results": null
+}
+
