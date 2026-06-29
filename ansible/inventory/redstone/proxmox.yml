@@ -39,6 +39,5 @@ groups:
   monitoring: "'monitoring' in proxmox_name"
   netbox: "'netbox' in proxmox_name"
   keycloak: "'keycloak' in proxmox_name"
-  backup: "'backup' in proxmox_name"
 
 want_proxmox_nodes_ansible_host: true
