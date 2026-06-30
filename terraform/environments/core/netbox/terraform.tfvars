@@ -1,22 +1,22 @@
 vms = [
   {
-    name     = "netbox-01.redstone"
+    name     = "netbox-01.core.internal"
     vm_state = "running"
-    ip = "192.168.178.91/24"
+    ip       = "10.1.100.13/24"
     cpu = {
       cores = 2
     }
     target_node = "pve-01"
-    memory  = 2048
-    gateway = "192.168.178.1"
+    memory      = 2048
+    gateway     = "10.1.100.1"
     scsi_disk = {
-      size = "15G"
+      size    = "15G"
       size_mb = "15000"
     }
-    vm_network_extra = [{
-      id     = 1
+    tags = "core"
+    vm_network = {
       bridge = "vmbr1"
       tag    = "100"
-    }]
+    }
   },
 ]
