@@ -1,5 +1,5 @@
 ---
-general_ip_gateway: 192.168.178.1
+general_ip_gateway: 10.2.100.1
 
 general_environment: development
 general_hostname: "{{ inventory_hostname }}"
@@ -10,8 +10,8 @@ general_debian_base_packages:
   - nftables
 
 general_dns_servers:
-  - 192.168.178.95
-  - 192.168.178.96
+  - 10.1.100.11
+  - 10.1.100.12
 
 general_ssh_port: 22
 general_admin_ssh_key: !vault |
