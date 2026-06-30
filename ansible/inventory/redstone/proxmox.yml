@@ -36,7 +36,6 @@ groups:
   k8s_vault_01_masters: "'k8s-vault-master' in proxmox_name"
   gh_runner: "'gh-runner' in proxmox_name and 'redstone' in proxmox_tags_parsed | list"
   monitoring: "'monitoring' in proxmox_name"
-  netbox: "'netbox' in proxmox_name"
   keycloak: "'keycloak' in proxmox_name"
 
 want_proxmox_nodes_ansible_host: true
