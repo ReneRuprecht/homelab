@@ -7,7 +7,12 @@ vms = [
       cores = 2
     }
     memory  = 8192
-    gateway = "192.168.178.1"
+    gateway = "10.2.100.1"
+    tags    = "redstone"
+    vm_network = {
+      tag    = "200"
+      bridge = "vmbr1"
+    }
   },
   {
     name        = "k8s-node-01.redstone"
@@ -17,7 +22,12 @@ vms = [
       cores = 2
     }
     memory  = 10240
-    gateway = "192.168.178.1"
+    gateway = "10.2.100.1"
+    tags    = "redstone"
+    vm_network = {
+      tag    = "200"
+      bridge = "vmbr1"
+    }
     scsi_disk = {
       size    = "25G",
       size_mb = 25000
@@ -34,7 +44,12 @@ vms = [
       cores = 2
     }
     memory  = 10240
-    gateway = "192.168.178.1"
+    gateway = "10.2.100.1"
+    tags    = "redstone"
+    vm_network = {
+      tag    = "200"
+      bridge = "vmbr1"
+    }
     scsi_disk = {
       size    = "25G",
       size_mb = 25000

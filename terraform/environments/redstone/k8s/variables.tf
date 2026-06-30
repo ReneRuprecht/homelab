@@ -44,9 +44,10 @@ variable "vms" {
     cpu = object({
       cores = optional(number, 1)
     })
-    vm_state = string
-    tags     = optional(string)
-    clone    = optional(string, "debian-13-cloud")
+    vm_state   = string
+    tags       = optional(string)
+    clone      = optional(string, "debian-13-cloud")
+    nameserver = optional(string, "10.1.100.11 10.1.100.12")
 
     cloudinit = optional(object({
       storage = optional(string, "internal-storage")
@@ -73,7 +74,25 @@ variable "vms" {
       slot    = string
     })), [])
 
+    vm_network = optional(object({
+      id     = optional(number, 0)
+      bridge = optional(string, "vmbr0")
+      model  = optional(string, "virtio")
+      tag    = optional(string)
+      }), {
+      id     = 0
+      bridge = "vmbr0"
+      model  = "virtio"
+    })
+
+    vm_network_extra = optional(list(object({
+      id     = number
+      bridge = string
+      model  = optional(string, "virtio")
+      tag    = optional(number)
+    })), [])
+
     cluster_name = optional(string, "Proxmox PVE-02")
-    prefix = optional(string, "192.168.178.0/24")
+    prefix       = optional(string, "10.2.100.0/24")
   }))
 }

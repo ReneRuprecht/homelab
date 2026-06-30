@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     endpoints = {
-      s3 = "http://backup-01.redstone:9000"
+      s3 = "http://backup-01.core.internal:9000"
     }
     bucket                      = "terraform-state"
     key                         = "redstone/k8s/terraform.tfstate"
@@ -16,7 +16,7 @@ terraform {
   required_providers {
     netbox = {
       source = "e-breuninger/netbox"
-      version = "4.1.0"
+      version = "5.6.1"
     }
     proxmox = {
       source = "telmate/proxmox"
