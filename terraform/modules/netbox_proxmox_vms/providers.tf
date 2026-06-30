@@ -6,7 +6,7 @@ terraform {
     }
     netbox = {
       source  = "e-breuninger/netbox"
-      version = "4.1.0"
+      version = "5.6.1"
     }
   }
 }
