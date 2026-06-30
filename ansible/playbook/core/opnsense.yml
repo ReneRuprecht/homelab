@@ -145,6 +145,46 @@
         quick: true
         log: true
         state: 'present'
+
+      allow_redstone_to_core_dns:
+        action: 'pass'
+        int: ['opt2']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP/UDP'
+        src: '10.2.100.0/24'
+        dest: 'CORE_DNS'
+        dest_port: '53'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_vlan_redstone_out_https:
+        action: 'pass'
+        int: ['opt2']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP/UDP'
+        src: '10.2.100.0/24'
+        dest: 'any'
+        dest_port: '443'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_mgmt_to_redstone_ssh:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: '10.2.100.0/24'
+        dest_port: 'ssh'
+        quick: true
+        log: true
+        state: 'present'
+
     aliases:
       - name: 'CORE_BACKUP'
         content: ['10.1.100.14', '10.1.100.15']
