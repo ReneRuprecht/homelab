@@ -10,11 +10,10 @@ vms = [
     gateway            = "10.1.100.1"
     start_at_node_boot = true
     tags               = "core"
-    vm_network_extra = [{
-      id     = 1
+    vm_network = {
       bridge = "vmbr1"
       tag    = "100"
-    }]
+    }
   },
   {
     name        = "dns-02.core.internal"
@@ -28,10 +27,9 @@ vms = [
     gateway            = "10.1.100.1"
     start_at_node_boot = true
     tags               = "core"
-    vm_network_extra = [{
-      id     = 1
+    vm_network = {
       bridge = "vmbr1"
       tag    = "100"
-    }]
+    }
   },
 ]
