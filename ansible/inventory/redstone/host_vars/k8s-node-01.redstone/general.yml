@@ -1,2 +1,5 @@
 ---
-general_ip_address: 192.168.178.109
+general_networking:
+  - interface: "eth0"
+    ip_address: 10.2.100.13
+    ip_gateway: 10.2.100.1

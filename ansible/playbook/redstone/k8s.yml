@@ -24,7 +24,7 @@
     - role: geerlingguy.docker
       become: true
     # - role: ansible-consul
-    - role: grafana.grafana.promtail
+    # - role: grafana.grafana.promtail
     - role: prometheus.prometheus.node_exporter
     - role: reneruprecht.kubernetes
   post_tasks:
