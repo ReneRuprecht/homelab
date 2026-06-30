@@ -12,7 +12,9 @@ bind9_our_neighbors:
 bind9_our_networks:
   - localhost
   - localnets
+  - 192.168.178.0/24
   - 10.1.100.0/24
+  - 10.2.100.0/24
 
 bind9_zones_static:
   - name: redstone
