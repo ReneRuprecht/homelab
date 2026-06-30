@@ -6,15 +6,12 @@ bind9_recursor: true
 bind9_forward_servers:
   - 1.1.1.1
 bind9_slaves:
-  - 192.168.178.96
   - 10.1.100.12
 bind9_our_neighbors:
-  - 192.168.178.96
   - 10.1.100.12
 bind9_our_networks:
   - localhost
   - localnets
-  - 192.168.178.0/24
   - 10.1.100.0/24
 
 bind9_zones_static:
@@ -34,11 +31,11 @@ bind9_zones_static:
 
 bind9_zones_dynamic:
   - name: core.internal
-    serial: 2025081128
+    serial: 2025081132
     admin: noemail.core.internal
     ns_records:
-      - dns-01.redstone
-      - dns-02.redstone
+      - dns-01.core.internal
+      - dns-02.core.internal
     rrs:
       - label: opnsense-01
         type: A

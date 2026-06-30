@@ -30,5 +30,6 @@ groups:
   firewalls: "'opnsense' in proxmox_name"
   gh_runner: "'gh-runner' in proxmox_name and 'core' in proxmox_tags_parsed | list"
   backup: "'backup-' in proxmox_name and 'core' in proxmox_tags_parsed | list"
+  dns: "'dns-' in proxmox_name and 'core' in proxmox_tags_parsed | list"
 
 want_proxmox_nodes_ansible_host: true
