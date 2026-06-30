@@ -13,7 +13,7 @@ vms = [
     }
   },
   {
-    name         = "backup-02.redstone"
+    name         = "backup-02.core.internal"
     vm_state     = "started"
     memory       = 2048
     target_node  = "pve-02"
