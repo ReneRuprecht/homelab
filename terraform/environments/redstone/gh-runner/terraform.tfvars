@@ -13,11 +13,10 @@ vms = [
     target_node  = "pve-02"
     cluster_name = "Proxmox PVE-02"
     memory       = 8192
-    gateway      = "192.168.178.1"
-    vm_network_extra = [ {
-      id = 1
-      tag = 200
+    gateway      = "10.2.100.1"
+    vm_network = {
+      tag    = 200
       bridge = "vmbr1"
-    } ]
+    }
   }
 ]

@@ -93,6 +93,6 @@ variable "vms" {
     })), [])
 
     cluster_name = optional(string, "Proxmox PVE-01")
-    prefix = optional(string, "192.168.178.0/24")
+    prefix = optional(string, "10.2.100.0/24")
   }))
 }
