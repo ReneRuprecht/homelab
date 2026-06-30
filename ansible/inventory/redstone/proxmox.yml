@@ -34,7 +34,7 @@ groups:
   k8s_01_nodes: "'k8s-node' in proxmox_name"
   k8s_vault_01_nodes: "'k8s-vault-node' in proxmox_name"
   k8s_vault_01_masters: "'k8s-vault-master' in proxmox_name"
-  gh_runner: "'gh-runner' in proxmox_name"
+  gh_runner: "'gh-runner' in proxmox_name and 'redstone' in proxmox_tags_parsed | list"
   monitoring: "'monitoring' in proxmox_name"
   netbox: "'netbox' in proxmox_name"
   keycloak: "'keycloak' in proxmox_name"
