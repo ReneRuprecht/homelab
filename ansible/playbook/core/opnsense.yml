@@ -185,6 +185,19 @@
         log: true
         state: 'present'
 
+      allow_mgmt_to_redstone_kubernetes:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: '10.2.100.12/24'
+        dest_port: '6443'
+        quick: true
+        log: true
+        state: 'present'
+
     aliases:
       - name: 'CORE_BACKUP'
         content: ['10.1.100.14', '10.1.100.15']
