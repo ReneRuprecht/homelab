@@ -39,6 +39,9 @@
       - vlan: 100
         interface: "vtnet1"
         description: "Core"
+      - vlan: 115
+        interface: "vtnet1"
+        description: "Secrets"
       - vlan: 200
         interface: "vtnet1"
         description: "Redstone"
@@ -194,6 +197,32 @@
         src: '192.168.178.0/24'
         dest: '10.2.100.12/24'
         dest_port: '6443'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_mgmt_to_identity_ssh:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: '10.1.110.0/24'
+        dest_port: 'ssh'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_mgmt_to_secrets_ssh:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: '10.1.115.0/24'
+        dest_port: 'ssh'
         quick: true
         log: true
         state: 'present'
