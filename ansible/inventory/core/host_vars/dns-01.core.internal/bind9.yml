@@ -63,6 +63,12 @@ bind9_zones_dynamic:
       - label: gh-runner-01
         type: A
         rdata: 10.1.100.16
+      - label: loadbalancer-01
+        type: A
+        rdata: 10.1.100.17
+      - label: loadbalancer-02
+        type: A
+        rdata: 10.1.100.18
 
   - name: secrets.internal
     serial: 2025081132
