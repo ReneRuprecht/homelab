@@ -1,27 +1,3 @@
-variable "dns_update_server" {
-  description = "Bind9 Server to update bind9"
-  type        = string
-  sensitive   = true
-}
-
-variable "dns_update_key_name" {
-  description = "DNS Key Name"
-  type        = string
-  sensitive   = true
-}
-
-variable "dns_update_key_algorithm" {
-  description = "DNS Key Algorithm"
-  type        = string
-  sensitive   = true
-}
-
-variable "dns_update_key_secret" {
-  description = "DNS Key secret to update bind9"
-  type        = string
-  sensitive   = true
-}
-
 variable "vm_user" {
   description = "VM User"
   type        = string
@@ -36,17 +12,19 @@ variable "vms" {
   description = "Liste von VMs mit Parametern für Proxmox + NetBox"
   type = list(object({
     name        = string
-    target_node = optional(string, "pve-01")
+    target_node = optional(string, "pve-02")
     vmid        = optional(number)
     memory      = number
     ip          = optional(string, "")
+    nameserver  = optional(string, "10.1.100.1 1.1.1.1")
     gateway     = string
     cpu = object({
       cores = optional(number, 1)
     })
-    vm_state = string
-    tags     = optional(string)
-    clone    = optional(string, "debian-13-cloud")
+    vm_state           = string
+    tags               = optional(string, "")
+    clone              = optional(string, "debian-13-cloud")
+    start_at_node_boot = optional(bool, false)
 
     cloudinit = optional(object({
       storage = optional(string, "internal-storage")
@@ -73,7 +51,22 @@ variable "vms" {
       slot    = string
     })), [])
 
-    cluster_name = optional(string, "Proxmox PVE-01")
-    prefix = optional(string, "192.168.178.0/24")
+    vm_network = optional(object({
+      id     = optional(number, 0)
+      bridge = optional(string, "vmbr0")
+      model  = optional(string, "virtio")
+      tag    = optional(string)
+      }), {
+      id     = 0
+      bridge = "vmbr0"
+      model  = "virtio"
+    })
+
+    vm_network_extra = optional(list(object({
+      id     = number
+      bridge = string
+      model  = optional(string, "virtio")
+      tag    = optional(number)
+    })), [])
   }))
 }

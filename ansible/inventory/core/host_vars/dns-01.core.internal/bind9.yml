@@ -91,6 +91,21 @@ bind9_zones_dynamic:
         type: A
         rdata: 10.1.115.13
 
+  - name: identity.internal
+    serial: 2025081132
+    admin: noemail.secrets.internal
+    ns_records:
+      - dns-01.core.internal
+      - dns-02.core.internal
+    rrs:
+      - label: keycloak
+        type: A
+        rdata: 10.1.100.250
+
+      - label: keycloak-01
+        type: A
+        rdata: 10.1.110.11
+
   - name: bluecore
     serial: 2025081126
     admin: noemail.bluecore
