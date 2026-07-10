@@ -77,6 +77,10 @@ bind9_zones_dynamic:
       - dns-01.core.internal
       - dns-02.core.internal
     rrs:
+      - label: vault
+        type: A
+        rdata: 10.1.100.250
+
       - label: vault-01
         type: A
         rdata: 10.1.115.11
