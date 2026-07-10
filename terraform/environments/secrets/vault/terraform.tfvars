@@ -1,6 +1,6 @@
 vms = [
   {
-    name     = "vault-01.redstone"
+    name     = "vault-01.secrets.internal"
     vm_state = "running"
     cpu = {
       cores = 2
@@ -17,7 +17,7 @@ vms = [
     }
   },
   {
-    name     = "vault-02.redstone"
+    name     = "vault-02.secrets.internal"
     vm_state = "running"
     cpu = {
       cores = 2
@@ -33,7 +33,7 @@ vms = [
     }
   },
   {
-    name     = "vault-03.redstone"
+    name     = "vault-03.secrets.internal"
     vm_state = "running"
     cpu = {
       cores = 2
