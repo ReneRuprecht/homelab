@@ -1,27 +1,3 @@
-variable "dns_update_server" {
-  description = "Bind9 Server to update bind9"
-  type        = string
-  sensitive   = true
-}
-
-variable "dns_update_key_name" {
-  description = "DNS Key Name"
-  type        = string
-  sensitive   = true
-}
-
-variable "dns_update_key_algorithm" {
-  description = "DNS Key Algorithm"
-  type        = string
-  sensitive   = true
-}
-
-variable "dns_update_key_secret" {
-  description = "DNS Key secret to update bind9"
-  type        = string
-  sensitive   = true
-}
-
 variable "vm_user" {
   description = "VM User"
   type        = string
@@ -40,13 +16,14 @@ variable "vms" {
     vmid        = optional(number)
     memory      = number
     ip          = optional(string, "")
+    nameserver  = optional(string, "10.1.100.11 10.1.100.12")
     gateway     = string
     cpu = object({
       cores = optional(number, 1)
     })
-    vm_state           = string
-    tags               = optional(string)
-    clone              = optional(string, "debian-13-cloud")
+    vm_state = string
+    tags     = optional(string)
+    clone    = optional(string, "debian-13-cloud")
     start_at_node_boot = optional(bool, false)
 
     cloudinit = optional(object({
@@ -72,6 +49,24 @@ variable "vms" {
       storage = optional(string, "internal-storage")
       format  = optional(string, "raw")
       slot    = string
+    })), [])
+
+    vm_network = optional(object({
+      id     = optional(number, 0)
+      bridge = optional(string, "vmbr0")
+      model  = optional(string, "virtio")
+      tag    = optional(string)
+      }), {
+      id     = 0
+      bridge = "vmbr0"
+      model  = "virtio"
+    })
+
+    vm_network_extra = optional(list(object({
+      id     = number
+      bridge = string
+      model  = optional(string, "virtio")
+      tag    = optional(number)
     })), [])
 
     cluster_name = optional(string, "Proxmox PVE-01")
