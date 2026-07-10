@@ -5,6 +5,11 @@ general_ufw_ports:
     state: enabled
     comment: "SSH"
 
+  - port: "443"
+    proto: tcp
+    state: enabled
+    comment: "HTTPS"
+
   - port: "8200"
     proto: tcp
     state: enabled
