@@ -39,6 +39,9 @@
       - vlan: 100
         interface: "vtnet1"
         description: "Core"
+      - vlan: 110
+        interface: "vtnet1"
+        description: "Identity"
       - vlan: 115
         interface: "vtnet1"
         description: "Secrets"
@@ -214,6 +217,31 @@
         log: true
         state: 'present'
 
+      allow_identity_to_core_dns:
+        action: 'pass'
+        int: ['opt3']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP/UDP'
+        src: '10.1.110.0/24'
+        dest: 'CORE_DNS'
+        dest_port: '53'
+        quick: true
+        log: true
+        state: 'absent'
+
+      allow_vlan_identity_out:
+        action: 'pass'
+        int: ['opt3']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'any'
+        src: '10.1.110.0/24'
+        dest: 'any'
+        quick: true
+        log: true
+        state: 'present'
+
       allow_mgmt_to_secrets_ssh:
         action: 'pass'
         int: ['wan']
@@ -223,6 +251,31 @@
         src: '192.168.178.0/24'
         dest: '10.1.115.0/24'
         dest_port: 'ssh'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_secrets_to_core_dns:
+        action: 'pass'
+        int: ['opt4']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP/UDP'
+        src: '10.1.115.0/24'
+        dest: 'CORE_DNS'
+        dest_port: '53'
+        quick: true
+        log: true
+        state: 'absent'
+
+      allow_vlan_secrets_out:
+        action: 'pass'
+        int: ['opt4']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'any'
+        src: '10.1.115.0/24'
+        dest: 'any'
         quick: true
         log: true
         state: 'present'
