@@ -63,6 +63,34 @@
         seq: 100
         state: 'present'
 
+      allow_mgmt_to_core_lb_https:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: 'CORE_LBS'
+        dest_port: 'https'
+        quick: true
+        log: true
+        seq: 100
+        state: 'present'
+
+      allow_mgmt_to_core_lb_stats:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: 'CORE_LBS'
+        dest_port: '8500'
+        quick: true
+        log: true
+        seq: 100
+        state: 'present'
+
       allow_mgmt_to_core_ssh:
         action: 'pass'
         int: ['wan']
@@ -96,6 +124,19 @@
         proto: 'any'
         src: '10.1.100.0/24'
         dest: 'any'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_core_lb_to_vault_api:
+        action: 'pass'
+        int: ['opt1']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: 'CORE_LBS'
+        dest: 'SECRETS_VAULT'
+        dest_port: '8200'
         quick: true
         log: true
         state: 'present'
@@ -266,16 +307,43 @@
         dest_port: '53'
         quick: true
         log: true
-        state: 'absent'
+        state: 'present'
 
       allow_vlan_secrets_out:
         action: 'pass'
         int: ['opt4']
         dir: 'in'
         ip_proto: 'inet'
-        proto: 'any'
-        src: '10.1.115.0/24'
+        proto: 'TCP'
+        src: 'SECRETS_NET'
         dest: 'any'
+        dest_port: 'https'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_secrets_to_core_lb_vault:
+        action: 'pass'
+        int: ['opt4']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: 'SECRETS_VAULT'
+        dest: 'CORE_LBS'
+        dest_port: '443'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_mgmt_to_vault_ui:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: 'CORE_LBS'
+        dest_port: '8200'
         quick: true
         log: true
         state: 'present'
@@ -285,6 +353,12 @@
         content: ['10.1.100.14', '10.1.100.15']
       - name: 'CORE_DNS'
         content: ['10.1.100.11', '10.1.100.12']
+      - name: 'CORE_LBS'
+        content: ['10.1.100.17', '10.1.100.18', '10.1.100.250']
+      - name: 'SECRETS_VAULT'
+        content: ['10.1.115.11', '10.1.115.12', '10.1.115.13']
+      - name: 'SECRETS_NET'
+        content: ['10.1.115.11', '10.1.115.12', '10.1.115.13']
 
   tasks:
     - name: Setup Aliases
