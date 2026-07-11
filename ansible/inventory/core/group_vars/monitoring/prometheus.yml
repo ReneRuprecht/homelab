@@ -1,0 +1,25 @@
+---
+prometheus_targets:
+  node:
+    - targets:
+        - 'dns-01.core.internal:9100'
+        - 'dns-02.core.internal:9100'
+        - 'netbox-01.core.internal:9100'
+        - 'backup-01.core.internal:9100'
+        - 'backup-02.core.internal:9100'
+        - 'gh-runner-01.core.internal:9100'
+        - 'loadbalancer-01.core.internal:9100'
+        - 'loadbalancer-02.core.internal:9100'
+        - 'monitoring-01.core.internal:9100'
+      labels:
+        region: core
+    - targets:
+        - 'vault-01.secrets.internal:9100'
+        - 'vault-02.secrets.internal:9100'
+        - 'vault-03.secrets.internal:9100'
+      labels:
+        region: secrets
+    - targets:
+        - 'keycloak-01.identity.internal:9100'
+      labels:
+        region: identity
