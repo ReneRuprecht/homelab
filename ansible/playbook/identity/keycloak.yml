@@ -7,3 +7,87 @@
     - role: geerlingguy.docker
     - role: prometheus.prometheus.node_exporter
     - role: reneruprecht.keycloak
+  vars:
+    keycloak_auth_username: "admin"
+    keycloak_auth_password: "admin"
+
+    keycloak_groups:
+      - name: homelab-admins
+        realm: homelab
+      - name: homelab-users
+        realm: homelab
+      - name: homelab-operators
+        realm: homelab
+
+    keycloak_roles:
+      - name: admins
+        realm: homelab
+        state: absent
+      - name: users
+        realm: homelab
+        state: absent
+      - name: operators
+        realm: homelab
+        state: absent
+
+  tasks:
+    - name: Create Keycloak realm
+      delegate_to: localhost
+      community.general.keycloak_realm:
+        auth_client_id: admin-cli
+        auth_keycloak_url: https://keycloak.identity.internal
+        auth_realm: master
+        auth_username: "{{ keycloak_auth_username }}"
+        auth_password: "{{ keycloak_auth_password }}"
+        realm: homelab
+        enabled: true
+        display_name: homelab
+        state: present
+
+    - name: Create a Keycloak group, authentication with credentials
+      delegate_to: localhost
+      community.general.keycloak_group:
+        name: "{{ item.name }}"
+        realm: "{{ item.realm }}"
+        state: "{{ item.state | default('present') }}"
+        auth_client_id: admin-cli
+        auth_keycloak_url: https://keycloak.identity.internal
+        auth_realm: master
+        auth_username: "{{ keycloak_auth_username }}"
+        auth_password: "{{ keycloak_auth_password }}"
+      loop: "{{ keycloak_groups }}"
+
+    - name: Create a Keycloak realm role
+      delegate_to: localhost
+      community.general.keycloak_role:
+        name: "{{ item.name }}"
+        realm: "{{ item.realm }}"
+        state: "{{ item.state | default('present') }}"
+        auth_client_id: admin-cli
+        auth_keycloak_url: https://keycloak.identity.internal
+        auth_realm: master
+        auth_username: "{{ keycloak_auth_username }}"
+        auth_password: "{{ keycloak_auth_password }}"
+      loop: "{{ keycloak_roles }}"
+
+    - name: Create user
+      community.general.keycloak_user:
+        auth_keycloak_url: https://keycloak.identity.internal
+        auth_username: "{{ keycloak_auth_username }}"
+        auth_password: "{{ keycloak_auth_password }}"
+        auth_realm: master
+        realm: homelab
+        username: homelab
+        firstName: homelab
+        lastName: admin
+        email: homelab@homelab.internal
+        enabled: true
+        emailVerified: true
+        credentials:
+          - type: password
+            value: password
+            temporary: false
+        groups:
+          - name: homelab-admins
+            state: present
+        state: present
