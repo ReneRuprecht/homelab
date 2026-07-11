@@ -17,11 +17,16 @@ haproxy_frontends:
     port: 443
     ssl_enable: true
     ssl_certificates:
+      - "/etc/haproxy/certs/keycloak.pem"
       - "/etc/haproxy/certs/vault.pem"
     routes:
       - acl_name: "is_vault"
         acl_condition: "hdr(host) -i vault.secrets.internal"
         backend_name: "vault_backend"
+
+      - acl_name: "is_keycloak"
+        acl_condition: "hdr(host) -i keycloak.identity.internal"
+        backend_name: "keycloak_backend"
     options:
       - "httplog"
 
@@ -82,5 +87,21 @@ haproxy_backends:
         init_addr: "none"
       - name: vault-03.secrets.internal
         address: vault-03.secrets.internal
+        resolver: "core"
+        init_addr: "none"
+
+  - name: "keycloak_backend"
+    mode: "http"
+    balance: "first"
+    port: 8080
+    check: true
+    check_port: 8080
+    headers:
+      X-Forwarded-Proto: https
+      X-Forwarded-Port: 443
+      X-Forwarded-Host: "keycloak.identity.internal"
+    servers:
+      - name: keycloak-01.identity.internal
+        address: keycloak-01.identity.internal
         resolver: "core"
         init_addr: "none"
