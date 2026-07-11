@@ -19,6 +19,7 @@ haproxy_frontends:
     ssl_certificates:
       - "/etc/haproxy/certs/keycloak.pem"
       - "/etc/haproxy/certs/vault.pem"
+      - "/etc/haproxy/certs/grafana.pem"
     routes:
       - acl_name: "is_vault"
         acl_condition: "hdr(host) -i vault.secrets.internal"
@@ -27,6 +28,14 @@ haproxy_frontends:
       - acl_name: "is_keycloak"
         acl_condition: "hdr(host) -i keycloak.identity.internal"
         backend_name: "keycloak_backend"
+
+      - acl_name: "is_grafana"
+        acl_condition: "hdr(host) -i grafana.core.internal"
+        backend_name: "grafana_backend"
+
+      - acl_name: "is_prometheus"
+        acl_condition: "hdr(host) -i prometheus.core.internal"
+        backend_name: "prometheus_backend"
     options:
       - "httplog"
 
@@ -103,5 +112,29 @@ haproxy_backends:
     servers:
       - name: keycloak-01.identity.internal
         address: keycloak-01.identity.internal
+        resolver: "core"
+        init_addr: "none"
+
+  - name: "grafana_backend"
+    mode: "http"
+    balance: "first"
+    port: 3000
+    check: true
+    check_port: 3000
+    servers:
+      - name: monitoring-01.core.internal
+        address: monitoring-01.core.internal
+        resolver: "core"
+        init_addr: "none"
+
+  - name: "prometheus_backend"
+    mode: "http"
+    balance: "first"
+    port: 9090
+    check: true
+    check_port: 9090
+    servers:
+      - name: monitoring-01.core.internal
+        address: monitoring-01.core.internal
         resolver: "core"
         init_addr: "none"
