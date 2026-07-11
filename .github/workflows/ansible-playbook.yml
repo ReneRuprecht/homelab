@@ -59,14 +59,15 @@ jobs:
       - name: Setup Vault CA
         working-directory: ansible
         run: |
-          echo "$VAULT_CA_B64" | base64 -d > vault.ca
+          echo "$VAULT_CA_B64" | base64 -d > /tmp/vault-ca.crt
+          chmod 0644 /tmp/vault-ca.crt
 
       - name: "Run ${{ matrix.playbook_env_mapping.playbook }} on ${{ matrix.playbook_env_mapping.env}}"
         working-directory: ansible
         env:
           ANSIBLE_VAULT_PASSWORD_FILE: ".vaultpass"
           ALLOW_BROKEN_CONDITIONALS: true
-          VAULT_CACERT: vault.ca
+          VAULT_CACERT: /tmp/vault-ca.crt
         run: |
           pipenv install
           pipenv run ansible-galaxy install -r requirements.yml
