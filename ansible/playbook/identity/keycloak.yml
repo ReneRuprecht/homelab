@@ -91,3 +91,88 @@
           - name: homelab-admins
             state: present
         state: present
+
+    - name: Create Keycloak client_scope
+      community.general.keycloak_clientscope:
+        auth_keycloak_url: https://keycloak.identity.internal
+        auth_username: "{{ keycloak_auth_username }}"
+        auth_password: "{{ keycloak_auth_password }}"
+        auth_realm: master
+
+        realm: homelab
+
+        name: groups
+        description: "User group membership for OIDC clients"
+
+        protocol: openid-connect
+
+        state: present
+
+        protocol_mappers:
+          - name: groups
+            protocol: openid-connect
+            protocolMapper: oidc-group-membership-mapper
+            config:
+              full.path: "false"
+              id.token.claim: "true"
+              access.token.claim: "true"
+              userinfo.token.claim: "true"
+              claim.name: "groups"
+
+      delegate_to: localhost
+
+    - name: Create Keycloak client
+      community.general.keycloak_client:
+        auth_keycloak_url: https://keycloak.identity.internal
+        auth_username: "{{ keycloak_auth_username }}"
+        auth_password: "{{ keycloak_auth_password }}"
+        auth_realm: master
+
+        state: present
+
+        realm: homelab
+
+        client_id: grafana
+        name: Grafana
+
+        enabled: true
+
+        protocol: openid-connect
+        protocol_mappers:
+          - name: groups
+            protocol: openid-connect
+            protocolMapper: oidc-group-membership-mapper
+            config:
+              full.path: "false"
+              id.token.claim: "true"
+              access.token.claim: "true"
+              userinfo.token.claim: "true"
+              claim.name: "groups"
+
+        standard_flow_enabled: true
+        direct_access_grants_enabled: true
+        service_accounts_enabled: false
+
+        public_client: false
+        client_authenticator_type: client-secret
+        secret: "supersecure"
+
+
+        client_scopes_behavior: idempotent
+        default_client_scopes:
+          - email
+          - offline_access
+          - roles
+          - profile
+          - groups
+
+        root_url: https://grafana.core.internal
+
+        redirect_uris:
+          - https://grafana.core.internal/login/generic_oauth
+
+        web_origins:
+          - https://grafana.core.internal
+
+        full_scope_allowed: false
+      delegate_to: localhost
