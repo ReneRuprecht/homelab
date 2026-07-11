@@ -41,6 +41,13 @@ bind9_zones_dynamic:
       - dns-01.core.internal
       - dns-02.core.internal
     rrs:
+      - label: grafana
+        type: A
+        rdata: 10.1.100.250
+      - label: prometheus
+        type: A
+        rdata: 10.1.100.250
+
       - label: opnsense-01
         type: A
         rdata: 192.168.178.80
