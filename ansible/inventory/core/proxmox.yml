@@ -33,5 +33,6 @@ groups:
   dns: "'dns-' in proxmox_name and 'core' in proxmox_tags_parsed | list"
   netbox: "'netbox' in proxmox_name and 'core' in proxmox_tags_parsed | list"
   loadbalancer: "'loadbalancer' in proxmox_name and 'core' in proxmox_tags_parsed | list"
+  monitoring: "'monitoring' in proxmox_name and 'core' in proxmox_tags_parsed | list"
 
 want_proxmox_nodes_ansible_host: true
