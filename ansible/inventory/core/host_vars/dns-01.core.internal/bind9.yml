@@ -35,7 +35,7 @@ bind9_zones_static:
 
 bind9_zones_dynamic:
   - name: core.internal
-    serial: 2025081132
+    serial: 2025081133
     admin: noemail.core.internal
     ns_records:
       - dns-01.core.internal
@@ -69,6 +69,9 @@ bind9_zones_dynamic:
       - label: loadbalancer-02
         type: A
         rdata: 10.1.100.18
+      - label: monitoring-01
+        type: A
+        rdata: 10.1.100.19
 
   - name: secrets.internal
     serial: 2025081132
