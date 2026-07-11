@@ -1,0 +1,7 @@
+---
+server_url: "keycloak.identity.internal"
+keycloak_bootstrap_admin_username: admin
+keycloak_bootstrap_admin_password: admin
+keycloak_db_username: keycloak
+keycloak_db_password: supersecure
+keycloak_hostname: "https://{{ server_url }}"
