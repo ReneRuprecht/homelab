@@ -1,10 +1,10 @@
 terraform {
   backend "s3" {
     endpoints = {
-      s3 = "http://backup-01.redstone:9000"
+      s3 = "http://backup-01.core.internal:9000"
     }
     bucket                      = "terraform-state"
-    key                         = "redstone/monitoring/terraform.tfstate"
+    key                         = "core/monitoring/terraform.tfstate"
     region                      = "main"
     use_path_style              = true
     skip_credentials_validation = true
@@ -16,7 +16,6 @@ terraform {
   required_providers {
     netbox = {
       source = "e-breuninger/netbox"
-      version = "4.1.0"
     }
     proxmox = {
       source = "telmate/proxmox"
