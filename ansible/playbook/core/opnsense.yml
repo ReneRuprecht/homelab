@@ -269,16 +269,17 @@
         dest_port: '53'
         quick: true
         log: true
-        state: 'absent'
+        state: 'present'
 
       allow_vlan_identity_out:
         action: 'pass'
         int: ['opt3']
         dir: 'in'
         ip_proto: 'inet'
-        proto: 'any'
+        proto: 'TCP'
         src: '10.1.110.0/24'
         dest: 'any'
+        dest_port: 'https'
         quick: true
         log: true
         state: 'present'
@@ -348,6 +349,19 @@
         log: true
         state: 'present'
 
+      allow_mgmt_to_keycloak:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: 'IDENTITY_KEYCLOAK'
+        dest_port: '8080'
+        quick: true
+        log: true
+        state: 'present'
+
     aliases:
       - name: 'CORE_BACKUP'
         content: ['10.1.100.14', '10.1.100.15']
@@ -359,6 +373,10 @@
         content: ['10.1.115.11', '10.1.115.12', '10.1.115.13']
       - name: 'SECRETS_NET'
         content: ['10.1.115.11', '10.1.115.12', '10.1.115.13']
+      - name: 'IDENTITY_KEYCLOAK'
+        content: ['10.1.115.11']
+      - name: 'IDENTITY_NET'
+        content: ['10.1.115.11']
 
   tasks:
     - name: Setup Aliases
