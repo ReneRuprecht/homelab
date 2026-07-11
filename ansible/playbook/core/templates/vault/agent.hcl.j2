@@ -1,0 +1,38 @@
+pid_file = "/run/vault-agent/vault-agent.pid"
+
+vault {
+  address = "{{ vault_agent_vault_addr }}"
+}
+
+auto_auth {
+  method "approle" {
+    mount_path = "auth/approle"
+    config = {
+      role_id_file_path   = "/etc/vault/role-id"
+      secret_id_file_path = "/etc/vault/secret-id"
+      remove_secret_id_file_after_reading = false
+    }
+  }
+
+  sink "file" {
+    config = {
+      path = "/var/run/vault/token"
+    }
+  }
+}
+
+template_config {
+  exit_on_retry_failure = true
+  static_secret_render_interval = "10m"
+  max_connections_per_host = 20
+}
+
+{% if 'loadbalancer' in inventory_hostname %}
+
+template {
+  source      = "/etc/vault/templates/haproxy.tpl"
+  destination = "/etc/haproxy/certs/grafana.pem"
+  command     = "sudo systemctl reload haproxy"
+}
+
+{% endif %}

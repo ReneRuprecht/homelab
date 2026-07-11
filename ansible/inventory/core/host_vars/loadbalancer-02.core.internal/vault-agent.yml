@@ -1,2 +1,2 @@
 ---
-vault_agent_approle: 'cert-reader'
+vault_agent_approle: 'haproxy'
