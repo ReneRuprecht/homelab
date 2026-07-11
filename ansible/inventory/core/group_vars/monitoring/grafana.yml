@@ -1,8 +1,44 @@
 ---
+_keycloak_server_url: https://keycloak.identity.internal
+_keycloak_grafana_realm: homelab
+
 grafana_ini:
+  server:
+    root_url: "https://grafana.core.internal"
+    domain: grafana.core.internal
+    serve_from_sub_path: false
   security:
     admin_user: admin
     admin_password: admin
+  auth:
+    generic_oauth:
+      enabled: true
+      name: Keycloak-OAuth
+      allow_sign_up: true
+
+      client_id: grafana
+      client_secret: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          36323734633533396231306536373435643938363634633061303038393662343435376533666565
+          6164623534323963353363616132393362613832393065610a643336666339613332353362393730
+          64663961616265326439313130316534306638326463393036623865383737656532366361393234
+          6638343763376236340a303633653537346664616466633431663164343731633963353265343733
+          6232
+
+      scopes: openid email profile offline_access roles groups
+
+      email_attribute_path: email
+      login_attribute_path: username
+      name_attribute_path: full_name
+
+      auth_url: "{{ _keycloak_server_url }}/realms/{{ _keycloak_grafana_realm }}/protocol/openid-connect/auth"
+      token_url: "{{ _keycloak_server_url }}/realms/{{ _keycloak_grafana_realm }}/protocol/openid-connect/token"
+      api_url: "{{ _keycloak_server_url }}/realms/{{ _keycloak_grafana_realm }}/protocol/openid-connect/userinfo"
+
+      role_attribute_path: >
+        contains(groups[*], 'homelab-admins') && 'Admin' ||
+        contains(groups[*], 'homelab-users') && 'Viewer' ||
+        'Viewer'
 
 grafana_dashboards:
   - dashboard_id: 1860
