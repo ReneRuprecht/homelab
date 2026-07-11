@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+set -o errexit
+set -o pipefail
+set -o nounset
+
+# -------------
+# Konfiguration logging
+# -------------
+
+export PATH=$PATH:/usr/local/bin
+
+SERVICE_NAME="vault-token-renewal"
+ENVIRONMENT="${ENVIRONMENT:-dev}"
+LOG_FILE="/var/log/${SERVICE_NAME}.log"
+RUN_ID="$(date -u +%Y%m%dT%H%M%SZ)-$$"
+
+log() {
+    local level="$1"
+    shift
+    local message="$*"
+
+    printf '{"ts":"%s","level":"%s","service":"%s","hostname":"%s","env":"%s","run_id":"%s","msg":"%s"}\n' \
+        "$(date -u +"%Y-%m-%dT%H:%M:%SZ")" \
+        "$level" \
+        "$SERVICE_NAME" \
+        "$HOSTNAME" \
+        "$ENVIRONMENT" \
+        "$RUN_ID" \
+        "$(echo "$message" | sed 's/"/\\"/g')" \
+        >> "$LOG_FILE"
+}
+
+log_info()  { log INFO "$@"; }
+log_warn()  { log WARN "$@"; }
+log_error() { log ERROR "$@"; }
+
+trap 'log_error "Script failed (exit=$?)"' ERR
+
+# -------------
+# Konfiguration backup
+# -------------
+
+TOKEN_FILE="/etc/prometheus/vault-token"
+TMP_FILE="${TOKEN_FILE}.tmp"
+
+VAULT_ADDR="{{ vault_agent_vault_addr }}"
+ROLE_ID_FILE="/etc/vault/role-id"
+SECRET_ID_FILE="/etc/vault/secret-id"
+export VAULT_ADDR
+
+# -------------
+# vault login
+# -------------
+
+ROLE_ID=$(cat "$ROLE_ID_FILE")
+SECRET_ID=$(cat "$SECRET_ID_FILE")
+
+if ! VAULT_TOKEN=$(vault write -field=token auth/approle/login \
+    role_id="$ROLE_ID" \
+    secret_id="$SECRET_ID" 2>/dev/null); then
+
+    log_error "Vault Login fehlgeschlagen (vault command error)"
+    exit 1
+fi
+
+if [[ -z "${VAULT_TOKEN:-}" ]]; then
+    log_error "Vault Login fehlgeschlagen (Token leer)"
+    exit 1
+fi
+
+export VAULT_TOKEN
+
+log_info "Erfolgreich bei Vault eingeloggt"
+
+if ! echo -n "$VAULT_TOKEN" > "$TMP_FILE"; then
+    log_error "Token konnte nicht in TMP Datei geschrieben werden"
+    exit 1
+fi
+
+if ! chmod 600 "$TMP_FILE"; then
+    log_error "chmod auf Token Datei fehlgeschlagen"
+    exit 1
+fi
+
+if ! mv "$TMP_FILE" "$TOKEN_FILE"; then
+    log_error "Token-Datei konnte nicht ersetzt werden"
+    exit 1
+fi
+
+log_info "Vault Token erfolgreich aktualisiert"

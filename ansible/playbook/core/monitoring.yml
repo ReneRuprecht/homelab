@@ -9,3 +9,14 @@
     - role: prometheus.prometheus.prometheus
     - role: prometheus.prometheus.node_exporter
     - role: grafana.grafana.grafana
+  post_tasks:
+    - name: Include prometheus vault agent
+      ansible.builtin.include_tasks:
+        file: ./tasks/vault-agent-prometheus.yml
+  handlers:
+    - name: Restart vault-agent
+      become: true
+      ansible.builtin.systemd:
+        name: vault-agent
+        state: restarted
+        daemon_reload: true

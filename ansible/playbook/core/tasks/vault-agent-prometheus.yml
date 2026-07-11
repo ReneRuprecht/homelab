@@ -1,0 +1,40 @@
+- name: Install vault agent
+  ansible.builtin.include_tasks:
+    file: ./tasks/vault-agent-install.yml
+
+- name: Ensure vault-scripts exists
+  become: true
+  ansible.builtin.file:
+    state: directory
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    path: /opt/vault-scripts
+    mode: "0750"
+
+- name: Copy token-renewal script
+  become: true
+  ansible.builtin.template:
+    src: vault/prometheus-token-renewal.sh.j2
+    dest: /opt/vault-scripts/token-renewal.sh
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: "0750"
+
+- name: Ensure script logfile exists
+  become: true
+  ansible.builtin.file:
+    state: touch
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    path: /var/log/vault-token-renewal.log
+    mode: "0640"
+
+- name: Setup cronjob
+  become: true
+  ansible.builtin.cron:
+    name: vault token renewal
+    user: "{{ vault_agent_user }}"
+    state: present
+    job: "/opt/vault-scripts/token-renewal.sh"
+    minute: "*/10"
+    hour: "*"

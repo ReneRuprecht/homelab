@@ -1,0 +1,5 @@
+---
+vault_agent_user: "prometheus"
+vault_agent_group: "prometheus"
+vault_agent_vault_addr: "https://vault.secrets.internal"
+vault_agent_approle: 'prometheus-metrics'
