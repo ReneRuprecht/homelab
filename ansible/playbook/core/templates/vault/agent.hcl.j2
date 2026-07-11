@@ -30,8 +30,20 @@ template_config {
 {% if 'loadbalancer' in inventory_hostname %}
 
 template {
-  source      = "/etc/vault/templates/haproxy.tpl"
+  source      = "/etc/vault/templates/grafana.tpl"
   destination = "/etc/haproxy/certs/grafana.pem"
+  command     = "sudo systemctl reload haproxy"
+}
+
+template {
+  source      = "/etc/vault/templates/keycloak.tpl"
+  destination = "/etc/haproxy/certs/keycloak.pem"
+  command     = "sudo systemctl reload haproxy"
+}
+
+template {
+  source      = "/etc/vault/templates/vault.tpl"
+  destination = "/etc/haproxy/certs/vault.pem"
   command     = "sudo systemctl reload haproxy"
 }
 

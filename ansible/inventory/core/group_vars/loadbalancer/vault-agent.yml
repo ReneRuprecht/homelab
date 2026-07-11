@@ -2,3 +2,7 @@
 vault_agent_user: "haproxy"
 vault_agent_group: "haproxy"
 vault_agent_vault_addr: "https://vault.secrets.internal"
+vault_agent_templates:
+  - grafana
+  - keycloak
+  - vault
