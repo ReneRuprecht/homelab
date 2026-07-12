@@ -20,6 +20,7 @@ haproxy_frontends:
       - "/etc/haproxy/certs/keycloak.pem"
       - "/etc/haproxy/certs/vault.pem"
       - "/etc/haproxy/certs/grafana.pem"
+      - "/etc/haproxy/certs/s3.pem"
     routes:
       - acl_name: "is_vault"
         acl_condition: "hdr(host) -i vault.secrets.internal"

@@ -47,4 +47,10 @@ template {
   command     = "sudo systemctl reload haproxy"
 }
 
+template {
+  source      = "/etc/vault/templates/s3.tpl"
+  destination = "/etc/haproxy/certs/s3.pem"
+  command     = "sudo systemctl reload haproxy"
+}
+
 {% endif %}
