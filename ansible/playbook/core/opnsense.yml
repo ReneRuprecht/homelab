@@ -60,7 +60,7 @@
         dest: '192.168.178.80'
         dest_port: 'https'
         quick: true
-        log: true
+        log: false
         seq: 100
         state: 'present'
 
@@ -74,7 +74,7 @@
         dest: 'CORE_LBS'
         dest_port: 'https'
         quick: true
-        log: true
+        log: false
         seq: 100
         state: 'present'
 
@@ -88,7 +88,7 @@
         dest: 'CORE_LBS'
         dest_port: '8500'
         quick: true
-        log: true
+        log: false
         seq: 100
         state: 'present'
 
@@ -102,7 +102,7 @@
         dest: '10.1.100.0/24'
         dest_port: 'ssh'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_mgmt_to_core_icmp:
@@ -114,7 +114,7 @@
         src: '192.168.178.0/24'
         dest: '10.0.0.0/8'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_mgmt_to_core_dns:
@@ -127,7 +127,7 @@
         dest: 'CORE_DNS'
         dest_port: '53'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_mgmt_to_minio_http:
@@ -140,7 +140,7 @@
         dest: 'CORE_BACKUP'
         dest_port: '9001'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_mgmt_to_minio_api:
@@ -153,7 +153,7 @@
         dest: 'CORE_BACKUP'
         dest_port: '9000'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_mgmt_to_netbox_http:
@@ -166,7 +166,7 @@
         dest: '10.1.100.13'
         dest_port: '8000'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_mgmt_to_redstone_ssh:
@@ -179,7 +179,7 @@
         dest: '10.2.100.0/24'
         dest_port: 'ssh'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_mgmt_to_redstone_kubernetes:
@@ -192,7 +192,7 @@
         dest: '10.2.100.12/24'
         dest_port: '6443'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_mgmt_to_identity_ssh:
@@ -205,7 +205,7 @@
         dest: '10.1.110.0/24'
         dest_port: 'ssh'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_mgmt_to_secrets_ssh:
@@ -218,7 +218,7 @@
         dest: '10.1.115.0/24'
         dest_port: 'ssh'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_mgmt_to_vault_ui:
@@ -231,7 +231,7 @@
         dest: 'CORE_LBS'
         dest_port: '8200'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_mgmt_to_keycloak:
@@ -244,7 +244,7 @@
         dest: 'IDENTITY_KEYCLOAK'
         dest_port: '8080'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
     core_rules:
@@ -257,7 +257,7 @@
         src: '10.1.100.0/24'
         dest: 'any'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_core_lb_to_vault_api:
@@ -270,7 +270,7 @@
         dest: 'SECRETS_VAULT'
         dest_port: '8200'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
     redstone_rules:
@@ -284,7 +284,7 @@
         dest: 'CORE_DNS'
         dest_port: '53'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_vlan_redstone_out_https:
@@ -297,7 +297,7 @@
         dest: 'any'
         dest_port: '443'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
     identity_rules:
@@ -311,7 +311,7 @@
         dest: 'CORE_DNS'
         dest_port: '53'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_vlan_identity_out:
@@ -324,7 +324,7 @@
         dest: 'any'
         dest_port: 'https'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
     secrets_rules:
@@ -338,7 +338,7 @@
         dest: 'CORE_DNS'
         dest_port: '53'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_vlan_secrets_out:
@@ -351,7 +351,7 @@
         dest: 'any'
         dest_port: 'https'
         quick: true
-        log: true
+        log: false
         state: 'present'
 
       allow_secrets_to_core_lb_vault:
@@ -364,7 +364,20 @@
         dest: 'CORE_LBS'
         dest_port: '443'
         quick: true
-        log: true
+        log: false
+        state: 'present'
+
+      allow_secrets_to_core_loki:
+        action: 'pass'
+        int: ['opt4']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: 'SECRETS_VAULT'
+        dest: '10.1.100.19'
+        dest_port: '3100'
+        quick: true
+        log: false
         state: 'present'
 
     core_aliases:
