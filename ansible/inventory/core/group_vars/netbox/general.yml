@@ -1,4 +1,7 @@
 ---
+general_debian_extra_packages:
+  - gpg
+
 general_ufw_ports:
   - port: "22"
     proto: tcp
@@ -9,3 +12,7 @@ general_ufw_ports:
     proto: tcp
     state: enabled
     comment: "Netbox - HTTP"
+
+general_gpg_create_key: true
+general_gpg_user: "netbox"
+general_gpg_group: "netbox"
