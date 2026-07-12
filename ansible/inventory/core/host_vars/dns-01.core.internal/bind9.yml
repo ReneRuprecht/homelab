@@ -35,7 +35,7 @@ bind9_zones_static:
 
 bind9_zones_dynamic:
   - name: core.internal
-    serial: 2025081133
+    serial: 2025081134
     admin: noemail.core.internal
     ns_records:
       - dns-01.core.internal
@@ -45,6 +45,10 @@ bind9_zones_dynamic:
         type: A
         rdata: 10.1.100.250
       - label: prometheus
+        type: A
+        rdata: 10.1.100.250
+
+      - label: s3
         type: A
         rdata: 10.1.100.250
 
