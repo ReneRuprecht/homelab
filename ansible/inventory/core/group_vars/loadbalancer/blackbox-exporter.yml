@@ -1,0 +1,12 @@
+---
+blackbox_exporter_version: 0.28.0
+blackbox_exporter_configuration_modules:
+  http_2xx:
+    prober: http
+    timeout: 5s
+    http:
+      method: GET
+      valid_status_codes: []
+      fail_if_not_ssl: true
+      tls_config:
+        ca_file: /etc/ssl/certs/root-ca.pem

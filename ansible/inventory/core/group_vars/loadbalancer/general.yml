@@ -47,3 +47,8 @@ general_ufw_ports:
     proto: tcp
     state: enabled
     comment: "Node Exporter"
+
+  - port: "9115"
+    proto: tcp
+    state: enabled
+    comment: "Blackbox Exporter"

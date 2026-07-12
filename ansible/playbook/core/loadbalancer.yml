@@ -14,6 +14,7 @@
     - role: evrardjp.keepalived
       become: true
     - role: prometheus.prometheus.node_exporter
+    - role: prometheus.prometheus.blackbox_exporter
   post_tasks:
     - name: Include haproxy_vault_agent
       ansible.builtin.include_tasks:
