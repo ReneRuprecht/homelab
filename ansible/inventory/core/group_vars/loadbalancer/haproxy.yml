@@ -36,6 +36,10 @@ haproxy_frontends:
       - acl_name: "is_prometheus"
         acl_condition: "hdr(host) -i prometheus.core.internal"
         backend_name: "prometheus_backend"
+
+      - acl_name: "is_s3"
+        acl_condition: "hdr(host) -i s3.core.internal"
+        backend_name: "s3_backend"
     options:
       - "httplog"
 
@@ -136,5 +140,17 @@ haproxy_backends:
     servers:
       - name: monitoring-01.core.internal
         address: monitoring-01.core.internal
+        resolver: "core"
+        init_addr: "none"
+
+  - name: "s3_backend"
+    mode: "http"
+    balance: "first"
+    port: 9000
+    check: true
+    check_port: 9000
+    servers:
+      - name: backup-01.core.internal
+        address: backup-01.core.internal
         resolver: "core"
         init_addr: "none"
