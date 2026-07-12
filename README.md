@@ -4,6 +4,20 @@ Das Repository dokumentiert mein selbst gehostetes Homelab basierend auf Proxmox
 Ziel ist es, verschiedene Technologien, Tools und Konzepte durch praktische Erfahrungen besser zu verstehen. 
 Dabei versuche ich, so viel wie möglich zu automatisieren und die gesamte Infrastruktur als Code abzubilden.
 
+## Technologie-Stack
+
+| Bereich | Technologie |
+|---|---|
+| Virtualisierung | Proxmox VE |
+| Netzwerk | OPNsense, VLANs, Firewall-Regeln |
+| Reverse Proxy | HAProxy |
+| Identity Management | Keycloak |
+| Secrets Management | HashiCorp Vault |
+| Zertifikate | Vault Agent |
+| Monitoring | Prometheus, Grafana, Exporter |
+| Automation | Terraform, Ansible |
+| CI/CD | GitHub Actions |
+| Backup | GPG-verschlüsselte Backups |
 
 # 💻 Hardware
 Die eingesetzte Hardware befindet sich in einem selbstgebauten 10" Rack. 
@@ -11,52 +25,76 @@ Die eingesetzte Hardware befindet sich in einem selbstgebauten 10" Rack.
 - Lenovo M720q mit 48 GB RAM, einer 512 GB SSD und einer 256 GB NVMe zum Einsatz (Proxmox). 
 
 # 🖥️ Proxmox
-Die VMs werden mit Terraform erstellt. Dabei werden grundlegende Ressourcen wie CPU, RAM, Netzwerk und Speicher definiert und anschließend in Proxmox bereitgestellt. Die Installation und Konfiguration der Software übernimmt Ansible. Mithilfe von Ansible Playbooks wird die benötigte Software sowie deren Konfiguration konsistent eingerichtet und bereitgestellt.
+Die VMs werden mit Terraform erstellt.
+Dabei werden grundlegende Ressourcen wie CPU, RAM, Netzwerk und Speicher definiert und anschließend in Proxmox bereitgestellt.
+Die Installation und Konfiguration der Software übernimmt Ansible. 
+Mithilfe von Ansible Playbooks wird die benötigte Software sowie deren Konfiguration konsistent eingerichtet und bereitgestellt.
 
 ![alt text](./images/proxmox.png "Proxmox")
 
-## VM Consul und Vault Backup
+## VM Vault und Netbox Backup
 
 ![alt text](./images/backup.png "Backup")
 
+# 🔀 OPNsense
+OPNsense bildet das zentrale Gateway der Homelab-Infrastruktur und übernimmt das Routing,
+die Firewall sowie die Segmentierung des Netzwerks. 
+Ziel ist eine klare Trennung der einzelnen Infrastrukturkomponenten,
+sodass Dienste nur über explizit definierte Firewall-Regeln miteinander kommunizieren können.
+
+Die Umgebung ist in mehrere VLANs unterteilt,
+die jeweils einem bestimmten Verantwortungsbereich zugeordnet sind:
+
+- **Core:** Zentrale Infrastruktur wie DNS, Netbox, Backup, GH-Runner, Loadbalancer und Monitoring
+- **Identity:** Authentifizierungsdienste wie Keycloak
+- **Secrets:** Beinhaltet Vault als zentrale Instanz für Secret-Management, Zertifikatsverwaltung und zukünftige PKI-Funktionalitäten.
+- **Redstone:** User Services z.B. auf Kubernetes
+
+Das Routing zwischen den einzelnen VLANs erfolgt ausschließlich über OPNsense.
+Standardmäßig ist der Verkehr zwischen den Sicherheitszonen untersagt und wird nur dort freigegeben, wo eine Kommunikation technisch erforderlich ist.
+
+![alt text](./images/opnsense.png "Opnsense")
+
 # 🛳️ Kubernetes
-Das laufende Kubernetes Cluster soll, soweit möglich, vollständig mittels GitOps ausgestattet und konfiguriert werden. Geplant ist, interne Services wie Prometheus und Grafana mit FluxCD zu deployen und zu verwalten, während eigene Apps und Services über ArgoCD bereitgestellt und gemanagt werden. Ziel ist es, anhand praktischer Beispiele ein besseres Verständnis für beide Systeme zu entwickeln.
+Das laufende Kubernetes Cluster ist, vollständig mit GitOps ausgestattet und konfiguriert.
+Interne Services wie Prometheus und Grafana werden mit FluxCD  deployed und verwaltet,
+während eigene Apps und Services über ArgoCD bereitgestellt und gemanagt werden.
+Ziel ist es, anhand praktischer Beispiele ein besseres Verständnis für beide Systeme zu entwickeln.
 
 ![alt text](./images/k8s.png "Kubernetes")
 
-## ⛵ ArgoCD
-ArgoCD wird verwendet um Anwendungen automatisch aus der Repository auf dem Kubernetes zu deployen.
+# 🚀 Automation & CI/CD
 
-# 🚀 Pipeline
+Die Infrastruktur wird über eine automatisierte CI/CD Pipeline verwaltet.
+Änderungen werden erkannt, validiert und abhängig vom betroffenen Bereich durch Terraform, Ansible oder Docker-Workflows verarbeitet.
 
-Die Pipeline wird dafür genutzt das, sofern möglich, alle deployments automatisiert ausgeführt werden.
-Dafür existieren speziell vorbereitete Docker-Images, die jeweils in den einzelnen Schritten genutzt werden.  
+| Technologie | Aufgabe | Auslöser |
+|---|---|---|
+| GitHub Actions | Orchestrierung der CI/CD Pipeline | Änderungen im Repository |
+| Docker | Erstellung und Veröffentlichung eigener Images | Änderungen an Dockerfiles |
+| Terraform | Provisionierung und Anpassung virtueller Infrastruktur | Änderungen an Terraform-Konfigurationen |
+| Ansible | Konfiguration und Administration der Systeme | Änderungen an Playbooks oder Variablen |
 
-Die Pipeline prüft, ob sich in den definierten Pfaden Änderungen ergeben haben. Werden Änderungen erkannt, erscheinen diese in der Übersicht.
+## Pipeline Prinzipien
 
-## 🐳 Docker
+| Bereich | Umsetzung |
+|---|---|
+| Deployment | Änderungen werden automatisch erkannt und den passenden Workflows zugeordnet |
+| Terraform | Änderungen werden zuerst per Plan überprüft |
+| Ansible | Änderungen werden vor der Ausführung validiert |
+| Produktionseingriffe | Ausführung von Änderungen nur nach Merge in den `main` Branch |
+| Artefakte | Logs und Plan-Ausgaben werden verschlüsselt gespeichert |
 
-- Änderungen an den Dockerfiles führen automatisch zum Neubau der Images.  
-- Die neuen Images werden anschließend in das Registry/Hub gepusht.  
+## Deployment-Struktur
 
-## ⚙️ Ansible
+Die Infrastruktur ist in verschiedene Bereiche aufgeteilt, welche unabhängig voneinander verarbeitet werden können.
 
-- Änderungen in den Ansible-Dateien (z. B. Host-/Group-Vars) führen zur Ausführung der betroffenen Playbooks.  
-- Die Zuordnung erfolgt über die Datei `playbook_mapping.yml` im Ansible-Ordner.  
-- **Reihenfolge:** Das DNS-Playbook wird immer zuerst ausgeführt, damit die VM erreichbar ist.  
-
-### Wichtig
-- Playbooks werden **nur beim Merge auf den `main`-Branch** ohne `--check` ausgeführt.  
-- Logs werden verschlüsselt als Artifact gespeichert.  
-
-## 🌍 Terraform
-
-- Änderungen in den Terraform-Konfigurationen führen zur Erstellung oder Anpassung der betroffenen VMs.  
-- Vorab wird eine Übersicht erstellt, in der sichtbar ist, ob Ressourcen hinzugefügt, geändert oder entfernt werden.  
-- Der Plan-Output wird – wie bei Ansible – verschlüsselt als Artifact hochgeladen.  
-
-### Wichtig
-- `terraform apply` wird **nur beim Merge auf den `main`-Branch** ausgeführt.  
+| Bereich | Beispiele |
+|---|---|
+| Core | DNS, Netbox, Backup, ... |
+| Identity | Keycloak |
+| Secrets | Vault |
+| Redstone | Kubernetes |
 
 # 🔧 Services
 
@@ -64,41 +102,44 @@ Aktuell wird eine Kombination aus virtuellen Maschinen und Kubernetes-Services b
 Die Umgebunj wird kontinuierlich weiterentwickelt und angepasst.
 
 ## Virtuelle Maschinen (VMs)
-- ~~3× **Consul**, Terraform State für die Pipeline~~ aktuell nicht aktiv
-- 2× **DNS**
-- 2× **Github Runner**, für die Pipeline
-- ~~3× **Vault**, die derzeit für Kubernetes-Secrets verwendet werden~~ aktuell auf kubernetes
-- 2× **Loadbalancer**, der Anfragen z.B. an die Vault-Instanzen weiterleitet  
-- 3× **K8s** (1 Master und 2 Nodes)  
-- 1× **Netbox**, für die Dokumentation
-- 1× **Monitoring**, für Prometheus, Grafana
-- 1× **Keycloak**, für Grafana und ArgoCD 
-- 2× **Backup**, für S3 storage und Terraform State
-- 3× **K8s-vault** (1 Master und 2 Nodes)  
+| Anzahl | Komponente | Zweck |
+|---|---|---|
+| 2× | DNS Server | Bereitstellung der internen Namensauflösung |
+| 2× | Load Balancer | Zentrale Eingangspunkte für interne Services und Weiterleitung an Backend-Systeme |
+| 3× | Vault Server | Zentrales Secret Management und Verwaltung von TLS-Zertifikaten |
+| 3× | Kubernetes Nodes | Container-Plattform für Workloads (1 Control Plane, 2 Worker Nodes) |
+| 1× | Monitoring Server | Prometheus und Grafana für Metriken und Visualisierung |
+| 1× | Keycloak | Zentrale Authentifizierung über OIDC (aktuell für Grafana) |
+| 1× | NetBox | Dokumentation der Infrastruktur und Netzwerkressourcen |
+| 2× | Backup Server | Backup-Ziel für S3-Daten und Terraform State |
+| 2× | GitHub Runner | Ausführung der CI/CD Pipelines |
+
+### Historische VMs
+
+| Komponente | Status |
+|---|---|
+| Consul Cluster (3 Nodes) | Nicht mehr aktiv, ursprünglich als Terraform State Backend verwendet |
 
 ## Kubernetes-Services
-### k8s-01
-- **FluxCD**  
-- **External Secrets**  
-- **Longhorn**  
-- **Cert-Manager**  
-- **CNPG** 
-- **Github-Runner-Scale-Set**
-- **Redis**
-- **ArgoCD**
-
-### K8s-Vault-01
-- **FluxCD**  
-- **Longhorn**  
-- **Vault**  
+### Redstone k8s-01
+| Bereich                | Technologie               |
+| ---------------------- | ------------------------- |
+| GitOps                 | Flux                      |
+| Application Deployment | ArgoCD                    |
+| Ingress                | NGINX Ingress Controller  |
+| TLS Management         | Cert-Manager              |
+| Secrets                | External Secrets Operator |
+| Storage                | Longhorn                  |
+| Datenbanken            | PostgreSQL, Redis         |
+| CI/CD                  | Github Runner             |
 
 # 🤖 Ansible
 Für die VMs im Homelab wurden und werden eigene Ansible Rollen entwickelt. 
 Hierzu zählt z.B. eine `General` Rolle die VMs mit den Basic Settings ausstattet (ssh, firewall, hostname, ... ) oder 
 eine `HAProxy` Rolle die es möglich macht mittels url auf verschiedene Backends zu routen.
-Jede VM sollte die `General`, `Consul`, `Promtail`, `Node_Exporter` Rolle im Playbook haben damit die Grundeinstellung gesetzt ist.
+Jede VM sollte die `General`, `Node_Exporter` Rolle im Playbook haben damit die Grundeinstellung gesetzt ist.
 
-## Rollen
+## Eigene Rollen
 - General
 - Kubernetes
 - HAProxy
@@ -115,7 +156,6 @@ In Prometheus werden VMs automatisch über Consul und Service Discovery aufgenom
 ## Exporter
 - `Node Exporter` auf allen VMs
 - `Bind Exporter` auf DNS VMs
-- `Consul Exporter` auf Consul VMs
   
 # 🛠️ Configs
 ## Ansible
