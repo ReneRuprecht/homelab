@@ -79,3 +79,63 @@ resource "vault_policy" "secrets_pki_sign" {
   name       = "sign-pki-int-secrets"
   policy     = file("${path.module}/policies/sign-pki-int-secrets.hcl")
 }
+
+####
+# Redstone
+####
+
+resource "vault_pki_secret_backend_role" "redstone_services" {
+  backend          = "pki-int-redstone"
+  name             = "redstone-services"
+  allowed_domains  = ["redstone.internal", "redstone"]
+
+  allow_subdomains = true
+  allow_bare_domains = false
+
+  server_flag = true
+  client_flag = false
+
+  enforce_hostnames = true
+
+  key_type = "rsa"
+  key_bits = 4096
+
+  max_ttl = 7776000
+  ttl     = 7776000
+}
+
+resource "vault_policy" "redstone_pki_sign" {
+  depends_on = [vault_pki_secret_backend_role.redstone_services]
+  name       = "sign-pki-int-redstone"
+  policy     = file("${path.module}/policies/sign-pki-int-redstone.hcl")
+}
+
+####
+# Bluecore
+####
+
+resource "vault_pki_secret_backend_role" "bluecore_services" {
+  backend          = "pki-int-bluecore"
+  name             = "bluecore-services"
+  allowed_domains  = ["bluecore.internal", "bluecore"]
+
+  allow_subdomains = true
+  allow_bare_domains = false
+
+  server_flag = true
+  client_flag = false
+
+  enforce_hostnames = true
+
+  key_type = "rsa"
+  key_bits = 4096
+
+  max_ttl = 7776000
+  ttl     = 7776000
+}
+
+resource "vault_policy" "bluecore_pki_sign" {
+  depends_on = [vault_pki_secret_backend_role.bluecore_services]
+  name       = "sign-pki-int-bluecore"
+  policy     = file("${path.module}/policies/sign-pki-int-bluecore.hcl")
+}
