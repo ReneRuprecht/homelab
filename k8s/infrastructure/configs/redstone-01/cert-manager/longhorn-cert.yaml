@@ -12,3 +12,6 @@ spec:
   issuerRef:
     name: pki-int-bluecore
     kind: ClusterIssuer
+  privateKey:
+    algorithm: RSA
+    size: 4096
