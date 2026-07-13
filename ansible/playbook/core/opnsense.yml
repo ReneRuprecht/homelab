@@ -247,6 +247,19 @@
         log: false
         state: 'present'
 
+      allow_mgmt_to_redstone_lognhorn:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: 'REDSTONE_K8S_LB'
+        dest_port: 'https'
+        quick: true
+        log: false
+        state: 'present'
+
     core_rules:
       allow_vlan_core_out:
         action: 'pass'
@@ -416,6 +429,8 @@
     redstone_aliases:
       - name: 'REDSTONE_K8S_MASTER'
         content: ['10.2.100.12']
+      - name: 'REDSTONE_K8S_LB'
+        content: ['10.2.100.249']
 
     aliases: >-
       {{
