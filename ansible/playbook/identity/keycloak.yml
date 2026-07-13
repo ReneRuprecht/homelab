@@ -18,6 +18,8 @@
         realm: homelab
       - name: homelab-operators
         realm: homelab
+      - name: ArgoCDAdmins
+        realm: homelab
 
     keycloak_roles:
       - name: admins
@@ -90,6 +92,8 @@
         groups:
           - name: homelab-admins
             state: present
+          - name: ArgoCDAdmins
+            state: present
         state: present
 
     - name: Create Keycloak client_scope
@@ -121,7 +125,7 @@
 
       delegate_to: localhost
 
-    - name: Create Keycloak client
+    - name: Create Keycloak client AroCD
       community.general.keycloak_client:
         auth_keycloak_url: https://keycloak.identity.internal
         auth_username: "{{ keycloak_auth_username }}"
@@ -132,8 +136,8 @@
 
         realm: homelab
 
-        client_id: grafana
-        name: Grafana
+        client_id: argocd
+        name: ArgoCD
 
         enabled: true
 
@@ -172,13 +176,11 @@
           - profile
           - groups
 
-        root_url: https://grafana.core.internal
-
+        root_url: https://argocd.redstone
         redirect_uris:
-          - https://grafana.core.internal/login/generic_oauth
-
+          - https://argocd.redstone/auth/callback
         web_origins:
-          - https://grafana.core.internal
+          - https://argocd.redstone
 
         full_scope_allowed: false
       delegate_to: localhost
