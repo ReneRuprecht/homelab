@@ -6,9 +6,9 @@ resources:
   - ingress-nginx
   - metallb
   - cert-manager
-  # - argocd
+  - argocd
   - cloudnativepg
   # - redis
-  - gha-runner-scale-set-controller
-# - airflow
-  - harbor
+  # - gha-runner-scale-set-controller
+  # - airflow
+  # - harbor
