@@ -380,6 +380,19 @@
         log: false
         state: 'present'
 
+      allow_secrets_vault_to_redstone_k8s:
+        action: 'pass'
+        int: ['opt4']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: 'SECRETS_VAULT'
+        dest: 'REDSTONE_K8S_MASTER'
+        dest_port: '6443'
+        quick: true
+        log: false
+        state: 'present'
+
     core_aliases:
       - name: 'CORE_BACKUP'
         content: ['10.1.100.14', '10.1.100.15']
@@ -400,11 +413,16 @@
       - name: 'IDENTITY_NET'
         content: ['10.1.115.11']
 
+    redstone_aliases:
+      - name: 'REDSTONE_K8S_MASTER'
+        content: ['10.2.100.12']
+
     aliases: >-
       {{
           core_aliases
         + secrets_aliases
         + identity_aliases
+        + redstone_aliases
       }}
 
     rules: >-
