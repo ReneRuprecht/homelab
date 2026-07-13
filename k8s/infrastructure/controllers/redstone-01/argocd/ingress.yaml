@@ -10,7 +10,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: argocd.bluecore
+    - host: argocd.redstone
       http:
         paths:
           - path: /
@@ -22,5 +22,5 @@ spec:
                   number: 80
   tls:
     - hosts:
-        - argocd.bluecore
+        - argocd.redstone
       secretName: argocd-cert-tls
