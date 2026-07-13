@@ -17,6 +17,59 @@ spec:
           clientSecret: $oidc.keycloak.clientSecret
           refreshTokenThreshold: 2m
           requestedScopes: ["openid", "profile", "email", "groups"]
+          rootCA: |
+            -----BEGIN CERTIFICATE-----
+            MIIEjTCCA3WgAwIBAgIUIv+e+DOFu/J5HC4I6+Y/5MrpFrAwDQYJKoZIhvcNAQEL
+            BQAwKzEpMCcGA1UEAxMgSG9tZWxhYiBJZGVudGl0eSBJbnRlcm1lZGlhdGUgQ0Ew
+            HhcNMjYwNzEyMTg1ODA5WhcNMjYxMDEwMTg1ODM4WjAlMSMwIQYDVQQDExprZXlj
+            bG9hay5pZGVudGl0eS5pbnRlcm5hbDCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCC
+            AgoCggIBAOS81sj7J0hD29HkM4Jnvr3DcMnXgH5RGvlgkYtywHSJfmXKsEdXKiOi
+            2dh3vuSUFTZ4WN2EUa9Ww0gh1017YdmLnzEcL/JIGO4rdzfYHr2ujDvk4fdVXhHy
+            nGv7DPUvu/l2NJlNT1nCLv8ibBlI4UxhWXSWp0Vo1mPLv5NBt0X6kHx1TUKbeTmO
+            a6DxHK4hu3gBGxneflWyI70samakvoniO2xSY4eX/lrUN8wCbTNwP1wLlRN6U5mG
+            HP2zHnqaehW1Jv8ZRYbtvHgwyB9VYSv6Vojs08At9fdoow3AWkY4gDX/mufLzI5W
+            vhhxR3Ktn2UTloj2fsfhh49XO/HmQC2jxvzf98iSapO1r2nUJQ5uGgWrPTX6CrqK
+            QU3rB7y47ZgaxTDrzY3Md6U12+catI6dPNTS/ac1ojofg15oefq18cRnUeBG+b3H
+            rdt4bosKSmZv/fLXs1CoyGi0z7D3R0aQ5I+12gl2ANPeAwdAQJweXN9BYd6Qr3Ht
+            xVyfFA2o2dbnecOvwBXqTED8FkwLL/QtDNBuKY33kpzjmK3jgNV7vc/PsvnQOEyN
+            FEtUdM6CNOfYW9TGzdcc5ga/x+VRJr784qzfKLgyvzjwFeEzxM+Sg0sV8FnEC/z5
+            vqO3LN4LOtRi2kUrK63798H1moWZt0dBUI26NoYrbzJTdrHDiHCrAgMBAAGjga4w
+            gaswDgYDVR0PAQH/BAQDAgOoMBMGA1UdJQQMMAoGCCsGAQUFBwMBMB0GA1UdDgQW
+            BBTRoRR9H0C1tNzMTBY57iwtq1wYFzAfBgNVHSMEGDAWgBSz6Gw2jI2nKZk+2jf7
+            /rQjej/NkDBEBgNVHREEPTA7gh1rZXljbG9hay0wMS5pZGVudGl0eS5pbnRlcm5h
+            bIIaa2V5Y2xvYWsuaWRlbnRpdHkuaW50ZXJuYWwwDQYJKoZIhvcNAQELBQADggEB
+            ALOGEV+BVqm0HRIMA6rwb7Mc5MCTZZ/eOGVnyFpe+ZtEiE68DKYZWKHRXKaJ/TxI
+            urIj9lhyR8Cqg9xP0TdGjqyz+L8wFJG0M4GQcxIZA9PCMdWWw+LwHDKl3afSlREY
+            +G89HpYixkAOrs9no9rUtpjewp5xTWWSOYDidYXWaZHaaiftoBbCKRpjesosAbq0
+            ZNXEsWk4weYxEmuvxnD+vcJ5w7qHQUSEfWNHYI/mdHeOfg5+E1DiZ9waEse/3NB9
+            JavU310Mebx8Tq76sZsOBPxaQYqMt0EkWk4JemSe0U/u56+JTjqaCwekQpD7ChC+
+            p5i6O68SCIrDpB4EOEkORe4=
+            -----END CERTIFICATE-----
+            -----BEGIN CERTIFICATE-----
+            MIIENjCCAh6gAwIBAgIUEr+nzUQa6wIGjXCkGz9Zs62CmAEwDQYJKoZIhvcNAQEL
+            BQAwGjEYMBYGA1UEAxMPSG9tZWxhYiBSb290IENBMB4XDTI2MDcxMDIxNDIyNVoX
+            DTMxMDcwOTIxNDI1NVowKzEpMCcGA1UEAxMgSG9tZWxhYiBJZGVudGl0eSBJbnRl
+            cm1lZGlhdGUgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC9pFKC
+            mdHaPbTIxX/v+Msn5hyQ+uMraoFw3CDwzbW0InahVYy9xzF//k0ZvGHyFA7qHbND
+            Yy75IYYI2mr6G48LbmL/ClruEVCUHPiOxVSSc7T7MV1eAhINa2duyEUbd81tN8L2
+            lWKAhDJPF25kCYmfusyq7KqORDsyizfrHQoBdRHwDHgsoduEtsdpglS3FhkoXLbv
+            X2wg8l/U4VbtbDqgJKVtlsDVzcwx+6+bUTjHIvveMNwenCmJbBuqLdkVSY9jY2ay
+            cHYscn2DLsYQZDluCjQNlkidx40/wXWsA/v9bhv52feOKgCFEihSV2EH6hukBxUH
+            CQqHvFatkeTVPCzTAgMBAAGjYzBhMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8E
+            BTADAQH/MB0GA1UdDgQWBBSz6Gw2jI2nKZk+2jf7/rQjej/NkDAfBgNVHSMEGDAW
+            gBTQiblT16E/a//iVxpL3y2TSsgf/DANBgkqhkiG9w0BAQsFAAOCAgEAryX8l48k
+            OHFu5bDX8unecL2gq7hmb6eWc6B+WAO5OaQeq7SoeFP1Mqbt1AF5qa9KggYA1cMW
+            0rI/8LsuElhkIrbe80Q0VlikYF/2QFsRfwMjskc4gtXjw2DnaT4Bmp/4KYMO8fJr
+            HihLqWbIdbOAisNP40m5vifWLuvak0yVSKZeBe4UFZihkQvuL337Q41UcYPWpRYr
+            ofxdDVYqK2BsOj1ckJVO+H3k3U4q4fQtA1cckyfkB6bpF2Qk52Dfdg/nNxDK1j8T
+            +ZOFdiVdSyx22OUKw7MwSfHrjZ+ajmeBGNAHi+G+lhfhr821AXhqLuXq92ftm0wJ
+            hc5W6ZpC+x5dscgsI/iYZuG9G9A+YJCsMfF+EodVBeEMbqp3yuqcb/EkPRixTXwb
+            ifFLlD/CuA/ogp/nHvZ8sTOO9FEmM1SK8rKCgXl9E7gImXfEYqgsl+semAvc/9Ba
+            sLNEXS8/q2gCc/7HUPLDigvtbq7xvTTatBOrQeoxGHpJFalERZcniVaNYY1KZIog
+            oOIScnHEb1jSW2peizey6fA981EVXGhhvajAcUdyL9zMfzzAaUP8a5pkNNsW67EA
+            szPtKVWxYHNu5Nd/NThpZgX8Awr6iiVrA/ydL07X758eVNcMdiNgCgrzPylE+kei
+            hcUXo13wMurI0HMg7BePAvQlpSwgxoJzBus=
+            -----END CERTIFICATE-----
       rbac:
         policy.csv: "g, ArgoCDAdmins, role:admin"
     controller:
