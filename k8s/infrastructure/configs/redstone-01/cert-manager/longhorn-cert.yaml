@@ -6,11 +6,11 @@ metadata:
   namespace: longhorn-system
 spec:
   secretName: longhorn-cert-tls
-  commonName: longhorn.bluecore
+  commonName: longhorn.redstone
   dnsNames:
-    - longhorn.bluecore
+    - longhorn.redstone
   issuerRef:
-    name: pki-int-bluecore
+    name: pki-int-redstone
     kind: ClusterIssuer
   privateKey:
     algorithm: RSA

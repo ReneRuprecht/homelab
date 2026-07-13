@@ -14,6 +14,6 @@ spec:
           secretName: harbor-cert-tls
       ingress:
         hosts:
-          core: core.harbor.bluecore
+          core: core.harbor.redstone
         className: "nginx"
-    externalURL: https://harbor.bluecore
+    externalURL: https://harbor.redstone

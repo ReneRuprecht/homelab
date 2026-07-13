@@ -9,4 +9,4 @@ spec:
     controller:
       service:
         annotations:
-          metallb.io/loadBalancerIPs: 192.168.178.249
+          metallb.io/loadBalancerIPs: 10.2.100.249

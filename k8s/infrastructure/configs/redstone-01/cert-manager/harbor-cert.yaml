@@ -6,12 +6,12 @@ metadata:
   namespace: harbor
 spec:
   secretName: harbor-cert-tls
-  commonName: harbor.bluecore
+  commonName: harbor.redstone
   dnsNames:
-    - harbor.bluecore
-    - core.harbor.bluecore
+    - harbor.redstone
+    - core.harbor.redstone
   issuerRef:
-    name: pki-int-bluecore
+    name: pki-int-redstone
     kind: ClusterIssuer
   privateKey:
     algorithm: RSA

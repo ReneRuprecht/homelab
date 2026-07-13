@@ -6,11 +6,11 @@ metadata:
   namespace: gitops
 spec:
   secretName: argocd-cert-tls
-  commonName: argocd.bluecore
+  commonName: argocd.redstone
   dnsNames:
-    - argocd.bluecore
+    - argocd.redstone
   issuerRef:
-    name: pki-int-bluecore
+    name: pki-int-redstone
     kind: ClusterIssuer
   privateKey:
     algorithm: RSA
