@@ -1,6 +1,5 @@
 ---
 bind9_masters:
-  - { name: dns-01.redstone, addresses: [192.168.178.95] }
   - { name: dns-01.core.internal, addresses: [10.1.100.11] }
 bind9_forward: true
 bind9_forward_servers:
@@ -10,12 +9,22 @@ bind9_zones_dynamic:
   - name: redstone
     type: slave
     masters:
-      - 192.168.178.95
       - 10.1.100.11
   - name: bluecore
     type: slave
     masters:
-      - 192.168.178.95
+      - 10.1.100.11
+  - name: core.internal
+    type: slave
+    masters:
+      - 10.1.100.11
+  - name: identity.internal
+    type: slave
+    masters:
+      - 10.1.100.11
+  - name: secrets.internal
+    type: slave
+    masters:
       - 10.1.100.11
 
 bind9_recursor: true
@@ -24,4 +33,6 @@ bind9_our_networks:
   - localnets
   - 192.168.178.0/24
   - 10.1.100.0/24
+  - 10.1.110.0/24
+  - 10.1.115.0/24
   - 10.2.100.0/24

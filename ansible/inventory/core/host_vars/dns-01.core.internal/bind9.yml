@@ -35,7 +35,7 @@ bind9_zones_static:
 
 bind9_zones_dynamic:
   - name: core.internal
-    serial: 2025081134
+    serial: 2025081145
     admin: noemail.core.internal
     ns_records:
       - dns-01.core.internal
@@ -85,7 +85,7 @@ bind9_zones_dynamic:
         rdata: 10.1.100.19
 
   - name: secrets.internal
-    serial: 2025081132
+    serial: 2025081143
     admin: noemail.secrets.internal
     ns_records:
       - dns-01.core.internal
@@ -106,7 +106,7 @@ bind9_zones_dynamic:
         rdata: 10.1.115.13
 
   - name: identity.internal
-    serial: 2025081132
+    serial: 2025081143
     admin: noemail.secrets.internal
     ns_records:
       - dns-01.core.internal
