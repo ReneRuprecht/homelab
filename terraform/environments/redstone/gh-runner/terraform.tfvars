@@ -1,6 +1,6 @@
 vms = [
   {
-    name     = "gh-runner-02.redstone"
+    name     = "gh-runner-02.redstone.internal"
     vm_state = "running"
     cpu = {
       cores = 2
