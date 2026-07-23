@@ -1,6 +1,6 @@
 vms = [
   {
-    name        = "k8s-master-01.redstone"
+    name        = "k8s-master-01.redstone.internal"
     vm_state    = "running"
     target_node = "pve-01"
     cpu = {
@@ -15,7 +15,7 @@ vms = [
     }
   },
   {
-    name        = "k8s-node-01.redstone"
+    name        = "k8s-node-01.redstone.internal"
     vm_state    = "running"
     target_node = "pve-02"
     cpu = {
@@ -37,7 +37,7 @@ vms = [
     ]
   },
   {
-    name        = "k8s-node-02.redstone"
+    name        = "k8s-node-02.redstone.internal"
     vm_state    = "running"
     target_node = "pve-02"
     cpu = {

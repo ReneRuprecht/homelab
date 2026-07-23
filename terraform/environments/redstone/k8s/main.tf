@@ -12,8 +12,8 @@ resource "dns_a_record_set" "vms" {
 
   for_each = module.netbox_proxmox_vms.proxmox_vms
 
-  zone = "redstone."
-  name = split(".redstone", each.key)[0]
+  zone = "redstone.internal."
+  name = split(".redstone.internal", each.key)[0]
 
   addresses = [
     each.value
