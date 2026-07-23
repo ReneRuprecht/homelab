@@ -1,0 +1,13 @@
+;; Ansible managed
+$ORIGIN .
+$TTL 3600   ; 1 hour.
+redstone.internal IN  SOA     dns-01.core.internal. noemail.redstone. (
+                2025081126 ; serial
+                14400 ; refresh (3 hours)
+                3600 ; retry (1 hour)
+                604800 ; expire (1 week)
+                10800 ; minimum (3 hours)
+                )
+                    NS      dns-01.redstone
+                    NS      dns-02.redstone
+
