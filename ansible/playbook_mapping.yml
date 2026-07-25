@@ -39,3 +39,6 @@ patterns:
   backup.yml:
     - "backup-*"
     - "backup" 
+  elastic.yml:
+    - "elastic-*"
+    - "elastic" 
