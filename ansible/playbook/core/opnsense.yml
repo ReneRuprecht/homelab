@@ -260,6 +260,19 @@
         log: false
         state: 'present'
 
+      allow_mgmt_to_kibana_http:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: '10.1.100.20'
+        dest_port: '5601'
+        quick: true
+        log: false
+        state: 'present'
+
     core_rules:
       allow_vlan_core_out:
         action: 'pass'

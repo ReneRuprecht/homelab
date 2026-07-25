@@ -53,4 +53,26 @@ template {
   command     = "sudo systemctl reload haproxy"
 }
 
+template {
+  source      = "/etc/vault/templates/kibana.tpl"
+  destination = "/etc/haproxy/certs/kibana.pem"
+  command     = "sudo systemctl reload haproxy"
+}
+
+{% endif %}
+
+{% if 'elastic' in inventory_hostname %}
+
+template {
+  source      = "/etc/vault/templates/elastic.tpl"
+  destination = "/tmp/elastic-template-dummy.txt"
+  command     = "sudo systemctl reload elasticsearch"
+}
+
+template {
+  source      = "/etc/vault/templates/core-chain.tpl"
+  destination = "/etc/pki/homelab/certs/core-chain.crt"
+  command     = "sudo systemctl reload kibana"
+}
+
 {% endif %}

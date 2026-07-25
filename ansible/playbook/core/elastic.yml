@@ -1,6 +1,35 @@
 ---
-- name: Install Elastic
+- name: Prepare Elastic
   hosts: elastic
   gather_facts: true
   roles:
     - role: reneruprecht.general
+  post_tasks:
+    - name: Ensure vault-agent group exists
+      become: true
+      ansible.builtin.group:
+        name: "{{ vault_agent_group }}"
+        state: present
+
+    - name: Include elastic-vault-agent
+      ansible.builtin.include_tasks:
+        file: ./tasks/vault-agent-elastic.yml
+  handlers:
+    - name: Restart vault-agent
+      become: true
+      ansible.builtin.systemd:
+        name: vault-agent
+        state: restarted
+        daemon_reload: true
+
+- name: Install Elastic
+  hosts: elastic
+  gather_facts: true
+  roles:
+    - role: reneruprecht.elasticsearch
+
+- name: Install Kibana
+  hosts: elastic
+  gather_facts: true
+  roles:
+    - role: reneruprecht.kibana

@@ -1,0 +1,60 @@
+---
+# Needs local vault cli connection
+#
+# vars:
+#   vault_agent_approle
+#   vault_agent_user
+#   vault_agent_group
+#   vault_agent_vault_addr
+#
+# handlers:
+#   - name: Restart vault-agent
+- name: Inlcude vault_agent_install
+  ansible.builtin.include_tasks:
+    file: ./vault-agent-install.yml
+
+- name: Copy vault agent configuration
+  become: true
+  register: vault_agent_config_state
+  ansible.builtin.template:
+    src: vault/agent.hcl.j2
+    dest: /etc/vault/agent.hcl
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0600'
+  notify:
+    - Restart vault-agent
+
+- name: Ensure elastic certs directory exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/elasticsearch/certs
+    state: directory
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0755'
+  notify:
+    - Restart vault-agent
+
+- name: Ensure homelab certs directory exists
+  become: true
+  ansible.builtin.file:
+    path: /etc/pki/homelab/certs
+    state: directory
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0755'
+  notify:
+    - Restart vault-agent
+
+- name: Deploy elastic pem template
+  become: true
+  ansible.builtin.copy:
+    src: "vault/{{ item }}.tpl"
+    dest: "/etc/vault/templates/{{ item }}.tpl"
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0600'
+  loop: "{{ vault_agent_templates }}"
+  notify:
+    - Restart vault-agent

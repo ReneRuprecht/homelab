@@ -1,0 +1,20 @@
+---
+kibana_elasticsearch_url: "https://elastic-01.core.internal:9200"
+
+kibana_server_host: "elastic-01.core.internal"
+
+kibana_elasticsearch_username: "kibana_system"
+kibana_elasticsearch_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          65336265623765313833333864303933613933333436323330306664373365616666393539333934
+          3361303061363530303163613665333066333938376237640a666565333939386532663537343234
+          34636636623038363532663463323135313531663934343963356366643561643663356236666434
+          3961646432373531630a303365656231613834373236343331336461626134366630383464646435
+          34636533386266653632316431623865663933396133653037343164643732653838
+
+kibana_elasticsearch_ssl_certificate_authorities:
+  - /etc/pki/homelab/certs/core-chain.crt
+kibana_elasticsearch_ssl_verification_mode: "certificate"
+
+kibana_elasticsearch_hosts:
+  - https://elastic-01.core.internal:9200

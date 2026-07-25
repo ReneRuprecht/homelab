@@ -1,0 +1,22 @@
+---
+elasticsearch_bootstrap_enabled: true
+elasticsearch_bootstrap_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          62643865353665376336386466366337653262333632356662323964373763623336666436666336
+          3264626563663238613562626335363163393637636661310a363630363963383763663035323338
+          31303830303361663536396538356663643166326437663536313966616238313664333539326264
+          3965393265653561650a313835356238636138316138383739613133343362386233663430653861
+          3861
+elasticsearch_bootstrap_url: "https://elastic-01.core.internal"
+elasticsearch_bootstrap_port: "9200"
+elasticsearch_network_host: "elastic-01.core.internal"
+elasticsearch_http_host: "0.0.0.0"
+
+
+elasticsearch_ssl_format: "pem"
+elasticsearch_path_conf: /etc/elasticsearch
+elasticsearch_path_certs: "{{ elasticsearch_path_conf }}/certs"
+elasticsearch_security_http_ssl_key: "{{ elasticsearch_path_certs }}/transport.key"
+elasticsearch_security_http_ssl_certificate: "{{ elasticsearch_path_certs }}/transport.crt"
+elasticsearch_security_transport_ssl_key: "{{ elasticsearch_path_certs }}/transport.key"
+elasticsearch_security_transport_ssl_certificate: "{{ elasticsearch_path_certs }}/transport.crt"

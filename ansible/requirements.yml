@@ -18,6 +18,14 @@ collections:
     version: 25.7.8
 
 roles:
+  - name: reneruprecht.kibana
+    src: "https://github.com/reneruprecht/ansible-role-kibana"
+    scm: git
+    verion: main
+  - name: reneruprecht.elasticsearch
+    src: "https://github.com/reneruprecht/ansible-role-elasticsearch"
+    scm: git
+    verion: main
   - name: reneruprecht.minio
     src: "https://github.com/reneruprecht/ansible-role-minio"
     scm: git

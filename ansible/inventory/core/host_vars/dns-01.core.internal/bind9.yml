@@ -49,13 +49,16 @@ bind9_zones_static:
 
 bind9_zones_dynamic:
   - name: core.internal
-    serial: 2025081146
+    serial: 2025081148
     admin: noemail.core.internal
     ns_records:
       - dns-01.core.internal
       - dns-02.core.internal
     rrs:
       - label: elasticsearch
+        type: A
+        rdata: 10.1.100.250
+      - label: kibana
         type: A
         rdata: 10.1.100.250
       - label: grafana

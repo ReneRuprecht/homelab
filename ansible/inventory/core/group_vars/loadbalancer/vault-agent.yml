@@ -7,3 +7,4 @@ vault_agent_templates:
   - keycloak
   - vault
   - s3
+  - kibana
