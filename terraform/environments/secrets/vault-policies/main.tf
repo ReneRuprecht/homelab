@@ -12,3 +12,8 @@ resource "vault_policy" "vault-backup" {
   name   = "vault-backup"
   policy = file("${path.module}/policies/vault-backup.hcl")
 }
+
+resource "vault_policy" "elastic" {
+  name   = "elastic"
+  policy = file("${path.module}/policies/elastic.hcl")
+}
