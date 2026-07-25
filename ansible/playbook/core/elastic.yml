@@ -1,0 +1,6 @@
+---
+- name: Install Elastic
+  hosts: elastic
+  gather_facts: true
+  roles:
+    - role: reneruprecht.general
