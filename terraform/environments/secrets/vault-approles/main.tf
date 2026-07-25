@@ -36,3 +36,16 @@ resource "vault_approle_auth_backend_role" "vault-backup" {
   token_ttl     = 3600
   token_max_ttl = 14400
 }
+
+resource "vault_approle_auth_backend_role" "elastic" {
+  backend = "approle"
+
+  role_name = "elastic"
+
+  token_policies = [
+    "elastic"
+  ]
+
+  token_ttl     = 3600
+  token_max_ttl = 14400
+}
