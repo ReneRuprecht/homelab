@@ -12,5 +12,35 @@ vms = [
       bridge = "vmbr1"
       tag    = "100"
     }
+  },
+  {
+    name        = "elastic-02.core.internal"
+    target_node = "pve-02"
+    vm_state    = "started"
+    memory      = 8192
+    cpu         = { cores = 2 }
+    ip          = "10.1.100.21/24"
+    gateway     = "10.1.100.1"
+    cpu         = { cores = 2 }
+    tags        = "core"
+    vm_network = {
+      bridge = "vmbr1"
+      tag    = "100"
+    }
+  },
+  {
+    name        = "elastic-03.core.internal"
+    target_node = "pve-02"
+    vm_state    = "started"
+    memory      = 8192
+    cpu         = { cores = 2 }
+    ip          = "10.1.100.22/24"
+    gateway     = "10.1.100.1"
+    cpu         = { cores = 2 }
+    tags        = "core"
+    vm_network = {
+      bridge = "vmbr1"
+      tag    = "100"
+    }
   }
 ]
