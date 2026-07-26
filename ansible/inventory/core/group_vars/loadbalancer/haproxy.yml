@@ -17,11 +17,7 @@ haproxy_frontends:
     port: 443
     ssl_enable: true
     ssl_certificates:
-      - "/etc/haproxy/certs/keycloak.pem"
-      - "/etc/haproxy/certs/vault.pem"
-      - "/etc/haproxy/certs/grafana.pem"
-      - "/etc/haproxy/certs/s3.pem"
-      - "/etc/haproxy/certs/kibana.pem"
+      - "/etc/haproxy/certs/"
     routes:
       - acl_name: "is_vault"
         acl_condition: "hdr(host) -i vault.secrets.internal"
@@ -46,6 +42,14 @@ haproxy_frontends:
       - acl_name: "is_kibana"
         acl_condition: "hdr(host) -i kibana.core.internal"
         backend_name: "kibana_backend"
+
+      - acl_name: "is_elasticsearch"
+        acl_condition: "hdr(host) -i elasticsearch.core.internal"
+        backend_name: "elasticsearch_backend"
+
+      - acl_name: "is_fleet"
+        acl_condition: "hdr(host) -i fleet.core.internal"
+        backend_name: "fleet_backend"
     options:
       - "httplog"
 
@@ -167,6 +171,30 @@ haproxy_backends:
     port: 5601
     check: true
     check_port: 5601
+    servers:
+      - name: elastic-01.core.internal
+        address: elastic-01.core.internal
+        resolver: "core"
+        init_addr: "none"
+
+  - name: "elasticsearch_backend"
+    mode: "http"
+    balance: "leastconn"
+    port: 9200
+    check: true
+    check_port: 9200
+    servers:
+      - name: elastic-01.core.internal
+        address: elastic-01.core.internal
+        resolver: "core"
+        init_addr: "none"
+
+  - name: "fleet_backend"
+    mode: "http"
+    balance: "leastconn"
+    port: 8220
+    check: true
+    check_port: 8220
     servers:
       - name: elastic-01.core.internal
         address: elastic-01.core.internal

@@ -54,8 +54,8 @@ template {
 }
 
 template {
-  source      = "/etc/vault/templates/kibana.tpl"
-  destination = "/etc/haproxy/certs/kibana.pem"
+  source      = "/etc/vault/templates/elastic-stack.tpl"
+  destination = "/etc/haproxy/certs/elastic-stack.pem"
   command     = "sudo systemctl reload haproxy"
 }
 
