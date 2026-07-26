@@ -176,6 +176,14 @@ haproxy_backends:
         address: elastic-01.core.internal
         resolver: "core"
         init_addr: "none"
+      - name: elastic-02.core.internal
+        address: elastic-02.core.internal
+        resolver: "core"
+        init_addr: "none"
+      - name: elastic-03.core.internal
+        address: elastic-03.core.internal
+        resolver: "core"
+        init_addr: "none"
 
   - name: "elasticsearch_backend"
     mode: "http"
@@ -183,9 +191,19 @@ haproxy_backends:
     port: 9200
     check: true
     check_port: 9200
+    ssl_enable: true
+    verify: "none"
     servers:
       - name: elastic-01.core.internal
         address: elastic-01.core.internal
+        resolver: "core"
+        init_addr: "none"
+      - name: elastic-02.core.internal
+        address: elastic-02.core.internal
+        resolver: "core"
+        init_addr: "none"
+      - name: elastic-03.core.internal
+        address: elastic-03.core.internal
         resolver: "core"
         init_addr: "none"
 
@@ -198,5 +216,13 @@ haproxy_backends:
     servers:
       - name: elastic-01.core.internal
         address: elastic-01.core.internal
+        resolver: "core"
+        init_addr: "none"
+      - name: elastic-02.core.internal
+        address: elastic-02.core.internal
+        resolver: "core"
+        init_addr: "none"
+      - name: elastic-03.core.internal
+        address: elastic-03.core.internal
         resolver: "core"
         init_addr: "none"
