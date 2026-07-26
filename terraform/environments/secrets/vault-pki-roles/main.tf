@@ -7,7 +7,7 @@ resource "vault_pki_secret_backend_role" "core_services" {
   allow_bare_domains = false
 
   server_flag = true
-  client_flag = false
+  client_flag = true
 
   enforce_hostnames = true
 
