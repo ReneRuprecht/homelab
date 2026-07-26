@@ -4,5 +4,5 @@ vault_agent_group: "elasticsearch"
 vault_agent_vault_addr: "https://vault.secrets.internal"
 vault_agent_approle: 'elastic'
 vault_agent_templates:
-  - elastic
+  - elasticsearch
   - core-chain

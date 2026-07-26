@@ -64,8 +64,8 @@ template {
 {% if 'elastic' in inventory_hostname %}
 
 template {
-  source      = "/etc/vault/templates/elastic.tpl"
-  destination = "/tmp/elastic-template-dummy.txt"
+  source      = "/etc/vault/templates/elasticsearch.tpl"
+  destination = "/tmp/elasticsearch-template-dummy.txt"
   command     = "sudo systemctl reload elasticsearch"
 }
 
