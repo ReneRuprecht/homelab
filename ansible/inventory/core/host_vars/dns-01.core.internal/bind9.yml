@@ -49,7 +49,7 @@ bind9_zones_static:
 
 bind9_zones_dynamic:
   - name: core.internal
-    serial: 2025081151
+    serial: 2025081152
     admin: noemail.core.internal
     ns_records:
       - dns-01.core.internal
@@ -109,6 +109,12 @@ bind9_zones_dynamic:
       - label: elastic-01
         type: A
         rdata: 10.1.100.20
+      - label: elastic-02
+        type: A
+        rdata: 10.1.100.21
+      - label: elastic-03
+        type: A
+        rdata: 10.1.100.22
 
   - name: secrets.internal
     serial: 2025081143
