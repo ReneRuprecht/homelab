@@ -1,4 +1,18 @@
 ---
+elasticsearch_enable_permission_fix: true
+
+elasticsearch_cluster_name: "core-cluster"
+elasticsearch_discovery_type: ''
+
+elasticsearch_discovery_seed_hosts:
+  - elastic-01.core.internal
+  - elastic-02.core.internal
+  - elastic-03.core.internal
+elasticsearch_cluster_initial_master_nodes:
+  - elastic-01.core.internal
+  - elastic-02.core.internal
+  - elastic-03.core.internal
+
 elasticsearch_bootstrap_enabled: true
 elasticsearch_bootstrap_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
@@ -7,10 +21,9 @@ elasticsearch_bootstrap_password: !vault |
           31303830303361663536396538356663643166326437663536313966616238313664333539326264
           3965393265653561650a313835356238636138316138383739613133343362386233663430653861
           3861
-elasticsearch_bootstrap_url: "https://elastic-01.core.internal"
 elasticsearch_bootstrap_port: "9200"
-elasticsearch_network_host: "elastic-01.core.internal"
 elasticsearch_http_host: "0.0.0.0"
+elasticsearch_transport_host: "0.0.0.0"
 
 
 elasticsearch_ssl_format: "pem"

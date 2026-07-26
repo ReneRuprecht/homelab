@@ -66,13 +66,13 @@ template {
 template {
   source      = "/etc/vault/templates/elasticsearch.tpl"
   destination = "/tmp/elasticsearch-template-dummy.txt"
-  command     = "sudo systemctl reload elasticsearch"
+  command     = "sudo systemctl restart elasticsearch"
 }
 
 template {
   source      = "/etc/vault/templates/core-chain.tpl"
   destination = "/etc/pki/homelab/certs/core-chain.crt"
-  command     = "sudo systemctl reload kibana"
+  command     = "sudo systemctl restart kibana"
 }
 
 {% endif %}

@@ -1,0 +1,5 @@
+---
+elasticsearch_network_host: "elastic-01.core.internal"
+elasticsearch_node_name: "elastic-01.core.internal"
+
+elasticsearch_bootstrap_url: "https://elastic-01.core.internal"

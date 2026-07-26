@@ -14,3 +14,13 @@ general_ufw_ports:
     proto: tcp
     state: enabled
     comment: "FLEET"
+
+  - port: "9200"
+    proto: tcp
+    state: enabled
+    comment: "ELASTICSEARCH"
+
+  - port: "9300"
+    proto: tcp
+    state: enabled
+    comment: "ELASTICSEARCH-CLUSTER"

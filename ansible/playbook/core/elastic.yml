@@ -4,6 +4,14 @@
   gather_facts: true
   roles:
     - role: reneruprecht.general
+
+- name: Install Elastic
+  hosts: elastic
+  gather_facts: true
+  vars:
+    elasticsearch_service_state: "stopped"
+  roles:
+    - role: reneruprecht.elasticsearch
   post_tasks:
     - name: Ensure vault-agent group exists
       become: true
@@ -14,6 +22,23 @@
     - name: Include elastic-vault-agent
       ansible.builtin.include_tasks:
         file: ./tasks/vault-agent-elastic.yml
+
+    - name: Flush handlers
+      ansible.builtin.meta: flush_handlers
+
+    - name: Wait for trigger directory
+      become: true
+      ansible.builtin.wait_for:
+        path: "{{ elasticsearch_security_http_ssl_key }}"
+        state: present
+        timeout: 20
+
+    - name: Start elasticsearch
+      become: true
+      ansible.builtin.systemd:
+        name: elasticsearch
+        state: started
+
   handlers:
     - name: Restart vault-agent
       become: true
@@ -22,9 +47,12 @@
         state: restarted
         daemon_reload: true
 
-- name: Install Elastic
+- name: Bootstrap Elastic
   hosts: elastic
   gather_facts: true
+  tags:
+    - never
+    - bootstrap
   roles:
     - role: reneruprecht.elasticsearch
 

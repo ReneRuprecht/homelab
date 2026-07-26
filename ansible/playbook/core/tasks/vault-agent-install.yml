@@ -108,10 +108,10 @@
   notify:
     - Restart vault-agent
 
-- name: Enable and start Vault Agent
-  become: true
-  ansible.builtin.systemd:
-    daemon_reload: true
-    name: vault-agent
-    enabled: true
-    state: started
+# - name: Enable and start Vault Agent
+#   become: true
+#   ansible.builtin.systemd:
+#     daemon_reload: true
+#     name: vault-agent
+#     enabled: true
+#     state: started
