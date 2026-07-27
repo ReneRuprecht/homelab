@@ -13,31 +13,9 @@
   roles:
     - role: reneruprecht.elasticsearch
   post_tasks:
-    - name: Ensure vault-agent group exists
-      become: true
-      ansible.builtin.group:
-        name: "{{ vault_agent_group }}"
-        state: present
-
     - name: Include elastic-vault-agent
       ansible.builtin.include_tasks:
-        file: ./tasks/vault-agent-elastic.yml
-
-    - name: Flush handlers
-      ansible.builtin.meta: flush_handlers
-
-    - name: Wait for elasticsearch certificates
-      become: true
-      ansible.builtin.wait_for:
-        path: "{{ item }}"
-        state: present
-        timeout: 20
-      when: item | length > 0
-      loop:
-        - "{{ elasticsearch_security_http_ssl_key }}"
-        - "{{ elasticsearch_security_http_ssl_certificate }}"
-        - "{{ elasticsearch_security_transport_ssl_key }}"
-        - "{{ elasticsearch_security_transport_ssl_certificate }}"
+        file: ./tasks/vault-agent-install.yml
 
     - name: Start elasticsearch
       become: true
@@ -45,13 +23,6 @@
         name: elasticsearch
         state: started
 
-  handlers:
-    - name: Restart vault-agent
-      become: true
-      ansible.builtin.systemd:
-        name: vault-agent
-        state: restarted
-        daemon_reload: true
 
 - name: Bootstrap Elastic
   hosts: elastic

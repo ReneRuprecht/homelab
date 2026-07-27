@@ -25,6 +25,12 @@
           - assert_vault_token.rc == 0
         fail_msg: "vault cli connection failed"
 
+- name: Ensure vault-agent group exists
+  become: true
+  ansible.builtin.group:
+    name: "{{ vault_agent_group }}"
+    state: present
+
 - name: Ensure Vault directories exist
   become: true
   ansible.builtin.file:
@@ -105,13 +111,50 @@
     owner: "{{ vault_agent_user }}"
     group: "{{ vault_agent_group }}"
     mode: '0644'
-  notify:
-    - Restart vault-agent
 
-# - name: Enable and start Vault Agent
-#   become: true
-#   ansible.builtin.systemd:
-#     daemon_reload: true
-#     name: vault-agent
-#     enabled: true
-#     state: started
+- name: Copy vault agent configuration
+  become: true
+  register: vault_agent_config_state
+  ansible.builtin.template:
+    src: vault/agent.hcl.j2
+    dest: /etc/vault/agent.hcl
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0600'
+
+- name: Ensure directories exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0755'
+  loop: "{{ vault_agent_create_directories }}"
+
+- name: Deploy elastic pem template
+  become: true
+  ansible.builtin.copy:
+    src: "vault/{{ item }}.tpl"
+    dest: "/etc/vault/templates/{{ item }}.tpl"
+    owner: "{{ vault_agent_user }}"
+    group: "{{ vault_agent_group }}"
+    mode: '0600'
+  loop: "{{ vault_agent_templates }}"
+
+- name: Enable and start Vault Agent
+  become: true
+  ansible.builtin.systemd:
+    daemon_reload: true
+    name: vault-agent
+    enabled: true
+    state: restarted
+
+- name: Wait for certificates
+  become: true
+  ansible.builtin.wait_for:
+    path: "{{ item }}"
+    state: present
+    timeout: 20
+  when: item | length > 0
+  loop: "{{ vault_agent_wait_for_certs | default([]) }}"

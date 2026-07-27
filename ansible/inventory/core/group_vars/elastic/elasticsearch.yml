@@ -8,10 +8,10 @@ elasticsearch_discovery_seed_hosts:
   - elastic-01.core.internal
   - elastic-02.core.internal
   - elastic-03.core.internal
-elasticsearch_cluster_initial_master_nodes:
-  - elastic-01.core.internal
-  - elastic-02.core.internal
-  - elastic-03.core.internal
+# elasticsearch_cluster_initial_master_nodes:
+#   - elastic-01.core.internal
+#   - elastic-02.core.internal
+#   - elastic-03.core.internal
 
 elasticsearch_bootstrap_enabled: true
 elasticsearch_bootstrap_password: !vault |

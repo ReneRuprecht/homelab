@@ -1,0 +1,7 @@
+---
+vault_agent_user: "root"
+vault_agent_group: "root"
+vault_agent_vault_addr: "https://vault.secrets.internal"
+vault_agent_approle: 'elastic-agent'
+vault_agent_templates:
+  - core-chain

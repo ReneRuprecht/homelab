@@ -8,3 +8,6 @@ vault_agent_templates:
   - vault
   - s3
   - elastic-stack
+
+vault_agent_create_directories:
+  - /etc/haproxy/certs

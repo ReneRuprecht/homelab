@@ -18,11 +18,4 @@
   post_tasks:
     - name: Include haproxy_vault_agent
       ansible.builtin.include_tasks:
-        file: ./tasks/vault-agent-haproxy.yml
-  handlers:
-    - name: Restart vault-agent
-      become: true
-      ansible.builtin.systemd:
-        name: vault-agent
-        state: restarted
-        daemon_reload: true
+        file: ./tasks/vault-agent-install.yml

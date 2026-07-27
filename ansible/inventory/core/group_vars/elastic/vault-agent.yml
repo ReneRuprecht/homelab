@@ -6,3 +6,13 @@ vault_agent_approle: 'elastic'
 vault_agent_templates:
   - elasticsearch
   - core-chain
+
+vault_agent_create_directories:
+  - /etc/elasticsearch/certs
+  - /etc/pki/homelab/certs
+
+vault_agent_wait_for_certs:
+  - "{{ elasticsearch_security_http_ssl_key }}"
+  - "{{ elasticsearch_security_http_ssl_certificate }}"
+  - "{{ elasticsearch_security_transport_ssl_key }}"
+  - "{{ elasticsearch_security_transport_ssl_certificate }}"

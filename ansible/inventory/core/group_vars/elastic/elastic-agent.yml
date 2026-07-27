@@ -1,4 +1,5 @@
 ---
+elastic_agent_active: false
 
 elastic_agent_install_servers: true
 
