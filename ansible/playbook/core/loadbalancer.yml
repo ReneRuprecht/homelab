@@ -19,3 +19,9 @@
     - name: Include haproxy_vault_agent
       ansible.builtin.include_tasks:
         file: ./tasks/vault-agent-install.yml
+
+- name: Install loadbalancer
+  hosts: loadbalancer
+  gather_facts: true
+  roles:
+    - role: reneruprecht.elastic-agent

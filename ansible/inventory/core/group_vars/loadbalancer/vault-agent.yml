@@ -8,6 +8,11 @@ vault_agent_templates:
   - vault
   - s3
   - elastic-stack
+  - core-chain
 
 vault_agent_create_directories:
   - /etc/haproxy/certs
+  - /etc/pki/homelab/certs
+
+vault_agent_wait_for_certs:
+  - "/etc/pki/homelab/certs/core-chain.crt"

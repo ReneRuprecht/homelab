@@ -76,3 +76,12 @@ template {
 }
 
 {% endif %}
+
+{% if elastic_agent_active | default(false) %}
+
+template {
+  source      = "/etc/vault/templates/core-chain.tpl"
+  destination = "/etc/pki/homelab/certs/core-chain.crt"
+}
+
+{% endif %}
