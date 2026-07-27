@@ -6,3 +6,13 @@
     - role: reneruprecht.general
     - role: prometheus.prometheus.node_exporter
     - role: reneruprecht.minio
+  post_tasks:
+    - name: Include haproxy_vault_agent
+      ansible.builtin.include_tasks:
+        file: ./tasks/vault-agent-install.yml
+
+- name: Install elastic-agent
+  hosts: backup
+  gather_facts: true
+  roles:
+    - role: reneruprecht.elastic-agent
