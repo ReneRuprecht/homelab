@@ -26,12 +26,18 @@
     - name: Flush handlers
       ansible.builtin.meta: flush_handlers
 
-    - name: Wait for trigger directory
+    - name: Wait for elasticsearch certificates
       become: true
       ansible.builtin.wait_for:
-        path: "{{ elasticsearch_security_http_ssl_key }}"
+        path: "{{ item }}"
         state: present
         timeout: 20
+      when: item | length > 0
+      loop:
+        - "{{ elasticsearch_security_http_ssl_key }}"
+        - "{{ elasticsearch_security_http_ssl_certificate }}"
+        - "{{ elasticsearch_security_transport_ssl_key }}"
+        - "{{ elasticsearch_security_transport_ssl_certificate }}"
 
     - name: Start elasticsearch
       become: true
@@ -61,3 +67,9 @@
   gather_facts: true
   roles:
     - role: reneruprecht.kibana
+
+- name: Install fleet server
+  hosts: elastic
+  gather_facts: true
+  roles:
+    - role: reneruprecht.elastic-agent

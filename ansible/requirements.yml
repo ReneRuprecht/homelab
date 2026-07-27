@@ -18,6 +18,10 @@ collections:
     version: 25.7.8
 
 roles:
+  - name: reneruprecht.elastic-agent
+    src: "https://github.com/reneruprecht/ansible-role-elastic-agent"
+    scm: git
+    verion: main
   - name: reneruprecht.kibana
     src: "https://github.com/reneruprecht/ansible-role-kibana"
     scm: git
