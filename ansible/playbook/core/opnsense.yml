@@ -419,6 +419,32 @@
         log: false
         state: 'present'
 
+      allow_secrets_to_core_fleet:
+        action: 'pass'
+        int: ['opt4']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: 'SECRETS_VAULT'
+        dest: 'CORE_LBS'
+        dest_port: '8220'
+        quick: true
+        log: false
+        state: 'present'
+
+      allow_secrets_to_core_elasticsearch:
+        action: 'pass'
+        int: ['opt4']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: 'SECRETS_VAULT'
+        dest: 'CORE_LBS'
+        dest_port: '9200'
+        quick: true
+        log: false
+        state: 'present'
+
     core_aliases:
       - name: 'CORE_BACKUP'
         content: ['10.1.100.14', '10.1.100.15']
