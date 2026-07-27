@@ -1,10 +1,24 @@
 ---
 - name: Install gh-runner
   hosts: gh_runner
-  become: true
   roles:
     - role: reneruprecht.general
+      become: true
     - role: monolithprojects.github_actions_runner
+      become: true
     - role: geerlingguy.docker
+      become: true
     - role: geerlingguy.nodejs
+      become: true
     - role: prometheus.prometheus.node_exporter
+      become: true
+  post_tasks:
+    - name: Include haproxy_vault_agent
+      ansible.builtin.include_tasks:
+        file: ./tasks/vault-agent-install.yml
+
+- name: Install elastic-agent
+  hosts: gh_runner
+  gather_facts: true
+  roles:
+    - role: reneruprecht.elastic-agent
