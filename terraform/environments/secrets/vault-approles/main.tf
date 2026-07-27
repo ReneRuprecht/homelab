@@ -49,3 +49,16 @@ resource "vault_approle_auth_backend_role" "elastic" {
   token_ttl     = 3600
   token_max_ttl = 14400
 }
+
+resource "vault_approle_auth_backend_role" "elastic-agent" {
+  backend = "approle"
+
+  role_name = "elastic-agent"
+
+  token_policies = [
+    "elastic-agent"
+  ]
+
+  token_ttl     = 3600
+  token_max_ttl = 14400
+}
