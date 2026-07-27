@@ -15,6 +15,11 @@ general_ufw_ports:
     state: enabled
     comment: "Vault"
 
+  - port: "8220"
+    proto: tcp
+    state: enabled
+    comment: "Fleet Backend"
+
   - port: "8301"
     proto: tcp
     state: enabled
@@ -52,3 +57,8 @@ general_ufw_ports:
     proto: tcp
     state: enabled
     comment: "Blackbox Exporter"
+
+  - port: "9200"
+    proto: tcp
+    state: enabled
+    comment: "Elasticsearch Backend"

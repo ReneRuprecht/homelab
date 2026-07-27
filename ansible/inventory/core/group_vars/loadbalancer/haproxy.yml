@@ -59,6 +59,18 @@ haproxy_frontends:
     mode: "tcp"
     default_backend: "vault_backend_tcp"
 
+  - name: "elasticsearch"
+    address: "0.0.0.0"
+    port: 9200
+    mode: "tcp"
+    default_backend: "elasticsearch_backend_tcp"
+
+  - name: "fleet"
+    address: "0.0.0.0"
+    port: 8220
+    mode: "tcp"
+    default_backend: "fleet_backend_tcp"
+
 haproxy_backends:
   - name: "vault_backend"
     mode: "http"
@@ -207,8 +219,50 @@ haproxy_backends:
         resolver: "core"
         init_addr: "none"
 
+  - name: "elasticsearch_backend_tcp"
+    mode: "tcp"
+    balance: "leastconn"
+    port: 9200
+    check: true
+    check_port: 9200
+    servers:
+      - name: elastic-01.core.internal
+        address: elastic-01.core.internal
+        resolver: "core"
+        init_addr: "none"
+      - name: elastic-02.core.internal
+        address: elastic-02.core.internal
+        resolver: "core"
+        init_addr: "none"
+      - name: elastic-03.core.internal
+        address: elastic-03.core.internal
+        resolver: "core"
+        init_addr: "none"
+
   - name: "fleet_backend"
     mode: "http"
+    balance: "leastconn"
+    port: 8220
+    check: true
+    check_port: 8220
+    ssl_enable: true
+    verify: "none"
+    servers:
+      - name: elastic-01.core.internal
+        address: elastic-01.core.internal
+        resolver: "core"
+        init_addr: "none"
+      - name: elastic-02.core.internal
+        address: elastic-02.core.internal
+        resolver: "core"
+        init_addr: "none"
+      - name: elastic-03.core.internal
+        address: elastic-03.core.internal
+        resolver: "core"
+        init_addr: "none"
+
+  - name: "fleet_backend_tcp"
+    mode: "tcp"
     balance: "leastconn"
     port: 8220
     check: true
