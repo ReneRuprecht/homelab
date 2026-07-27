@@ -40,10 +40,23 @@
 - name: Install dns
   hosts: dns
   gather_facts: true
-  become: true
   roles:
     - role: reneruprecht.general
+      become: true
     # - role: grafana.grafana.promtail
     - role: prometheus.prometheus.node_exporter
+      become: true
     - role: prometheus.prometheus.bind_exporter
+      become: true
     - role: systemli.bind9
+      become: true
+  post_tasks:
+    - name: Include haproxy_vault_agent
+      ansible.builtin.include_tasks:
+        file: ./tasks/vault-agent-install.yml
+
+- name: Install elastic-agent
+  hosts: dns
+  gather_facts: true
+  roles:
+    - role: reneruprecht.elastic-agent
