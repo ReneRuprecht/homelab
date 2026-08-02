@@ -99,7 +99,7 @@ Die Infrastruktur ist in verschiedene Bereiche aufgeteilt, welche unabhängig vo
 # 🔧 Services
 
 Aktuell wird eine Kombination aus virtuellen Maschinen und Kubernetes-Services betrieben.
-Die Umgebunj wird kontinuierlich weiterentwickelt und angepasst.
+Die Umgebung wird kontinuierlich weiterentwickelt und angepasst.
 
 ## Virtuelle Maschinen (VMs)
 | Anzahl | Komponente | Zweck |
