@@ -28,7 +28,7 @@ variable "os_region" {
   type        = string
 }
 
-variable "ssh_public_key" {
-  description = "SSH public key"
+variable "os_ansible_ssh_key" {
+  description = "Ansible SSH Key"
   type        = string
 }
