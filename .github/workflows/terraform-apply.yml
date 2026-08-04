@@ -18,6 +18,11 @@ env:
   TF_VAR_dns_update_key_name: ${{ secrets.DNS_UPDATE_KEY_NAME }}
   TF_VAR_dns_update_key_algorithm: ${{ secrets.DNS_UPDATE_KEY_ALGORITHM }}
   TF_VAR_dns_update_key_secret: ${{ secrets.DNS_UPDATE_KEY_SECRET }}
+  TF_VAR_os_auth_url: ${{ secrets.OS_AUTH_URL }}
+  TF_VAR_os_username: ${{ secrets.OS_USERNAME }}
+  TF_VAR_os_password: ${{ secrets.OS_PASSWORD }}
+  TF_VAR_os_project: ${{ secrets.OS_PROJECT }}
+  TF_VAR_os_region: ${{ secrets.OS_REGION }}
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   VAULT_CA_B64: ${{ secrets.VAULT_CA_B64 }}
