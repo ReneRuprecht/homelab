@@ -1,0 +1,18 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: artifactory-postgres
+  namespace: artifactory
+spec:
+  description: "Artifactory DB"
+  instances: 1
+  startDelay: 300
+  stopDelay: 300
+
+  bootstrap:
+    initdb:
+      database: artifactory
+
+  storage:
+    storageClass: longhorn
+    size: 1Gi
