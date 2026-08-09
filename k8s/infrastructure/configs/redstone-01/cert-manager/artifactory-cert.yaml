@@ -1,0 +1,17 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: artifactory
+  namespace: artifactory
+spec:
+  secretName: artifactory-tls-secret
+  commonName: artifactory.redstone
+  dnsNames:
+    - artifactory.redstone
+  issuerRef:
+    name: pki-int-redstone
+    kind: ClusterIssuer
+  privateKey:
+    algorithm: RSA
+    size: 4096

@@ -5,3 +5,4 @@ resources:
 - longhorn-cert.yaml
 - argocd-cert.yaml
 # - harbor-cert.yaml
+- artifactory-cert.yaml

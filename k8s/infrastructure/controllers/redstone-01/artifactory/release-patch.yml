@@ -1,0 +1,62 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: artifactory
+  namespace: flux-system
+spec:
+  values:
+    global:
+      masterKeySecretName: artifactory-cluster-keys
+      joinKeySecretName: artifactory-cluster-keys
+      masterKey:
+        secretKeyRef:
+          name: "artifactory-cluster-keys"
+          key: "master-key"
+      joinKey:
+        secretKeyRef:
+          name: "artifactory-cluster-keys"
+          key: "join-key"
+
+    artifactory:
+      nginx:
+        enabled: false
+      ingress:
+        enabled: true
+        className: "nginx"
+        hosts:
+          - artifactory.redstone
+        routerPath: /
+        artifactoryPath: /artifactory/
+        annotations:
+          nginx.ingress.kubernetes.io/proxy-body-size: "0"
+        tls:
+          - secretName: artifactory-tls-secret
+            hosts:
+              - artifactory.redstone
+      postgresql:
+        enabled: false
+      database:
+        type: postgresql
+        driver: org.postgresql.Driver
+        url: "jdbc:postgresql://artifactory-postgres-rw.artifactory:5432/artifactory"
+        secrets:
+          user:
+            name: "artifactory-postgres-app"
+            key: "username"
+          password:
+            name: "artifactory-postgres-app"
+            key: "password"
+      unifiedSecretInstallation: false
+      persistence:
+        enabled: true
+        storageClass: "longhorn"
+        size: 10Gi
+        accessMode: ReadWriteOnce
+      resources:
+        requests:
+          cpu: "500m"
+          memory: "1.5Gi"
+        limits:
+          cpu: "2"
+          memory: "3Gi"

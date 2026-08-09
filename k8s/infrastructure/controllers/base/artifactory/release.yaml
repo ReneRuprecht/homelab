@@ -1,0 +1,18 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: artifactory
+  namespace: flux-system
+spec:
+  releaseName: artifactory
+  targetNamespace: artifactory
+  interval: 1h
+  chart:
+    spec:
+      chart: artifactory-oss
+      version: "107.161.x"
+      sourceRef:
+        kind: HelmRepository
+        name: jfrog
+        namespace: flux-system
