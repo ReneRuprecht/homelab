@@ -1,6 +1,7 @@
 vms = [
   {
     name        = "omv-01.core.internal"
+    target_node = "pve-02"
     vm_state    = "started"
     memory      = 4096
     cpu         = { cores = 2 }
