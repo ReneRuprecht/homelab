@@ -48,6 +48,9 @@
       - vlan: 200
         interface: "vtnet1"
         description: "Redstone"
+      - vlan: 300
+        interface: "vtnet1"
+        description: "Openstack"
 
     mgmt_rules:
       allow_mgmt_to_opnsense_https:
@@ -445,6 +448,34 @@
         log: false
         state: 'present'
 
+    openstack_rules:
+      allow_vlan_openstack_out:
+        action: 'pass'
+        int: ['opt5']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '10.3.100.0/24'
+        dest: 'any'
+        dest_port: 'https'
+        quick: true
+        log: true
+        state: 'present'
+
+      allow_openstack_to_core_dns:
+        action: 'pass'
+        int: ['opt5']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP/UDP'
+        src: '10.3.100.0/24'
+        dest: 'CORE_DNS'
+        dest_port: '53'
+        quick: true
+        log: false
+        state: 'present'
+
+
     core_aliases:
       - name: 'CORE_BACKUP'
         content: ['10.1.100.14', '10.1.100.15']
@@ -486,6 +517,7 @@
         | combine(redstone_rules)
         | combine(secrets_rules)
         | combine(identity_rules)
+        | combine(openstack_rules)
       }}
 
   tasks:

@@ -17,6 +17,7 @@ bind9_our_networks:
   - 10.1.110.0/24
   - 10.1.115.0/24
   - 10.2.100.0/24
+  - 10.3.100.0/24
 
 bind9_zones_static:
   - name: redstone
