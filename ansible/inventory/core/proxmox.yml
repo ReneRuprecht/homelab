@@ -35,5 +35,6 @@ groups:
   loadbalancer: "'loadbalancer' in proxmox_name and 'core' in proxmox_tags_parsed | list"
   monitoring: "'monitoring' in proxmox_name and 'core' in proxmox_tags_parsed | list"
   elastic: "'elastic' in proxmox_name and 'core' in proxmox_tags_parsed | list"
+  omv: "'omv' in proxmox_name and 'core' in proxmox_tags_parsed | list"
 
 want_proxmox_nodes_ansible_host: true
