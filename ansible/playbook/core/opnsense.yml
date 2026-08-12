@@ -276,6 +276,20 @@
         log: false
         state: 'present'
 
+      allow_mgmt_to_core_omv_http:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: 'CORE_OMV'
+        dest_port: 'http'
+        quick: true
+        log: false
+        seq: 100
+        state: 'present'
+
     core_rules:
       allow_vlan_core_out:
         action: 'pass'
@@ -483,6 +497,8 @@
         content: ['10.1.100.11', '10.1.100.12']
       - name: 'CORE_LBS'
         content: ['10.1.100.17', '10.1.100.18', '10.1.100.250']
+      - name: 'CORE_OMV'
+        content: ['10.1.100.23']
 
     secrets_aliases:
       - name: 'SECRETS_VAULT'

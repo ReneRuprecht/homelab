@@ -42,3 +42,6 @@ patterns:
   elastic.yml:
     - "elastic-*"
     - "elastic" 
+  omv.yml:
+    - "omv-*"
+    - "omv" 
