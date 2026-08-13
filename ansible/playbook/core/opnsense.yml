@@ -290,6 +290,48 @@
         seq: 100
         state: 'present'
 
+      allow_mgmt_to_core_omv_nfs:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: 'CORE_OMV'
+        dest_port: '2049'
+        quick: true
+        log: false
+        seq: 100
+        state: 'present'
+
+      allow_mgmt_to_core_omv_rpcbind:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP/UDP'
+        src: '192.168.178.0/24'
+        dest: 'CORE_OMV'
+        dest_port: '111'
+        quick: true
+        log: false
+        seq: 100
+        state: 'present'
+
+      allow_mgmt_to_core_omv_smb:
+        action: 'pass'
+        int: ['wan']
+        dir: 'in'
+        ip_proto: 'inet'
+        proto: 'TCP'
+        src: '192.168.178.0/24'
+        dest: 'CORE_OMV'
+        dest_port: '445'
+        quick: true
+        log: false
+        seq: 100
+        state: 'present'
+
     core_rules:
       allow_vlan_core_out:
         action: 'pass'

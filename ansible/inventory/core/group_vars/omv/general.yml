@@ -9,3 +9,22 @@ general_ufw_ports:
     proto: tcp
     state: enabled
     comment: "HTTP"
+
+  - port: "111"
+    proto: tcp
+    state: enabled
+    comment: "RPCBIND"
+  - port: "111"
+    proto: udp
+    state: enabled
+    comment: "RPCBIND"
+
+  - port: "445"
+    proto: tcp
+    state: enabled
+    comment: "SMB"
+
+  - port: "2049"
+    proto: tcp
+    state: enabled
+    comment: "NFS"
