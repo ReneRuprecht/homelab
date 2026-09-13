@@ -13,3 +13,4 @@ resources:
   # - airflow
   # - harbor
   #  - artifactory
+  - vaultwarden
