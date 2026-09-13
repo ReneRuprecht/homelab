@@ -1,0 +1,18 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: vaultwarden-postgres
+  namespace: vaultwarden
+spec:
+  description: "vaultwarden DB"
+  instances: 1
+  startDelay: 300
+  stopDelay: 300
+
+  bootstrap:
+    initdb:
+      database: vaultwarden
+
+  storage:
+    storageClass: longhorn
+    size: 10Gi
