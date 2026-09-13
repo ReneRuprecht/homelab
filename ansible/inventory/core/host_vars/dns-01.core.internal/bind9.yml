@@ -157,7 +157,7 @@ bind9_zones_dynamic:
         rdata: 10.1.110.11
 
   - name: redstone
-    serial: 2025081108
+    serial: 2025081110
     admin: noemail.redstone
     ns_records:
       - dns-01.core.internal
@@ -165,13 +165,13 @@ bind9_zones_dynamic:
     rrs:
       - label: pass
         type: A
-        rdata: 192.168.178.249
+        rdata: 10.2.100.249
       - label: lognhorn
         type: A
-        rdata: 192.168.178.249
+        rdata: 10.2.100.249
       - label: argocd
         type: A
-        rdata: 192.168.178.249
+        rdata: 10.2.100.249
 
   - name: bluecore
     serial: 2025081126
