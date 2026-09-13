@@ -5,5 +5,5 @@ resources:
 - longhorn-cert.yaml
 - argocd-cert.yaml
 # - harbor-cert.yaml
-- artifactory-cert.yaml
+# - artifactory-cert.yaml
 - vaultwarden-cert.yaml
