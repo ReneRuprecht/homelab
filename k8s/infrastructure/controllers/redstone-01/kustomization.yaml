@@ -12,4 +12,4 @@ resources:
   # - gha-runner-scale-set-controller
   # - airflow
   # - harbor
-  - artifactory
+  #  - artifactory
