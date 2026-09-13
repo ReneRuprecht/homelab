@@ -6,6 +6,20 @@ metadata:
   namespace: flux-system
 spec:
   values:
+    image:
+      extraVars:
+        - name: SSL_CERT_FILE
+          value: /etc/ssl/custom/root.ca
+    extraVolumes:
+      - name: vaultwarden-homelab-root-ca
+        secret:
+          secretName: vaultwarden-homelab-root-ca
+
+    extraVolumeMounts:
+      - name: vaultwarden-homelab-root-ca
+        mountPath: /etc/ssl/custom
+        readOnly: true
+
     database:
       type: postgresql
       existingSecret: "vaultwarden-postgres-app"
@@ -16,3 +30,17 @@ spec:
       tlsSecret: vaultwarden-cert-tls
       hostname: pass.redstone
       allowList: "192.168.178.0/24"
+    sso:
+      enabled: true
+
+      existingSecret: "vaultwarden-sso"
+
+      authority: "https://keycloak.identity.internal/realms/homelab"
+
+      pkce: true
+
+      clientId:
+        existingSecretKey: "client-id"
+
+      clientSecret:
+        existingSecretKey: "client-secret"
