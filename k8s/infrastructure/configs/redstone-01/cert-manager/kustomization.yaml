@@ -6,3 +6,4 @@ resources:
 - argocd-cert.yaml
 # - harbor-cert.yaml
 - artifactory-cert.yaml
+- vaultwarden-cert.yaml
